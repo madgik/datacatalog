@@ -53,18 +53,18 @@ spring:
         registration:
           keycloak:
             authorization-grant-type: authorization_code
-            client-id: datacatalog
-            client-secret: <client-secret>  # ensure this matches your secret
-            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"  # must match Keycloak's redirect URI
+            client-id: {{ .Env.KEYCLOAK_CLIENT_ID }}
+            client-secret: {{ .Env.KEYCLOAK_CLIENT_SECRET }}
+            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
             scope: openid
         provider:
           keycloak:
-            issuer-uri: https://iam.ebrains.eu/auth/realms/MIP
+            issuer-uri: {{ .Env.KEYCLOAK_AUTH_URL }}realms/{{ .Env.KEYCLOAK_REALM }}
             user-name-attribute: preferred_username
 app:
   frontend:
-    auth-callback-url: "http://localhost:4200/auth-callback"
-    base-url: "http://localhost:4200"
+    auth-callback-url: {{ .Env.FRONTEND_URL }}/auth-callback
+    base-url: {{ .Env.FRONTEND_URL }}
   data_quality_tool:
-    json-to-excel-url: "http://data_quality_tool:8000/json-to-excel"
-    excel-to-json-url: "http://data_quality_tool:8000/excel-to-json"
+    json-to-excel-url: {{ .Env.DQT_URL }}/json-to-excel
+    excel-to-json-url: {{ .Env.DQT_URL }}/excel-to-json

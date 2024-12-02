@@ -36,14 +36,19 @@ services:
     ports:
       - "8090:8090"
     environment:
+      ### Database ###
       DB_URL: jdbc:postgresql://datacatalog_db:5432/postgres
       DB_USER: postgres
       DB_PASSWORD: test
+      ### Frontend ###
+      FRONTEND_URL: http://localhost
+      DQT_URL: http://data_quality_tool:8000
+      ### Keycloak ###
       AUTHENTICATION: 1
       KEYCLOAK_AUTH_URL: https://iam.ebrains.eu/auth/
       KEYCLOAK_REALM: MIP
-      KEYCLOAK_CLIENT_ID: datacatalog
-      KEYCLOAK_CLIENT_SECRET: <client-secret>
+      KEYCLOAK_CLIENT_ID: datacatalogue
+      KEYCLOAK_CLIENT_SECRET: s66onAvpe6Bhhp476PnDM5XitZaMjfKG
       KEYCLOAK_SSL_REQUIRED: none
     depends_on:
       datacatalog_db:
@@ -56,6 +61,6 @@ services:
       dockerfile: Dockerfile
     container_name: frontend
     ports:
-      - "80:80" # Expose the frontend on port 80
+      - "8080:80" # Expose the frontend on port 80
     depends_on:
       - backend
