@@ -1,0 +1,74 @@
+/* Container Styling */
+.about-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Header Styling */
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 15px;
+}
+
+.title {
+  font-size: 2.4em;
+  color: #333;
+  font-weight: 500;
+}
+
+/* About Content Styling */
+.about-content {
+  padding: 20px;
+  text-align: left;
+}
+
+.about-content h2 {
+  font-size: 1.8em;
+  margin-bottom: 20px;
+  color: #555;
+}
+
+.about-content p {
+  font-size: 1.1em;
+  margin-bottom: 15px;
+  color: #555;
+}
+
+.about-content a {
+  color: #007bff;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.about-content a:hover {
+  text-decoration: underline;
+  color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .about-container {
+    padding: 15px;
+  }
+
+  .title {
+    font-size: 2em;
+  }
+
+  .about-content p {
+    font-size: 1em;
+  }
+}

@@ -1,0 +1,66 @@
+<section class="landing-page">
+  <!-- Federation Image Grid Section -->
+  <div class="federation-container">
+    <div class="image-gallery">
+      <div class="image-container">
+        <!-- Dynamic Federation Cards -->
+        <div
+          *ngFor="let federation of federations;"
+          class="image-item"
+          (click)="selectFederation(federation)"
+        >
+          <img
+            [src]="'assets/' + federation.code + '.png'"
+            [alt]="federation.title"
+          />
+          <div class="image-caption">
+            <h3>{{ federation.title }}</h3>
+            <p>
+              Institutions: {{ federation.institutions }} | Data Records:
+              {{ federation.records }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description Section -->
+    <div class="description">
+      <h2>Welcome to the Medical Informatics Platform</h2>
+      <p>
+        Collaborate across multiple hospitals to access medical data and use
+        cutting-edge algorithms to analyze shared pathologies like dementia,
+        mental health, and more.
+      </p>
+      <div class="actions">
+        <button (click)="learnMore()">Learn More</button>
+        <button (click)="getStarted()">Get Started</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Federation Details Section -->
+  <section class="federations">
+    <div class="federation">
+      <h2>Access to Medical Data</h2>
+      <p>
+        Explore tools that enable secure access to medical data from our
+        federated network of hospitals. Gain insights while maintaining
+        privacy and compliance.
+      </p>
+    </div>
+    <div class="federation">
+      <h2>Algorithms</h2>
+      <p>
+        Leverage cutting-edge algorithms for analyzing medical data, including
+        advanced tools for diagnosing pathologies like dementia or mental
+        health conditions.
+      </p>
+    </div>
+  </section>
+
+  <!-- Call-to-Action Button -->
+  <div class="cta" *ngIf="!isLoggedIn()">
+    <button (click)="redirectToSignUp()">Create EBRAINS Account</button>
+  </div>
+</section>

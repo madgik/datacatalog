@@ -1,0 +1,61 @@
+
+
+services:
+  data_quality_tool:
+    build:
+      context: ./data_quality_tool
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+
+  datacatalog_db:
+    image: postgres:15
+    volumes:
+      - ./.stored_data/datacatalogdb:/var/lib/postgresql/data
+    hostname: datacatalog_db
+    environment:
+      POSTGRES_PASSWORD: test
+    command: -p 5432
+    ports:
+      - '5432:5432'
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "8090:8090"
+    environment:
+      DB_URL: jdbc:postgresql://datacatalog_db:5432/postgres
+      DB_USER: postgres
+      DB_PASSWORD: test
+      AUTHENTICATION: 1
+      KEYCLOAK_AUTH_URL: https://iam.ebrains.eu/auth/
+      KEYCLOAK_REALM: MIP
+      KEYCLOAK_CLIENT_ID: datacatalog
+      KEYCLOAK_CLIENT_SECRET: <client-secret>
+      KEYCLOAK_SSL_REQUIRED: none
+    depends_on:
+      datacatalog_db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "80:80" # Expose the frontend on port 80
+    depends_on:
+      - backend

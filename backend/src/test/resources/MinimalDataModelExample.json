@@ -1,0 +1,69 @@
+{
+  "uuid": "613d49ac-daf0-4ef8-8ae6-e6447cdd5f93",
+  "code": "example",
+  "version": "1.0",
+  "label": "Minimal Example",
+  "longitudinal": false,
+  "variables": [
+    {
+      "code": "dataset",
+      "label": "Dataset Variable",
+      "description": "An example variable description",
+      "sql_type": "text",
+      "isCategorical": true,
+      "enumerations": [
+        {
+          "code": "enum1",
+          "label": "Enumeration 1"
+        }
+      ],
+      "type": "nominal",
+      "methodology": "example methodology",
+      "units": "unit"
+    }
+  ],
+  "groups": [
+    {
+      "code": "example_group",
+      "label": "Example Group",
+      "variables": [
+        {
+          "code": "group_variable",
+          "label": "Group Variable",
+          "description": "A variable within a group",
+          "sql_type": "int",
+          "isCategorical": false,
+          "minValue": 0,
+          "maxValue": 100,
+          "type": "integer",
+          "methodology": "group methodology",
+          "units": "years"
+        }
+      ],
+      "groups": [
+        {
+          "code": "nested_group",
+          "label": "Nested Group",
+          "variables": [
+            {
+              "code": "nested_group_variable",
+              "label": "Nested Group Variable",
+              "description": "A nested group variable",
+              "sql_type": "text",
+              "isCategorical": true,
+              "enumerations": [
+                {
+                  "code": "nested_enum1",
+                  "label": "Nested Enumeration 1"
+                }
+              ],
+              "type": "nominal",
+              "methodology": "nested methodology",
+              "units": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

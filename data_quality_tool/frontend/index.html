@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Quality Tool Service</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Data Quality Tool Service</h1>
+
+        <div class="upload-section">
+            <h2>Convert Excel to JSON</h2>
+            <input type="file" id="excelFile" accept=".xlsx">
+            <button onclick="convertExcelToJson()">Convert to JSON</button>
+            <a id="downloadJson" style="display: none;">Download JSON</a>
+        </div>
+
+        <div class="upload-section">
+            <h2>Convert JSON to Excel</h2>
+            <input type="file" id="jsonFile" accept=".json">
+            <button onclick="convertJsonToExcel()">Convert to Excel</button>
+            <a id="downloadExcel" style="display: none;">Download Excel</a>
+        </div>
+
+        <div id="error-message" style="display: none; color: red;"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+# Configuration template for the Datacatalog running inside a Docker container
+
+### EMBEDDED SERVER CONFIGURATION ###
+server:
+  servlet:
+    context-path: "/services"
+  port: 8090
+  forward-headers-strategy: native
+
+### AUTHENTICATION ###
+authentication:
+  enabled: {{ default .Env.AUTHENTICATION "1" }}
+  domain_expert: "DC_DOMAIN_EXPERT"
+
+### LOG LEVELS ###
+logging:
+  level:
+    root: "INFO"
+    eu:
+      ebrainsv2: "DEBUG"
+
+
+### DATABASE CONFIGURATION ###
+spring:
+  datasource:
+    url: {{ default .Env.DB_URL "jdbc:postgresql://datacatalog_db:5432/postgres" }}
+    username: {{ default .Env.DB_USER "postgres" }}
+    password: {{ default .Env.DB_PASSWORD "test" }}
+    driver-class-name: org.postgresql.Driver
+  flyway:
+      url: {{ default .Env.DB_URL "jdbc:postgresql://datacatalog_db:5432/postgres" }}
+      username: {{ default .Env.DB_USER "postgres" }}
+      password: {{ default .Env.DB_PASSWORD "test" }}
+      baseline-on-migrate: true
+  data:
+    jpa:
+      repositories:
+        bootstrap-mode: default
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  jackson:
+    default-property-inclusion: non_null
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: {{ .Env.KEYCLOAK_AUTH_URL }}realms/{{ .Env.KEYCLOAK_REALM }}
+      client:
+        registration:
+          keycloak:
+            authorization-grant-type: authorization_code
+            client-id: datacatalog
+            client-secret: <client-secret>  # ensure this matches your secret
+            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"  # must match Keycloak's redirect URI
+            scope: openid
+        provider:
+          keycloak:
+            issuer-uri: https://iam.ebrains.eu/auth/realms/MIP
+            user-name-attribute: preferred_username
+app:
+  frontend:
+    auth-callback-url: "http://localhost:4200/auth-callback"
+    base-url: "http://localhost:4200"
+  data_quality_tool:
+    json-to-excel-url: "http://data_quality_tool:8000/json-to-excel"
+    excel-to-json-url: "http://data_quality_tool:8000/excel-to-json"
