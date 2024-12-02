@@ -3,13 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import {DataModel} from "../interfaces/data-model.interface";
-import {environment} from "../environment";
 
 @Injectable({
   providedIn: 'root',
 })
 export class DataModelService {
-  private apiUrl = `${environment.backendUrl}/services/datamodels`;
+  private apiUrl = `/services/datamodels`;
   private dataModels: any[] = []; // Cache for all data models
   private dataModelsLoaded = false; // Flag to track cache loading
 

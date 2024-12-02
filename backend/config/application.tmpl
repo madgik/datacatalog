@@ -55,7 +55,7 @@ spring:
             authorization-grant-type: authorization_code
             client-id: {{ .Env.KEYCLOAK_CLIENT_ID }}
             client-secret: {{ .Env.KEYCLOAK_CLIENT_SECRET }}
-            redirect-uri: "{baseUrl}/login/oauth2/code/keycloak"
+            redirect-uri: "http://localhost:8090/services/login/oauth2/code/keycloak"
             scope: openid
         provider:
           keycloak:

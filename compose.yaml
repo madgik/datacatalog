@@ -61,6 +61,6 @@ services:
       dockerfile: Dockerfile
     container_name: frontend
     ports:
-      - "8080:80" # Expose the frontend on port 80
+      - "80:80" # Expose the frontend on port 80
     depends_on:
       - backend
