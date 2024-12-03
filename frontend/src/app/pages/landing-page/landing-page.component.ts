@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FederationService } from '../../services/federation.service';
 import { Federation } from "../../interfaces/federations.interface";
 import { AuthService } from '../../services/auth.service';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-landing-page',
@@ -17,7 +18,9 @@ export class LandingPageComponent implements OnInit {
 
   constructor(
     private federationService: FederationService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
+
   ) {}
 
   isLoggedIn(): boolean {
@@ -31,11 +34,11 @@ export class LandingPageComponent implements OnInit {
 
 
   learnMore(): void {
-
+    this.router.navigate(['/about']);
   }
 
   getStarted(): void {
-
+    this.router.navigate(['/federations']);
   }
 
   ngOnInit(): void {
