@@ -5,7 +5,7 @@
     @if (federation.institutions != '0') {
       <p>Data Records: {{ federation.records }} | Institutions: {{ federation.institutions }}</p>
     } @else {
-      <p>Data Records: {{ federation.records }}</p>
+      <p>Data Records: {{ federation.records | number }}</p>
     }
     <p>Data Models:</p>
     <ul>

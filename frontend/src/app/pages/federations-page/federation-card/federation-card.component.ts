@@ -1,13 +1,14 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Federation } from '../../../interfaces/federations.interface';
-import {SlicePipe} from "@angular/common";
+import {DecimalPipe, SlicePipe} from "@angular/common";
 
 @Component({
   selector: 'app-federation-card',
   templateUrl: './federation-card.component.html',
   styleUrls: ['./federation-card.component.css'],
   imports: [
-    SlicePipe
+    SlicePipe,
+    DecimalPipe
   ],
   standalone: true
 })
