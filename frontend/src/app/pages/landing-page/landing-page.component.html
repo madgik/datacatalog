@@ -16,7 +16,12 @@
           <div class="image-caption">
             <h3>{{ federation.title }}</h3>
             <p>
-              Institutions: {{ federation.institutions }} | Data Records:
+              @if (federation.institutions != '0'){
+                <span>
+              Institutions: {{ federation.institutions }} |
+              </span>
+              }
+              Data Records:
               {{ federation.records }}
             </p>
           </div>

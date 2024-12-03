@@ -2,7 +2,7 @@
   <img [src]="'assets/' + federation.code + '.png'" alt="{{ federation.title }}" class="federation-image">
   <div class="federation-content">
     <h3>{{ federation.title }}</h3>
-    @if (federation.institutions !== '0') {
+    @if (federation.institutions != '0') {
       <p>Data Records: {{ federation.records }} | Institutions: {{ federation.institutions }}</p>
     } @else {
       <p>Data Records: {{ federation.records }}</p>

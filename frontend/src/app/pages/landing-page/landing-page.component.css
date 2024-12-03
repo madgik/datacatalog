@@ -30,19 +30,18 @@ h2, h3 {
 .image-gallery {
   width: 65%; /* Wider gallery to emphasize visual content */
 }
-
 .image-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Auto-fit for better responsiveness */
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Wider columns */
+  gap: 20px; /* Space between items */
 }
 
 .image-item {
-  width: 100%;
-  height: 400px; /* Set specific height */
+  width: 100%; /* Full width of the grid cell */
+  height: 220px; /* Reduced height to emphasize width */
   position: relative;
   cursor: pointer;
-  border-radius: 15px;
+  border-radius: 12px; /* Slightly rounded corners */
   overflow: hidden;
   transition: transform 0.3s ease;
   background-color: #f0f0f0; /* Fallback background */
@@ -51,9 +50,22 @@ h2, h3 {
 .image-item img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Ensures image covers the set size */
-  border-radius: 15px;
+  object-fit: cover; /* Ensures the image fully fills the container */
+  border-radius: 12px;
 }
+
+@media (max-width: 768px) {
+  .image-item {
+    height: 250px; /* Slightly smaller height for mobile devices */
+  }
+}
+
+@media (max-width: 480px) {
+  .image-item {
+    height: 200px; /* Further reduced height for very small screens */
+  }
+}
+
 
 .image-item:hover {
   transform: scale(1.1); /* Subtle zoom on hover */
