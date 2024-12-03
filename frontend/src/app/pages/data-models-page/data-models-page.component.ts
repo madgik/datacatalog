@@ -114,13 +114,11 @@ export class DataModelsPageComponent implements OnInit{
     } else {
       if (this.isDomainExpert){
         this.dataModelService.getAllDataModels().subscribe((dataModels) => {
-          console.log("this.selectedDataModel",this.selectedDataModel)
           this.handleDataModelResponse(dataModels);
         });
       }
       else {
         this.dataModelService.getAllReleasedDataModels().subscribe((dataModels) => {
-          console.log("this.selectedDataModel",this.selectedDataModel)
           this.handleDataModelResponse(dataModels);
         });
       }
@@ -134,7 +132,6 @@ export class DataModelsPageComponent implements OnInit{
     if (dataModels.length > 0) {
       this.selectedDataModel = crossSectional[0] || longitudinal[0] || null;
     }
-    console.log("this.selectedDataModel",this.selectedDataModel)
     this.loadVisualizationData();
   }
 
@@ -147,7 +144,6 @@ export class DataModelsPageComponent implements OnInit{
 
   onSelectedNodeChange(node: any): void {
     this.selectedNode = node;
-    console.log("this.selectedNode:", this.selectedNode);
   }
 
   onSelectedDataModelChange(selectedDataModel: DataModel | null): void {
@@ -165,7 +161,6 @@ export class DataModelsPageComponent implements OnInit{
   }
 
   handleAction(action: string): void {
-    console.log('Action Triggered:', action);
     switch (action) {
       case 'add':
         this.goToAddDataModel();

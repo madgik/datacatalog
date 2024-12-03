@@ -13,7 +13,7 @@ export class NodeInfoComponent {
   visible: boolean = true;
 
   get hasChildren(): boolean {
-    return this.selectedNode?.children && this.selectedNode.children.length > 0;
+    return !!this.selectedNode?.children?.length;
   }
 
   toggleVisibility(): void {

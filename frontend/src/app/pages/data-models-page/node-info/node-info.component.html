@@ -13,7 +13,6 @@
       @if(hasChildren){
         <p><strong>Number of Variables:</strong> {{ countLeafNodes() }}</p>
       } @else {
-        <ng-template>
           @if(fieldExists('description')){
             <p>
               <strong>Description:</strong> {{ selectedNode.description }}
@@ -50,7 +49,6 @@
               <strong>Max Value:</strong> {{ selectedNode.maxValue }}
             </p>
           }
-        </ng-template>
       }
     </div>
   }

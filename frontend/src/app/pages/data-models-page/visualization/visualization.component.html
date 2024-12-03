@@ -1,10 +1,19 @@
 <div class="visualization-type-container">
+  <label for="group">Root Group:</label>
+  <select class="dropdown" id="group" (change)="onGroupChange($event)">
+    <option *ngFor="let group of groupList" [value]="group">{{ group }}</option>
+  </select>
+
+  <label for="maxDepth">Max Depth:</label>
+  <select class="dropdown" id="maxDepth" (change)="onMaxDepthChange($event)">
+  </select>
+
   <label for="visualization">Select Visualization:</label>
   <select class="dropdown" id="visualization" (change)="onVisualizationTypeChange($event)">
-    <option value="ZoomableCirclePacking">Zoomable Circle Packing</option>
-    <option value="ZoomableSunburst">Zoomable Sunburst</option>
     <option value="TidyTree">TidyTree</option>
+    <option value="ZoomableSunburst">Zoomable Sunburst</option>
   </select>
+
 </div>
 
 <div id="chart-container">
