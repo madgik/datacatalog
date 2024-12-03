@@ -88,8 +88,6 @@ export class VisualizationComponent implements OnInit, OnChanges {
     }
 
     let visualizationData = this.d3Data;
-    console.log("brooo", this.selectedGroup)
-    console.log("brooo", this.maxDepth)
 
     // Start from the selected group if specified
     if (this.selectedGroup) {
@@ -99,7 +97,6 @@ export class VisualizationComponent implements OnInit, OnChanges {
         return;
       }
     }
-    console.log("brooo", visualizationData)
 
 
     // Limit tree depth if applicable
@@ -107,7 +104,7 @@ export class VisualizationComponent implements OnInit, OnChanges {
       const maxDepthValue = parseInt(this.maxDepth, 10);
       visualizationData = this.limitTreeDepth(visualizationData, maxDepthValue);
     }
-
+    console.log(visualizationData)
     const handleNodeClick = (node: any) => {
       this.selectedNodeChange.emit(node);
     };

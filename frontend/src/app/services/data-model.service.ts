@@ -120,35 +120,40 @@ export class DataModelService {
     return { crossSectional, longitudinal };
   }
 
-  // Convert data model to D3 hierarchy format
-  convertToD3Hierarchy(data: any): any {
-    const convertVariables = (variables: any[]) =>
-      variables.map((v) => ({
-        name: v.label,
-        value: 1,
-        ...v,
-      }));
+  // Convert data model to D3 hierarchy format with variable count for groups
+convertToD3Hierarchy(data: any): any {
+  const convertVariables = (variables: any[]): any[] =>
+    variables.map((v) => ({
+      name: v.label,
+      value: 1,
+      ...v,
+    }));
 
-    const convertGroups = (groups: any) =>
-      groups.map((g: any) => ({
+  const convertGroups = (groups: any[]): any[] =>
+    groups.map((g: any) => {
+      const variableNodes = convertVariables(g.variables || []);
+      const groupNodes = convertGroups(g.groups || []);
+      const totalVariableCount = variableNodes.length + groupNodes.reduce((count, group) => count + (group.variableCount || 0), 0);
+
+      return {
         name: g.label,
         code: g.code,
-        children: [
-          ...convertVariables(g.variables || []),
-          ...convertGroups(g.groups || []),
-        ],
-      }));
+        variableCount: totalVariableCount, // Track total variables in the group and subgroups
+        children: [...variableNodes, ...groupNodes],
+      };
+    });
 
-    return  {
-      name: data.label,
-      code: data.code,
-      children: [
-        ...convertVariables(data.variables || []),
-        ...convertGroups(data.groups || []),
-      ],
-    };
+  const rootVariables = convertVariables(data.variables || []);
+  const rootGroups = convertGroups(data.groups || []);
+  const rootVariableCount = rootVariables.length + rootGroups.reduce((count, group) => count + (group.variableCount || 0), 0);
 
-  }
+  return {
+    name: data.label,
+    code: data.code,
+    variableCount: rootVariableCount, // Track total variables for the root
+    children: [...rootVariables, ...rootGroups],
+  };
+}
 
   //CRUD:
 

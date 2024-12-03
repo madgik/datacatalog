@@ -144,6 +144,7 @@ export class DataModelsPageComponent implements OnInit{
 
   onSelectedNodeChange(node: any): void {
     this.selectedNode = node;
+    console.log(this.selectedNode)
   }
 
   onSelectedDataModelChange(selectedDataModel: DataModel | null): void {
