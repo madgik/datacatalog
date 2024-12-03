@@ -63,6 +63,17 @@
   margin-top: 16px;
 }
 
+/* Description Read More/Less */
+.toggle-description {
+  color: #007b8f;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.toggle-description:hover {
+  text-decoration: underline;
+}
 /* Buttons Styling */
 button {
   padding: 10px 15px;
@@ -112,3 +123,23 @@ button:hover {
 .delete-btn:hover {
   background-color: #8b2325;
 }
+
+
+
+/* Link Styling */
+a.modern-link {
+  text-decoration: none;
+  color: #007b8f; /* Teal for consistency */
+  font-weight: bold;
+  border: 1px solid #007b8f;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+a.modern-link:hover {
+  background-color: #007b8f;
+  color: #fff;
+  transform: scale(1.03);
+}
+

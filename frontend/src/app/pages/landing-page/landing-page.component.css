@@ -56,7 +56,7 @@ h2, h3 {
 }
 
 .image-item:hover {
-  transform: scale(1.05); /* Subtle zoom on hover */
+  transform: scale(1.1); /* Subtle zoom on hover */
 }
 
 .image-caption {
