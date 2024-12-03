@@ -6,12 +6,13 @@
   border-radius: 10px; /* Slightly less rounded */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #f9f9f9; /* Softer background color */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), gap 0.3s cubic-bezier(0.4, 0, 0.2, 1);  gap: 20px;
 }
 
 .federation-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  gap: 50px; /* Increased spacing on hover */
 }
 
 .federation-image {
@@ -19,48 +20,61 @@
   height: auto;
   border-radius: 10px;
   margin-right: 20px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), height 0.5s cubic-bezier(0.4, 0, 0.2, 1), margin-right 0.5s cubic-bezier(0.4, 0, 0.2, 1);}
+
+.federation-card:hover .federation-image {
+  width: 350px; /* Expand image to 400px */
+  height: auto;
+  margin-right: 40px; /* Increase spacing for content when image grows */
 }
 
 .federation-content {
   flex: 1;
+  padding-left: 20px; /* Maintain consistent spacing */
+  transition: padding-left 0.5s cubic-bezier(0.4, 0, 0.2, 1), flex 0.5s cubic-bezier(0.4, 0, 0.2, 1);}
+
+.federation-card:hover .federation-content {
+  padding-left: 10px; /* Adjust padding to make use of space dynamically */
 }
 
 .federation-content h3 {
-  font-size: 1.2em;
-  margin-bottom: 8px;
+  font-size: 1.4em; /* Slightly larger font size */
+  margin-bottom: 10px;
   color: #444; /* Slightly softer color */
+  transition: font-size 0.3s ease, margin-bottom 0.3s ease;
 }
 
 .federation-content p {
-  font-size: 0.95em;
+  font-size: 1em; /* Slightly larger text */
   color: #666; /* Softer text color */
-  margin: 4px 0;
-  line-height: 1.4;
+  margin: 6px 0;
+  line-height: 1.5; /* Better readability */
 }
 
 .federation-description {
   font-style: italic;
   color: #777;
+  margin-bottom: 8px;
 }
 
 .federation-buttons {
   display: flex;
-  gap: 8px;
-  margin-top: 12px;
+  gap: 10px;
+  margin-top: 16px;
 }
 
 /* Buttons Styling */
 button {
-  padding: 8px 12px;
+  padding: 10px 15px;
   border: none;
   border-radius: 6px; /* Softer edges */
   cursor: pointer;
-  font-size: 0.9em;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  font-size: 1em; /* Larger buttons */
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
-  transform: scale(1.02); /* Subtle hover effect */
+  transform: scale(1.03); /* Slightly larger hover effect */
 }
 
 .data-model-btn {
