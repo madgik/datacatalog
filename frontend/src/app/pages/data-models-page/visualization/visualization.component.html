@@ -1,28 +1,31 @@
-<div class="visualization-type-container">
-  <label for="group">Root Group:</label>
-  <select class="dropdown" id="group" (change)="onGroupChange($event)">
-    <option *ngFor="let group of groupList" [value]="group">{{ group }}</option>
-  </select>
+<div class="disclaimer" style="margin-top: 10px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; color: #333;">
+  <strong>Note:</strong> All nodes can be clicked to access their information. Only nodes with the
+  <span style="background-color: #ffeb3b; color: #333; font-weight: bold; padding: 2px 4px; border-radius: 3px;">
+    yellow effect
+  </span>
+  can be double-clicked to become the new root. Additionally, the node must have a depth of at least <strong>3</strong> to be eligible as a root.
+</div>
 
-  <label for="maxDepth">Max Depth:</label>
-  <select class="dropdown" id="maxDepth" (change)="onMaxDepthChange($event)">
-  </select>
-
-  <label for="visualization">Select Visualization:</label>
-  <select class="dropdown" id="visualization" (change)="onVisualizationTypeChange($event)">
-    <option value="TidyTree">TidyTree</option>
-    <option value="ZoomableSunburst">Zoomable Sunburst</option>
-  </select>
-
+<div class="breadcrumbs">
+  <ng-container *ngFor="let breadcrumb of breadcrumbPath; let i = index">
+    <span
+      class="breadcrumb"
+      [class.active]="i === breadcrumbPath.length - 1"
+      (click)="i < breadcrumbPath.length - 1 ? handleBreadcrumbClick(i) : null"
+    >
+      {{ breadcrumb }}
+    </span>
+    <span *ngIf="i < breadcrumbPath.length - 1"> &gt; </span>
+  </ng-container>
 </div>
 
 <div id="chart-container">
-  @if (!error) {
-    <!-- Chart will render here -->
+  <ng-container *ngIf="!error; else errorTemplate">
     <div id="chart" style="width: 100%; height: 800px;"></div>
-  } @else {
+  </ng-container>
+  <ng-template #errorTemplate>
     <div class="error-message">
       {{ error }}
     </div>
-  }
+  </ng-template>
 </div>

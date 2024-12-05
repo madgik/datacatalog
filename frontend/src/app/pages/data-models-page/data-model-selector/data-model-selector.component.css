@@ -1,6 +1,7 @@
 
 /* Common dropdown styling for all select elements */
 .dropdown {
+  margin: 0; /* Ensure no extra space */
   padding: 8px;
   font-size: 15px;
   font-weight: 500;

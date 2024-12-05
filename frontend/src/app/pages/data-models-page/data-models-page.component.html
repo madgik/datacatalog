@@ -25,19 +25,19 @@
       </div>
 
       @if(isDomainExpert){
-          <app-action-menu
-            [isSelectedDataModelReleased]="selectedDataModel?.released ?? false"
-            (action)="handleAction($event)"
-            (menuVisibleChange)="handleMenuToggle($event)"
-          ></app-action-menu>
+        <app-action-menu
+          [isSelectedDataModelReleased]="selectedDataModel?.released ?? false"
+          (action)="handleAction($event)"
+          (menuVisibleChange)="handleMenuToggle($event)"
+        ></app-action-menu>
       }
     </div>
 
     <app-visualization
       [visualizationType]="visualizationType"
       [d3Data]="d3Data"
-      (selectedNodeChange)="onSelectedNodeChange($event)">
-    </app-visualization>
+      (selectedNodeChange)="onSelectedNodeChange($event)"
+    ></app-visualization>
 
     @if(!menuVisible()){
       <div>
@@ -51,7 +51,6 @@
     }
   </div>
 }
-
 
 <!-- Child route outlet for Add and Update forms -->
 <router-outlet></router-outlet>
