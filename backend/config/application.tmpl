@@ -46,16 +46,12 @@ spring:
     default-property-inclusion: non_null
   security:
     oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: {{ .Env.KEYCLOAK_AUTH_URL }}realms/{{ .Env.KEYCLOAK_REALM }}
       client:
         registration:
           keycloak:
             authorization-grant-type: authorization_code
             client-id: {{ .Env.KEYCLOAK_CLIENT_ID }}
             client-secret: {{ .Env.KEYCLOAK_CLIENT_SECRET }}
-            redirect-uri: "http://localhost:8090/services/login/oauth2/code/keycloak"
             scope: openid
         provider:
           keycloak:
@@ -63,8 +59,8 @@ spring:
             user-name-attribute: preferred_username
 app:
   frontend:
-    auth-callback-url: {{ .Env.FRONTEND_URL }}/auth-callback
-    base-url: {{ .Env.FRONTEND_URL }}
+    auth-callback-url: {{ .Env.PUBLIC_HOST }}/auth-callback
+    base-url: {{ .Env.PUBLIC_HOST }}
   data_quality_tool:
     json-to-excel-url: {{ .Env.DQT_URL }}/json-to-excel
     excel-to-json-url: {{ .Env.DQT_URL }}/excel-to-json

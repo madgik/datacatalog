@@ -24,6 +24,10 @@ export class FederationCardComponent {
     this.visualizeDataModel.emit(this.federation.code);
   }
 
+  navigateToFederation(url: string): void {
+      window.open(url, '_blank');
+  }
+
   update() {
     this.updateFederation.emit(this.federation.code);
   }

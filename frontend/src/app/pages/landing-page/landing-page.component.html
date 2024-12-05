@@ -2,32 +2,30 @@
   <!-- Federation Image Grid Section -->
   <div class="federation-container">
     <div class="image-gallery">
-      <div class="image-container">
-        <!-- Dynamic Federation Cards -->
-        <div
-          *ngFor="let federation of federations;"
-          class="image-item"
-          (click)="selectFederation(federation)"
-        >
-          <img
-            [src]="'assets/' + federation.code + '.png'"
-            [alt]="federation.title"
-          />
-          <div class="image-caption">
-            <h3>{{ federation.title }}</h3>
-            <p>
-              @if (federation.institutions != '0'){
-                <span>
-              Institutions: {{ federation.institutions }} |
-              </span>
-              }
-              Data Records:
-              {{ federation.records | number }}
-            </p>
-          </div>
-        </div>
+  <div class="image-container">
+    <!-- Dynamic Federation Cards -->
+    <div
+      *ngFor="let federation of federations;"
+      class="image-item"
+      (click)="navigateToFederation(federation.url)"
+    >
+      <img
+        [src]="'assets/' + federation.code + '.png'"
+        [alt]="federation.title"
+      />
+      <div class="image-caption">
+        <h3>{{ federation.title }}</h3>
+        <p>
+          <span *ngIf="federation.institutions != '0'">
+            Institutions: {{ federation.institutions }} |
+          </span>
+          Data Records: {{ federation.records | number }}
+        </p>
       </div>
     </div>
+  </div>
+</div>
+
 
     <!-- Description Section -->
     <div class="description">

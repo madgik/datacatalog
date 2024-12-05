@@ -6,13 +6,17 @@
   border-radius: 10px; /* Slightly less rounded */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #f9f9f9; /* Softer background color */
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), gap 0.3s cubic-bezier(0.4, 0, 0.2, 1);  gap: 20px;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              gap 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 20px;
 }
 
 .federation-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  gap: 50px; /* Increased spacing on hover */
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  gap: 30px; /* Adjust spacing for hover effect */
+  background-color: #eef7ff; /* Slightly different background on hover */
 }
 
 .federation-image {
@@ -20,41 +24,59 @@
   height: auto;
   border-radius: 10px;
   margin-right: 20px;
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), height 0.5s cubic-bezier(0.4, 0, 0.2, 1), margin-right 0.5s cubic-bezier(0.4, 0, 0.2, 1);}
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              margin-right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 .federation-card:hover .federation-image {
-  width: 350px; /* Expand image to 400px */
-  height: auto;
-  margin-right: 40px; /* Increase spacing for content when image grows */
+  width: 220px; /* Slightly larger on hover */
 }
 
 .federation-content {
   flex: 1;
   padding-left: 20px; /* Maintain consistent spacing */
-  transition: padding-left 0.5s cubic-bezier(0.4, 0, 0.2, 1), flex 0.5s cubic-bezier(0.4, 0, 0.2, 1);}
+  transition: padding-left 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              flex 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 .federation-card:hover .federation-content {
-  padding-left: 10px; /* Adjust padding to make use of space dynamically */
+  padding-left: 10px; /* Adjust padding dynamically */
 }
 
 .federation-content h3 {
   font-size: 1.4em; /* Slightly larger font size */
   margin-bottom: 10px;
   color: #444; /* Slightly softer color */
-  transition: font-size 0.3s ease, margin-bottom 0.3s ease;
+  transition: font-size 0.3s ease, color 0.3s ease;
+}
+
+.federation-card:hover .federation-content h3 {
+  font-size: 1.5em;
+  color: #007b8f; /* Highlighted color on hover */
 }
 
 .federation-content p {
-  font-size: 1em; /* Slightly larger text */
+  font-size: 1em;
   color: #666; /* Softer text color */
   margin: 6px 0;
   line-height: 1.5; /* Better readability */
+  transition: color 0.3s ease;
+}
+
+.federation-card:hover .federation-content p {
+  color: #333; /* Darker color on hover */
 }
 
 .federation-description {
   font-style: italic;
   color: #777;
   margin-bottom: 8px;
+  transition: color 0.3s ease;
+}
+
+.federation-card:hover .federation-description {
+  color: #555; /* Slightly darker */
 }
 
 .federation-buttons {
@@ -63,17 +85,6 @@
   margin-top: 16px;
 }
 
-/* Description Read More/Less */
-.toggle-description {
-  color: #007b8f;
-  font-weight: bold;
-  cursor: pointer;
-  margin-left: 8px;
-}
-
-.toggle-description:hover {
-  text-decoration: underline;
-}
 /* Buttons Styling */
 button {
   padding: 10px 15px;
@@ -85,9 +96,10 @@ button {
 }
 
 button:hover {
-  transform: scale(1.03); /* Slightly larger hover effect */
+  transform: scale(1.05); /* Slightly larger hover effect */
 }
 
+/* Individual Button Styles */
 .data-model-btn {
   background-color: #007b8f; /* Darker, more neutral teal */
   color: #f0f0f0;
@@ -97,12 +109,12 @@ button:hover {
   background-color: #005f6e;
 }
 
-.request-access-btn {
+.visit-btn {
   background-color: #20964f; /* Muted green */
   color: #f0f0f0;
 }
 
-.request-access-btn:hover {
+.visit-btn:hover {
   background-color: #176a36;
 }
 
@@ -124,22 +136,14 @@ button:hover {
   background-color: #8b2325;
 }
 
-
-
-/* Link Styling */
-a.modern-link {
-  text-decoration: none;
-  color: #007b8f; /* Teal for consistency */
+/* Description Read More/Less */
+.toggle-description {
+  color: #007b8f;
   font-weight: bold;
-  border: 1px solid #007b8f;
-  padding: 6px 12px;
-  border-radius: 6px;
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  cursor: pointer;
+  margin-left: 8px;
 }
 
-a.modern-link:hover {
-  background-color: #007b8f;
-  color: #fff;
-  transform: scale(1.03);
+.toggle-description:hover {
+  text-decoration: underline;
 }
-

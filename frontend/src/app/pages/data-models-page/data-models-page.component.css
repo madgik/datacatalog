@@ -18,14 +18,9 @@
 
 /* Dropdown container styling */
 .dropdown-container {
-  margin: 0; /* Ensure no extra space */
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  margin-bottom: 4px;
 }
 
-
-/* Node info container */
-.node-info-container {
-  margin-top: 10px; /* Add spacing above node info */
-}

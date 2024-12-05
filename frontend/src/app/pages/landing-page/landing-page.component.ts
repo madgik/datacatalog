@@ -29,9 +29,11 @@ export class LandingPageComponent implements OnInit {
 
   redirectToSignUp(): void {
     window.open('https://www.ebrains.eu/page/sign-up', '_blank');
-    alert('After completing registration, return to this page.');
   }
 
+  navigateToFederation(url: string): void {
+      window.open(url, '_blank');
+  }
 
   learnMore(): void {
     this.router.navigate(['/about']);

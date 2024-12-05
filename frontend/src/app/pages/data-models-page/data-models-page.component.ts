@@ -20,6 +20,7 @@ import {ErrorService} from "./services/error.service";
 import {ConfirmationDialogComponent} from "./confirmation-dialog/confirmation-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {DataModelFormComponent} from "./data-model-form/data-model-form.component";
+import {GuidePopupComponent} from "./guide-popup/guide-popup.component";
 
 
 @Component({
@@ -40,7 +41,8 @@ import {DataModelFormComponent} from "./data-model-form/data-model-form.componen
     NodeInfoComponent,
     DataModelSelectorComponent,
     ExportOptionsComponent,
-    RouterOutlet
+    RouterOutlet,
+    GuidePopupComponent,
   ],
   standalone: true
 })
@@ -59,7 +61,6 @@ export class DataModelsPageComponent implements OnInit{
   crossSectionalModels: DataModel[] = [];
   longitudinalModels: DataModel[] = [];
   menuVisible = signal(false);
-
 
   constructor(
     private federationService: FederationService,

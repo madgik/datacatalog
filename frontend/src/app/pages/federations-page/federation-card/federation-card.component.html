@@ -21,14 +21,9 @@
         {{ showMore ? 'Read Less' : 'Read More' }}
       </span>
     </p>
-    <p>
-      <a [href]="federation.url" target="_blank" class="modern-link">
-        Visit Federation
-      </a>
-    </p>
     <div class="federation-buttons">
       <button class="data-model-btn" (click)="viewDataModel()">Data Model</button>
-      <button class="request-access-btn">Request Access</button>
+      <button class="visit-btn" (click)="navigateToFederation(federation.url)">Visit Federation</button>
       @if (isAdmin){
         <button class="update-btn" (click)="update()">✏️ Edit</button>
         <button class="delete-btn" (click)="delete()">🗑️ Delete</button>
