@@ -60,17 +60,40 @@ export class VisualizationComponent implements OnInit, OnChanges {
   handleBreadcrumbClick(index: number): void {
     const targetPath = this.breadcrumbPath.slice(0, index + 1);
     const targetNode = this.findNodeByPath(this.originalData, targetPath);
+    if (!targetNode) {
+      console.error(`No node found for breadcrumb path:`, targetPath);
+      return; // Exit early if no valid node is found
+    }
 
     this.breadcrumbPath = targetPath; // Update breadcrumbs
     this.renderChart(targetNode);
   }
 
   findNodeByPath(node: any, path: string[]): any {
-    if (!path.length) return node;
-    const [head, ...tail] = path;
-    const child = node.children?.find((child: any) => child.name === head);
-    return this.findNodeByPath(child, tail);
+  if (!node) {
+    console.error("Node is undefined. Path segment not found:", path);
+    return null; // Gracefully handle the error
   }
+
+  if (!path.length) return node;
+
+  const [head, ...tail] = path;
+
+  // If the current node matches the root of the path, skip searching in children
+  if (node.name === head) {
+    console.log(`Matched root node: ${head}`);
+    return this.findNodeByPath(node, tail);
+  }
+
+  const child = node.children?.find((child: any) => child.name === head);
+
+  if (!child) {
+    console.error(`Child node "${head}" not found under node:`, node);
+    return null; // Return null if the child is not found
+  }
+
+  return this.findNodeByPath(child, tail);
+}
 
   renderChart(selectedNode?: any): void {
     const container = this.elementRef.nativeElement.querySelector('#chart');
@@ -85,6 +108,7 @@ export class VisualizationComponent implements OnInit, OnChanges {
     };
 
     createTidyTree(
+      selectedNode ? this.breadcrumbPath : [],
       selectedNode || this.originalData,
       container,
       handleNodeClick,

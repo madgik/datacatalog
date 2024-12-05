@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import { HierarchyPointNode, HierarchyPointLink } from 'd3-hierarchy';
 
 export function createTidyTree(
+  providedPath:any,
   data: any,
   container: HTMLElement,
   onNodeClick: (node: any) => void,
@@ -41,6 +42,7 @@ export function createTidyTree(
 
   // Render the tree
   const renderTree = (rootData: any) => {
+
     container.innerHTML = ''; // Clear existing visualization
 
     const baseWidth = 1500;
@@ -112,26 +114,40 @@ export function createTidyTree(
         onNodeClick(d.data);
       })
       .on('dblclick', (event, d) => {
-        const path = getPathFromOriginalRootToNode(d.data);
+
+        if (originalData === d.data) {
+          console.log('Double-clicked node is already the current root, doing nothing.');
+          return;
+        }
+
+        const newAvailableDepths = calculateMaxDepth(d); // Calculate available depths for the new root
+
+        if (newAvailableDepths <= 0) {
+          console.log('Double-clicked node has no depth, breadcrumb unchanged.');
+          return; // If the node has no depth, do nothing and leave the breadcrumb unchanged
+        }
+
+        providedPath.pop();
+        const path = [...providedPath, ...getPathFromOriginalRootToNode(d.data)];
         onBreadcrumbUpdate(path);
         renderTree(d.data); // Render the subtree as new root
       });
 
     node.append('circle')
-      .attr('filter', d => (d.depth === 0 ? null : (d.depth > 0 && calculateMaxDepth(d) > 1 ? 'url(#glow)' : null))) // No glow for root
+      .attr('filter', d => (d.depth === 0 ? null : (d.depth > 0 && calculateMaxDepth(d) > 0 ? 'url(#glow)' : null))) // No glow for root
       .attr('title', d => `Name: ${d.data.name}\nDepth: ${d.depth}`)
-      .attr('fill', d => (d.depth === 0 ? '#4caf50' : (d.depth > 0 && calculateMaxDepth(d) > 1 ? '#007acc' : '#555'))) // Root gets green color
-      .attr('stroke', d => (d.depth === 0 ? '#2e7d32' : (d.depth > 0 && calculateMaxDepth(d) > 1 ? '#ffcc00' : null))) // Root gets dark green stroke
-      .attr('r', d => (d.depth === 0 ? 8 : (d.depth > 0 && calculateMaxDepth(d) > 1 ? 5 : 2.5))); // Root has a larger radius
+      .attr('fill', d => (d.depth === 0 ? '#4caf50' : (d.depth > 0 && calculateMaxDepth(d) > 0 ? '#007acc' : '#555'))) // Root gets green color
+      .attr('stroke', d => (d.depth === 0 ? '#2e7d32' : (d.depth > 0 && calculateMaxDepth(d) > 0 ? '#ffcc00' : null))) // Root gets dark green stroke
+      .attr('r', d => (d.depth === 0 ? 8 : (d.depth > 0 && calculateMaxDepth(d) > 0 ? 5 : 2.5))); // Root has a larger radius
 
     node.append('text')
       .attr('dy', '0.31em')
       .attr('x', d => (d.children ? -6 : 6))
       .attr('text-anchor', d => (d.children ? 'end' : 'start'))
       .text(d => d.data.name)
-      .attr('stroke', d => (d.depth === 0 ? '#ffffff' : (d.depth > 0 && calculateMaxDepth(d) > 1 ? 'yellow' : 'white'))) // Root text gets white stroke
+      .attr('stroke', d => (d.depth === 0 ? '#ffffff' : (d.depth > 0 && calculateMaxDepth(d) > 0 ? 'yellow' : 'white'))) // Root text gets white stroke
       .attr('paint-order', 'stroke')
-      .style('font-size', d => (d.depth === 0 ? `${14}px` : (d.depth > 0 && calculateMaxDepth(d) > 1 ? `${12}px` : `${10}px`))) // Root has larger font size
+      .style('font-size', d => (d.depth === 0 ? `${14}px` : (d.depth > 0 && calculateMaxDepth(d) > 0 ? `${12}px` : `${10}px`))) // Root has larger font size
       .style('font-weight', d => (d.depth === 0 ? 'bold' : 'normal')); // Bold font for root
 
     if (svg.node() !== null) {
