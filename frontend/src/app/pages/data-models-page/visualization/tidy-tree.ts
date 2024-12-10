@@ -46,7 +46,7 @@ export function createTidyTree(
     container.innerHTML = ''; // Clear existing visualization
 
     const baseWidth = 1500;
-    const baseHeight = 600;
+    const baseHeight = 1000;
     const dx = 10;
     const dy = baseWidth / 8;
 
@@ -68,7 +68,7 @@ export function createTidyTree(
       }
     });
 
-    const dynamicHeight = Math.max(baseHeight, x1 - x0 + dx * 2);
+    const dynamicHeight = Math.max(baseHeight, x1 - x0 + dx * 2 + 100);
     const dynamicWidth = y1 - y0 + dy * 2;
     const offsetFactor = dynamicWidth / baseWidth; // Calculate a ratio based on size
     const leftBias = Math.min(0.25, offsetFactor / 2); // Bias more for larger charts
@@ -81,11 +81,10 @@ export function createTidyTree(
     adjustedOffsetX = adjustedOffsetX - 500 + dynamicWidth / 2.5
 
     const paddingX = 5, paddingY = 5;
-    const verticalOffset = (2 * baseHeight - dynamicHeight)/ 2;
+    const verticalOffset = (2 * baseHeight - dynamicHeight)/ 8;
 
     // Ensure the offset is non-negative (only for smaller diagrams)
     const adjustedPaddingY = Math.max(paddingY, verticalOffset);
-
     const viewBoxWidth = dynamicWidth + paddingX * 2;
     const viewBoxHeight = dynamicHeight + paddingY * 2;
 
