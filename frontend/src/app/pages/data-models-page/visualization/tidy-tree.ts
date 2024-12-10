@@ -46,12 +46,12 @@ export function createTidyTree(
     container.innerHTML = ''; // Clear existing visualization
 
     const baseWidth = 1500;
-    const baseHeight = 500;
+    const baseHeight = 600;
     const dx = 10;
-    const dy = baseWidth / 7.5;
+    const dy = baseWidth / 8;
 
     const root = d3.hierarchy(rootData);
-    const tree = d3.cluster<HierarchyPointNode<any>>().nodeSize([dx, dy]);
+    const tree = d3.tree<HierarchyPointNode<any>>().nodeSize([dx, dy]);
 
     root.sort((a, b) => d3.ascending(a.data.name, b.data.name));
     tree(root);
@@ -75,16 +75,13 @@ export function createTidyTree(
 
     const offsetX = (baseWidth - dynamicWidth) / 2 * (1 - leftBias) - y0;
 
+
     // Ensure offset doesn't push too far left for large diagrams
-    const adjustedOffsetX = Math.max(offsetX, -y0) + 50;
+    let adjustedOffsetX = Math.max(offsetX, -y0) + 50;
+    adjustedOffsetX = adjustedOffsetX - 500 + dynamicWidth / 2.5
 
-
-    console.log("offsetX", offsetX)
-
-    const paddingX = 10, paddingY = 10;
+    const paddingX = 5, paddingY = 5;
     const verticalOffset = (2 * baseHeight - dynamicHeight)/ 2;
-    console.log(dynamicHeight)
-    console.log(baseHeight)
 
     // Ensure the offset is non-negative (only for smaller diagrams)
     const adjustedPaddingY = Math.max(paddingY, verticalOffset);
@@ -96,7 +93,7 @@ export function createTidyTree(
       .attr('width', baseWidth)
       .attr('height', dynamicHeight)
       .attr('viewBox', `${y0 - paddingX} ${x0 - paddingY} ${viewBoxWidth} ${viewBoxHeight}`)
-      .attr('style', 'max-width: 100%; height: auto; font: 10px sans-serif;');
+      .attr('style', 'max-width: 100%; height: auto; font: 10px sans-serif;')
 
     const g = svg.append('g')
       .attr('transform', `translate(${adjustedOffsetX}, ${adjustedPaddingY})`);
@@ -138,7 +135,7 @@ export function createTidyTree(
 
         const newAvailableDepths = calculateMaxDepth(d); // Calculate available depths for the new root
 
-        if (newAvailableDepths <= 1) {
+        if (newAvailableDepths <= 0) {
           console.log('Double-clicked node has no depth, breadcrumb unchanged.');
           return; // If the node has no depth, do nothing and leave the breadcrumb unchanged
         }
@@ -150,20 +147,20 @@ export function createTidyTree(
       });
 
     node.append('circle')
-      .attr('filter', d => (d.depth === 0 ? null : (d.depth > 0 && calculateMaxDepth(d) > 1 ? 'url(#glow)' : null))) // No glow for root
+      .attr('filter', d => (d.depth === 0 ? null : (d.depth > 0 && calculateMaxDepth(d) > 0 ? 'url(#glow)' : null))) // No glow for root
       .attr('title', d => `Name: ${d.data.name}\nDepth: ${d.depth}`)
-      .attr('fill', d => (d.depth === 0 ? '#4caf50' : (d.depth > 0 && calculateMaxDepth(d) > 1 ? '#007acc' : '#555'))) // Root gets green color
-      .attr('stroke', d => (d.depth === 0 ? '#2e7d32' : (d.depth > 0 && calculateMaxDepth(d) > 1 ? '#ffcc00' : null))) // Root gets dark green stroke
-      .attr('r', d => (d.depth === 0 ? 8 : (d.depth > 0 && calculateMaxDepth(d) > 1 ? 5 : 2.5))); // Root has a larger radius
+      .attr('fill', d => (d.depth === 0 ? '#4caf50' : (d.depth > 0 && calculateMaxDepth(d) > 0 ? '#007acc' : '#555'))) // Root gets green color
+      .attr('stroke', d => (d.depth === 0 ? '#2e7d32' : (d.depth > 0 && calculateMaxDepth(d) > 0 ? '#ffcc00' : null))) // Root gets dark green stroke
+      .attr('r', d => (d.depth === 0 ? 8 : (d.depth > 0 && calculateMaxDepth(d) > 0 ? 5 : 2.5))); // Root has a larger radius
 
     node.append('text')
       .attr('dy', '0.31em')
       .attr('x', d => (d.children ? -6 : 6))
       .attr('text-anchor', d => (d.children ? 'end' : 'start'))
       .text(d => d.data.name)
-      .attr('stroke', d => (d.depth === 0 ? '#ffffff' : (d.depth > 0 && calculateMaxDepth(d) > 1 ? 'yellow' : 'white'))) // Root text gets white stroke
+      .attr('stroke', d => (d.depth === 0 ? '#ffffff' : (d.depth > 0 && calculateMaxDepth(d) > 0 ? 'yellow' : 'white'))) // Root text gets white stroke
       .attr('paint-order', 'stroke')
-      .style('font-size', d => (d.depth === 0 ? `${14}px` : (d.depth > 0 && calculateMaxDepth(d) > 1 ? `${12}px` : `${10}px`))) // Root has larger font size
+      .style('font-size', d => (d.depth === 0 ? `${14}px` : (d.depth > 0 && calculateMaxDepth(d) > 0 ? `${12}px` : `${10}px`))) // Root has larger font size
       .style('font-weight', d => (d.depth === 0 ? 'bold' : 'normal')); // Bold font for root
 
     if (svg.node() !== null) {
