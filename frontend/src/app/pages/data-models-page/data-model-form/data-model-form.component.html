@@ -1,8 +1,4 @@
 <section class="data-model-form">
-<!--  <nav class="breadcrumb">-->
-<!--    <a href="/data-models">Data Models</a> / {{ selectedDataModelID ? 'Update Data Model' : 'Add New Data Model' }}-->
-<!--  </nav>-->
-
   <h1>{{ selectedDataModelID ? 'Update Data Model' : 'Add New Data Model' }}</h1>
 
   <form [formGroup]="dataModelForm" (ngSubmit)="submitForm()">
@@ -32,6 +28,10 @@
         <input id="longitudinal" type="checkbox" formControlName="longitudinal" />
       </div>
     }
+
+    <section class="error-message" *ngIf="errorMessage">
+      <p>{{ errorMessage }}</p>
+    </section>
 
 
     <button type="submit" [disabled]="!file">

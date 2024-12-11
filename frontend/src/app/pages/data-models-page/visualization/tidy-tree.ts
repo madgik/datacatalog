@@ -10,6 +10,15 @@ export function createTidyTree(
 ): void {
   const originalData = JSON.parse(JSON.stringify(data)); // Save the original data
 
+  // Add fullscreenchange event listener
+    document.addEventListener('fullscreenchange', () => {
+      const isFullScreen = document.fullscreenElement !== null;
+      const fullScreenMultiplier = isFullScreen ? 1.5 : 1;
+
+      // Update tree rendering to account for full-screen dimensions
+      renderTree(data, fullScreenMultiplier);
+    });
+
   const calculateMaxDepth = (node: any): number => {
     let maxDepth = 0;
     node.each((d: any) => {
@@ -41,13 +50,14 @@ export function createTidyTree(
   };
 
   // Render the tree
-  const renderTree = (rootData: any) => {
+  const renderTree = (rootData: any, scaleMultiplier: number = 1) => {
 
     container.innerHTML = ''; // Clear existing visualization
 
-    const baseWidth = 1500;
-    const baseHeight = 1000;
-    const dx = 10;
+
+    const baseWidth = 1500 * scaleMultiplier;
+    const baseHeight = 1000 * scaleMultiplier;
+    const dx = 10 * scaleMultiplier;
     const dy = baseWidth / 8;
 
     const root = d3.hierarchy(rootData);
@@ -68,6 +78,7 @@ export function createTidyTree(
       }
     });
 
+
     const dynamicHeight = Math.max(baseHeight, x1 - x0 + dx * 2 + 100);
     const dynamicWidth = y1 - y0 + dy * 2;
     const offsetFactor = dynamicWidth / baseWidth; // Calculate a ratio based on size
@@ -78,7 +89,7 @@ export function createTidyTree(
 
     // Ensure offset doesn't push too far left for large diagrams
     let adjustedOffsetX = Math.max(offsetX, -y0) + 50;
-    adjustedOffsetX = adjustedOffsetX - 500 + dynamicWidth / 2.5
+    adjustedOffsetX = adjustedOffsetX - 500 * scaleMultiplier + dynamicWidth / 2.5
 
     const paddingX = 5, paddingY = 5;
     const verticalOffset = (2 * baseHeight - dynamicHeight)/ 8;
@@ -122,10 +133,10 @@ export function createTidyTree(
       .join('g')
       .attr('transform', d => `translate(${d.y},${d.x})`)
       .style('cursor', 'pointer')
-      .on('click', (event, d) => {
+      .on('click', (_event, d) => {
         onNodeClick(d.data);
       })
-      .on('dblclick', (event, d) => {
+      .on('dblclick', (_event, d) => {
 
         if (originalData === d.data) {
           console.log('Double-clicked node is already the current root, doing nothing.');

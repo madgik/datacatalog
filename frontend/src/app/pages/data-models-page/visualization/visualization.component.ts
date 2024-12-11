@@ -70,29 +70,60 @@ export class VisualizationComponent implements OnInit, OnChanges {
   }
 
   findNodeByPath(node: any, path: string[]): any {
-  if (!node) {
-    console.error("Node is undefined. Path segment not found:", path);
-    return null; // Gracefully handle the error
+    if (!node) {
+      console.error("Node is undefined. Path segment not found:", path);
+      return null; // Gracefully handle the error
+    }
+
+    if (!path.length) return node;
+
+    const [head, ...tail] = path;
+
+    // If the current node matches the root of the path, skip searching in children
+    if (node.name === head) {
+      console.log(`Matched root node: ${head}`);
+      return this.findNodeByPath(node, tail);
+    }
+
+    const child = node.children?.find((child: any) => child.name === head);
+
+    if (!child) {
+      console.error(`Child node "${head}" not found under node:`, node);
+      return null; // Return null if the child is not found
+    }
+
+    return this.findNodeByPath(child, tail);
   }
 
-  if (!path.length) return node;
+  isFullScreen: boolean = false;
 
-  const [head, ...tail] = path;
+  toggleFullScreen(): void {
+  const chartContainer = this.elementRef.nativeElement.querySelector('#chart-container');
+  const fullscreenBtn = this.elementRef.nativeElement.querySelector('#fullscreen-btn');
+  const breadcrumbs = this.elementRef.nativeElement.querySelector('#breadcrumbs');
+  if (!chartContainer) return;
 
-  // If the current node matches the root of the path, skip searching in children
-  if (node.name === head) {
-    console.log(`Matched root node: ${head}`);
-    return this.findNodeByPath(node, tail);
+  if (!document.fullscreenElement) {
+    chartContainer.requestFullscreen?.().then(() => {
+      this.isFullScreen = true;
+      fullscreenBtn.classList.add('fullscreen-mode'); // Fix button in full-screen
+      breadcrumbs.classList.add('fullscreen-mode');  // Fix breadcrumbs in full-screen
+      // Re-render chart with current breadcrumb node
+      const targetNode = this.findNodeByPath(this.originalData, this.breadcrumbPath);
+      this.renderChart(targetNode);
+    }).catch((err: { message: any; }) => {
+      console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+    });
+  } else {
+    document.exitFullscreen?.().then(() => {
+      this.isFullScreen = false;
+      fullscreenBtn.classList.remove('fullscreen-mode'); // Reset button position
+      breadcrumbs.classList.remove('fullscreen-mode');  // Reset breadcrumbs position
+      // Re-render chart with current breadcrumb node
+      const targetNode = this.findNodeByPath(this.originalData, this.breadcrumbPath);
+      this.renderChart(targetNode);
+    });
   }
-
-  const child = node.children?.find((child: any) => child.name === head);
-
-  if (!child) {
-    console.error(`Child node "${head}" not found under node:`, node);
-    return null; // Return null if the child is not found
-  }
-
-  return this.findNodeByPath(child, tail);
 }
 
   renderChart(selectedNode?: any): void {

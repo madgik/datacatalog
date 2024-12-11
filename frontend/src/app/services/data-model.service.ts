@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import {DataModel} from "../interfaces/data-model.interface";
@@ -188,13 +188,49 @@ convertToD3Hierarchy(data: any): any {
     return this.http.post<void>(url, formData).pipe(
       switchMap(() => this.reloadDataModels()), // Reload data models after creation
       tap(() => console.log('Data model created successfully from Excel.')),
-      catchError((error) => {
-        console.error('Error creating Excel data model:', error);
-        return throwError(() => error);
-      })
-    );
+      catchError((error: HttpErrorResponse) => {
+        console.error('Sanitized error response:', error.error.replace(/<EOL>/g, '\n'));
+        const errorMessage = this.extractErrorMessage(error, 'creating Excel data model');
+        return throwError(() => errorMessage);
+        }
+      )
+    )
   }
 
+  private extractErrorMessage(error: HttpErrorResponse, action: string): string {
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      return `An error occurred while ${action}: ${error.error.message}`;
+    } else if (typeof error.error === 'string') {
+      try {
+        // Replace <EOL> with actual newlines
+        const sanitizedError = error.error.replace(/<EOL>/g, '\n').trim();
+
+        // Extract JSON from the string if it exists
+        const jsonStartIndex = sanitizedError.indexOf('{');
+        const jsonEndIndex = sanitizedError.lastIndexOf('}');
+        if (jsonStartIndex !== -1 && jsonEndIndex !== -1) {
+          const jsonString = sanitizedError.substring(jsonStartIndex, jsonEndIndex + 1);
+          const parsedError = JSON.parse(jsonString);
+          if (parsedError.error) {
+            return `Error while ${action}: ${parsedError.error}`;
+          }
+        }
+
+        // If JSON parsing fails, return sanitized string
+        return `An unexpected error occurred while ${action}: ${sanitizedError}`;
+      } catch (e) {
+        // If an error occurs during parsing, return the raw error
+        return `An unexpected error occurred while ${action}: ${error.error}`;
+      }
+    } else if (error.error && error.error.error) {
+      // Error object already parsed
+      return `Error while ${action}: ${error.error.error}`;
+    }
+
+    // Default fallback
+    return `An unexpected error occurred while ${action}: ${error.message}`;
+  }
 
   createDataModelFromJson(file: File): Observable<void> {
     const url = `${this.apiUrl}`;
@@ -212,7 +248,9 @@ convertToD3Hierarchy(data: any): any {
                 observer.complete();
               });
             },
-            error: (error) => observer.error(error),
+            error: (error: HttpErrorResponse) => {
+              observer.error(this.extractErrorMessage(error, 'creating JSON data model'));
+            },
           });
         } catch (error) {
           observer.error('Error parsing JSON file: ' + error);
@@ -221,7 +259,6 @@ convertToD3Hierarchy(data: any): any {
       reader.readAsText(file);
     });
   }
-
 
 
   updateDataModelFromJson(dataModelId: string, file: File): Observable<void> {
@@ -240,7 +277,9 @@ convertToD3Hierarchy(data: any): any {
                 observer.complete();
               });
             },
-            error: (error) => observer.error(error),
+            error: (error: HttpErrorResponse) => {
+              observer.error(this.extractErrorMessage(error, 'updating JSON data model'));
+            },
           });
         } catch (error) {
           observer.error('Error parsing JSON file: ' + error);
@@ -249,7 +288,6 @@ convertToD3Hierarchy(data: any): any {
       reader.readAsText(file);
     });
   }
-
   updateDataModelFromExcel(dataModelId: string, file: File, version: string, longitudinal: string): Observable<any[]> {
     const url = `${this.apiUrl}/${dataModelId}/excel`;
 
@@ -261,9 +299,9 @@ convertToD3Hierarchy(data: any): any {
     return this.http.put<void>(url, formData).pipe(
       switchMap(() => this.reloadDataModels()), // Reload data models after update
       tap(() => console.log('Data model updated successfully (Excel).')),
-      catchError((error) => {
-        console.error('Error updating data model (Excel):', error);
-        return throwError(() => error);
+      catchError((error: HttpErrorResponse) => {
+        const errorMessage = this.extractErrorMessage(error, 'updating Excel data model');
+        return throwError(() => errorMessage);
       })
     );
   }

@@ -2,6 +2,7 @@ package ebrainsv2.mip.datacatalog.datamodel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +21,22 @@ import java.util.Map;
 public class DataModelConverter {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    public static ByteArrayResource convertDataModelDTOToExcel(String dqtJsonToExcelUrl, DataModelDTO dataModel) throws IOException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(dataModel);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        byte[] excelData = restTemplate.postForObject(dqtJsonToExcelUrl, requestEntity, byte[].class);
+
+        return new ByteArrayResource(excelData);
+    }
 
     public static DataModelDTO convertExcelToDataModelDTO(String dqtExcelToJsonUrl,
                                                           MultipartFile file,

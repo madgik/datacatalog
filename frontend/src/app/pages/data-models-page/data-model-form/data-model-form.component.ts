@@ -19,6 +19,8 @@ export class DataModelFormComponent implements OnInit {
   selectedFileType: string = 'json';
   file: File | null = null;
   selectedDataModelID: string | undefined;
+  errorMessage: string | null = null;
+
 
   constructor(
     private dataModelService: DataModelService,
@@ -50,6 +52,7 @@ export class DataModelFormComponent implements OnInit {
     const target = event.target as HTMLSelectElement;
     this.selectedFileType = target.value;
     this.file = null;
+    this.errorMessage = null; // Reset error message
   }
 
   onFileChange(event: Event): void {
@@ -57,6 +60,7 @@ export class DataModelFormComponent implements OnInit {
     if (target.files && target.files.length > 0) {
       this.file = target.files[0];
     }
+    this.errorMessage = null; // Reset error message
   }
 
   submitForm(): void {
@@ -69,58 +73,74 @@ export class DataModelFormComponent implements OnInit {
 
   handleAddMode(): void {
     if (!this.file) {
-      console.error('No file selected');
+      this.errorMessage = 'No file selected';
       return;
     }
 
+    this.errorMessage = null; // Reset error message
     if (this.selectedFileType === 'json') {
       this.dataModelService.createDataModelFromJson(this.file).subscribe({
         next: () => {
           console.log('JSON Data Model created successfully.');
           this.dataModelUpdated.emit(); // Notify parent
-          this.router.navigate(['/data-models/']);
+          this.router.navigate(['/data-models']); // Navigate to data models page
         },
-        error: (error) => console.error('Error creating JSON Data Model:', error),
+        error: (error) => {
+          console.error('Error creating JSON Data Model:', error);
+          this.errorMessage = error; // Display the extracted error message
+        },
       });
     } else if (this.selectedFileType === 'xlsx') {
       const version = this.dataModelForm.get('version')?.value;
       const longitudinal = this.dataModelForm.get('longitudinal')?.value;
+
       this.dataModelService.createDataModelFromExcel(this.file, version, longitudinal).subscribe({
         next: () => {
           console.log('Excel Data Model created successfully.');
           this.dataModelUpdated.emit(); // Notify parent
-          this.router.navigate(['/data-models']);
+          this.router.navigate(['/data-models']); // Navigate to data models page
         },
-        error: (error) => console.error('Error creating Excel Data Model:', error),
+        error: (error) => {
+          console.error('Error creating Excel Data Model:', error);
+          this.errorMessage = error; // Display the extracted error message
+        },
       });
     }
   }
 
   handleUpdateMode(): void {
     if (!this.file || !this.selectedDataModelID) {
-      console.error('No file or data model ID provided');
+      this.errorMessage = 'No file or data model ID provided';
       return;
     }
 
+    this.errorMessage = null; // Reset error message
     if (this.selectedFileType === 'json') {
       this.dataModelService.updateDataModelFromJson(this.selectedDataModelID, this.file).subscribe({
         next: () => {
-          console.log('Data Model updated successfully (JSON).');
+          console.log('Data model updated successfully (JSON).');
           this.dataModelUpdated.emit(); // Notify parent
-          this.router.navigate(['/data-models']);
+          this.router.navigate(['/data-models']); // Navigate to data models page
         },
-        error: (error) => console.error('Error updating data model (JSON):', error),
+        error: (error) => {
+          console.error('Error updating JSON Data Model:', error);
+          this.errorMessage = error; // Set the error message for display
+        },
       });
     } else if (this.selectedFileType === 'xlsx') {
       const version = this.dataModelForm.get('version')?.value;
       const longitudinal = this.dataModelForm.get('longitudinal')?.value;
+
       this.dataModelService.updateDataModelFromExcel(this.selectedDataModelID, this.file, version, longitudinal).subscribe({
         next: () => {
-          console.log('Data Model updated successfully (Excel).');
+          console.log('Data model updated successfully (Excel).');
           this.dataModelUpdated.emit(); // Notify parent
-          this.router.navigate(['/data-models']);
+          this.router.navigate(['/data-models']); // Navigate to data models page
         },
-        error: (error) => console.error('Error updating data model (Excel):', error),
+        error: (error) => {
+          console.error('Error updating Excel Data Model:', error);
+          this.errorMessage = error; // Set the error message for display
+        },
       });
     }
   }
