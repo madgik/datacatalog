@@ -36,21 +36,8 @@
   </div>
 
   <app-visualization
-    [visualizationType]="visualizationType"
-    [d3Data]="d3Data"
-    (selectedNodeChange)="onSelectedNodeChange($event)"
+    [dataModelHierarchy]="d3Data"
   ></app-visualization>
-
-  @if(!menuVisible()){
-    <div>
-      @if(selectedNode){
-        <app-node-info
-          [selectedNode]="selectedNode"
-          (visibilityChange)="onNodeInfoVisibilityChange($event)"
-        ></app-node-info>
-      }
-    </div>
-  }
 </div>
 }
 

@@ -13,7 +13,6 @@ import { DataModel } from "../../interfaces/data-model.interface";
 import { FederationSelectorComponent } from "./federation-selector/federation-selector.component";
 import { VisualizationComponent } from "./visualization/visualization.component";
 import { ActionMenuComponent } from "./action-menu/action-menu.component";
-import { NodeInfoComponent } from "./node-info/node-info.component";
 import { DataModelSelectorComponent } from "./data-model-selector/data-model-selector.component";
 import { ExportOptionsComponent } from "./export-options/export-options.component";
 import {ErrorService} from "./services/error.service";
@@ -38,7 +37,6 @@ import {GuidePopupComponent} from "./guide-popup/guide-popup.component";
     FederationSelectorComponent,
     VisualizationComponent,
     ActionMenuComponent,
-    NodeInfoComponent,
     DataModelSelectorComponent,
     ExportOptionsComponent,
     RouterOutlet,
@@ -49,15 +47,12 @@ import {GuidePopupComponent} from "./guide-popup/guide-popup.component";
 //TODO:request access for federation
 //TODO:filters
 export class DataModelsPageComponent implements OnInit{
-  visualizationType = 'TidyTree';
   d3Data: any;
   federations: Federation[] = [];
   selectedFederation: Federation | null = null;
   selectedDataModel: DataModel | null | undefined;
-  selectedNode: any;
   isDomainExpert = false;
   selectedFileType = signal<'json' | 'xlsx'>('json');
-  nodeInfoVisible: boolean = true;
   crossSectionalModels: DataModel[] = [];
   longitudinalModels: DataModel[] = [];
   menuVisible = signal(false);
@@ -139,13 +134,7 @@ export class DataModelsPageComponent implements OnInit{
   loadVisualizationData(): void {
     if (this.selectedDataModel) {
       this.d3Data = this.dataModelService.convertToD3Hierarchy(this.selectedDataModel);
-      this.selectedNode = this.d3Data;
     }
-  }
-
-  onSelectedNodeChange(node: any): void {
-    this.selectedNode = node;
-    console.log(this.selectedNode)
   }
 
   onSelectedDataModelChange(selectedDataModel: DataModel | null): void {
@@ -158,9 +147,6 @@ export class DataModelsPageComponent implements OnInit{
     this.loadDataModels();
   }
 
-  onNodeInfoVisibilityChange(visible: boolean): void {
-    this.nodeInfoVisible = visible;
-  }
 
   handleAction(action: string): void {
     switch (action) {

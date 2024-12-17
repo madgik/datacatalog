@@ -1,19 +1,30 @@
 <div id="chart-container">
-  <div class="breadcrumbs" id="breadcrumbs">
-    <ng-container *ngFor="let breadcrumb of breadcrumbPath; let i = index">
-      <span
-        class="breadcrumb"
-        [class.active]="i === breadcrumbPath.length - 1"
-        (click)="i < breadcrumbPath.length - 1 ? handleBreadcrumbClick(i) : null"
-      >
-        {{ breadcrumb }}
-      </span>
-      <span *ngIf="i < breadcrumbPath.length - 1"> &gt; </span>
-    </ng-container>
-  </div>
+  <!-- Breadcrumb Navigation -->
+  <app-breadcrumb
+    [breadcrumbs]="breadcrumbPath"
+    (breadcrumbClick)="handleBreadcrumbClick($event)"
+  ></app-breadcrumb>
+
+  <!-- Search Input -->
+  <input
+    id="search-bar"
+    type="text"
+    placeholder="Search..."
+    [ngModel]="searchQuery"
+    (ngModelChange)="handleSearch($event)"
+    (keyup.enter)="selectSearchResult(searchQuery)"
+    list="autocomplete-list"
+  />
+  <datalist id="autocomplete-list">
+    <option *ngFor="let suggestion of searchSuggestions" [value]="suggestion"></option>
+  </datalist>
+
+  <!-- Fullscreen Toggle -->
   <button id="fullscreen-btn" (click)="toggleFullScreen()">
     <i [class]="isFullScreen ? 'fas fa-compress' : 'fas fa-expand'"></i>
   </button>
+
+  <!-- Chart or Error Template -->
   <ng-container *ngIf="!error; else errorTemplate">
     <div id="chart" style="width: 100%; height: 800px;"></div>
   </ng-container>
@@ -22,4 +33,11 @@
       {{ error }}
     </div>
   </ng-template>
+
+  <!-- Node Information -->
+  <app-node-info
+    [data]="dataModelHierarchy"
+    [hasVariableCount]="hasVariableCount"
+  ></app-node-info>
+
 </div>
