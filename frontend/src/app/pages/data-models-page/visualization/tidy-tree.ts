@@ -5,19 +5,90 @@ export function createTidyTree(
   providedPath:any,
   data: any,
   container: HTMLElement,
-  onNodeClick: (node: any) => void,
   onBreadcrumbUpdate: (path: string[]) => void,
+  highlightedNode: any = null
 ): void {
   const originalData = JSON.parse(JSON.stringify(data)); // Save the original data
+  const tooltip = d3.select(container).select('#tooltip');
+  console.log('Tooltip:', tooltip);
+  console.log('Tooltip Node:', tooltip.node());
+
+  const showTooltip = (_event: MouseEvent, d: any) => {
+    console.log('Tooltip triggered for node:', d.data);
+
+    tooltip
+      .html(() => {
+        let tooltipContent = `<strong>Name:</strong> ${d.data.name || "N/A"}`;
+
+        tooltipContent += d.data.code ? `<br><strong>Code:</strong> ${d.data.code}` : "";
+        if (d.data.code) console.log('Code:', d.data.code); // Log code
+
+        if (d.data.variableCount) {
+          tooltipContent += `<br><strong>Variable Count:</strong> ${d.data.variableCount}`;
+        } else {
+          tooltipContent += d.data.description
+            ? `<br><strong>Description:</strong> ${d.data.description}`
+            : "";
+          if (d.data.description) console.log('Description:', d.data.description); // Log description
+
+          tooltipContent += d.data.type
+            ? `<br><strong>Type:</strong> ${d.data.type}`
+            : "";
+          if (d.data.type) console.log('Type:', d.data.type); // Log type
+
+          if (d.data.type === "nominal" && d.data.enumerations) {
+            tooltipContent += `
+              <p><strong>Enumerations:</strong></p>
+              <ul class="enumerations-list">
+                ${d.data.enumerations
+                  .map((enumItem: { label: string }) => `<li>${enumItem.label}</li>`)
+                  .join("")}
+              </ul>
+            `;
+          }
+        }
+
+        tooltipContent += d.data.min ? `<br><strong>Min:</strong> ${d.data.min}` : "";
+        if (d.data.min) console.log('Min:', d.data.min); // Log min value
+
+        tooltipContent += d.data.max ? `<br><strong>Max:</strong> ${d.data.max}` : "";
+        if (d.data.max) console.log('Max:', d.data.max); // Log max value
+
+        tooltipContent += d.data.units ? `<br><strong>Units:</strong> ${d.data.units}` : "";
+        if (d.data.units) console.log('Units:', d.data.units); // Log units
+
+        tooltipContent += d.data.methodology
+          ? `<br><strong>Methodology:</strong> ${d.data.methodology}`
+          : "";
+        if (d.data.methodology) console.log('Methodology:', d.data.methodology); // Log methodology
+
+        return tooltipContent;
+      })
+      .style("visibility", "visible")
+      .style("top", `${_event.pageY + 10}px`)
+      .style("left", `${_event.pageX + 10}px`);
+
+    console.log('Tooltip position:', {
+      top: `${_event.pageY + 10}px`,
+      left: `${_event.pageX + 10}px`
+    });
+  };
+
+const hideTooltip = () => {
+  console.log('Tooltip hidden');
+  tooltip.style("visibility", "hidden");
+};
+
+
 
   // Add fullscreenchange event listener
-    document.addEventListener('fullscreenchange', () => {
-      const isFullScreen = document.fullscreenElement !== null;
-      const fullScreenMultiplier = isFullScreen ? 1.5 : 1;
+  document.addEventListener('fullscreenchange', () => {
+    const isFullScreen = document.fullscreenElement !== null;
+    const fullScreenMultiplier = isFullScreen ? 1.25 : 1;
 
-      // Update tree rendering to account for full-screen dimensions
-      renderTree(data, fullScreenMultiplier);
-    });
+    // Update tree rendering to account for full-screen dimensions
+    renderTree(data, fullScreenMultiplier);
+  });
 
   const calculateMaxDepth = (node: any): number => {
     let maxDepth = 0;
@@ -55,7 +126,7 @@ export function createTidyTree(
     container.innerHTML = ''; // Clear existing visualization
 
 
-    const baseWidth = 1500 * scaleMultiplier;
+    const baseWidth = 2500 * scaleMultiplier;
     const baseHeight = 1000 * scaleMultiplier;
     const dx = 10 * scaleMultiplier;
     const dy = baseWidth / 8;
@@ -89,7 +160,7 @@ export function createTidyTree(
 
     // Ensure offset doesn't push too far left for large diagrams
     let adjustedOffsetX = Math.max(offsetX, -y0) + 50;
-    adjustedOffsetX = adjustedOffsetX - 500 * scaleMultiplier + dynamicWidth / 2.5
+    adjustedOffsetX = adjustedOffsetX - 700 * scaleMultiplier + dynamicWidth / 2.5
 
     const paddingX = 5, paddingY = 5;
     const verticalOffset = (2 * baseHeight - dynamicHeight)/ 8;
@@ -133,35 +204,60 @@ export function createTidyTree(
       .join('g')
       .attr('transform', d => `translate(${d.y},${d.x})`)
       .style('cursor', 'pointer')
-      .on('click', (_event, d) => {
-        onNodeClick(d.data);
+      .on("mouseover", (_event, d) => {
+        showTooltip(_event, d);
+        // Highlight clicked node
+        highlightedNode = d;
+        node.select("circle")
+          .attr("stroke", null)
+          .attr("stroke-width", 5);
+
+        d3.select(_event.currentTarget).select("circle")
+          .attr("stroke", "red")
+          .attr("stroke-width", 3);
       })
-      .on('dblclick', (_event, d) => {
+      .on("dblclick", (_event, d) => {
+        // Hide tooltip on double-click
+        tooltip.style("visibility", "hidden");
 
         if (originalData === d.data) {
-          console.log('Double-clicked node is already the current root, doing nothing.');
+          console.log("Double-clicked node is already the current root, doing nothing.");
           return;
         }
 
-        const newAvailableDepths = calculateMaxDepth(d); // Calculate available depths for the new root
+        const newAvailableDepths = calculateMaxDepth(d);
 
         if (newAvailableDepths <= 0) {
-          console.log('Double-clicked node has no depth, breadcrumb unchanged.');
-          return; // If the node has no depth, do nothing and leave the breadcrumb unchanged
+          console.log("Double-clicked node has no depth, breadcrumb unchanged.");
+          return;
         }
 
         providedPath.pop();
         const path = [...providedPath, ...getPathFromOriginalRootToNode(d.data)];
         onBreadcrumbUpdate(path);
-        renderTree(d.data); // Render the subtree as new root
-      });
+        renderTree(d.data);
+      })
+      .on("mouseleave", () => {
+        hideTooltip()
+    });
 
     node.append('circle')
-      .attr('filter', d => (d.depth === 0 ? null : (d.depth > 0 && calculateMaxDepth(d) > 0 ? 'url(#glow)' : null))) // No glow for root
-      .attr('title', d => `Name: ${d.data.name}\nDepth: ${d.depth}`)
-      .attr('fill', d => (d.depth === 0 ? '#4caf50' : (d.depth > 0 && calculateMaxDepth(d) > 0 ? '#007acc' : '#555'))) // Root gets green color
-      .attr('stroke', d => (d.depth === 0 ? '#2e7d32' : (d.depth > 0 && calculateMaxDepth(d) > 0 ? '#ffcc00' : null))) // Root gets dark green stroke
-      .attr('r', d => (d.depth === 0 ? 8 : (d.depth > 0 && calculateMaxDepth(d) > 0 ? 5 : 2.5))); // Root has a larger radius
+    .attr('fill', d => {
+      if (highlightedNode && d.data.name === highlightedNode.name) {
+        return 'red'; // Highlight the node in red
+      }
+      if (d.depth === 0) {
+        return '#4caf50'; // Root node gets green color
+      }
+      return calculateMaxDepth(d) > 0 ? '#007acc' : '#555'; // Other nodes based on depth
+    })
+    .attr('stroke', d => (highlightedNode && d.data.name === highlightedNode.name ? '#ff0000' : (d.depth === 0 ? '#2e7d32' : null))) // Highlighted stroke red
+    .attr('r', d => {
+      if (highlightedNode && d.data.name === highlightedNode.name) {
+        return 6; // Highlighted node has a bigger radius
+      }
+      return d.depth === 0 ? 8 : (calculateMaxDepth(d) > 0 ? 5 : 2.5);
+    });
 
     node.append('text')
       .attr('dy', '0.31em')

@@ -39,7 +39,7 @@ services:
       DB_USER: postgres
       DB_PASSWORD: test
       ### Frontend ###
-      PUBLIC_HOST: http://localhost
+      PUBLIC_HOST: http://localhost:4200
       DQT_URL: http://data_quality_tool:8000
       ### Keycloak ###
       AUTHENTICATION: 1
@@ -53,12 +53,12 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: frontend
-    ports:
-      - "80:80" # Expose the frontend on port 80
-    depends_on:
-      - backend
+#  frontend:
+#    build:
+#      context: ./frontend
+#      dockerfile: Dockerfile
+#    container_name: frontend
+#    ports:
+#      - "80:80" # Expose the frontend on port 80
+#    depends_on:
+#      - backend

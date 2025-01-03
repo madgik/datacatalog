@@ -37,7 +37,6 @@ export class DataModelSelectorComponent implements OnChanges, OnInit {
 
   onDataModelChange(): void {
     if (this.selectedDataModel) {
-      console.log('Data Model Changed:', this.selectedDataModel);
       this.dataModelChange.emit(this.selectedDataModel);
     }
   }

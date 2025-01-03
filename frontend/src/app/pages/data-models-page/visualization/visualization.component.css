@@ -1,66 +1,94 @@
 /* General container styling */
 #chart-container {
   position: relative;
-  padding: 15px;
+  height: calc(100vh - 190px);
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 5px;
-  background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow-x: auto;
-  overflow-y: auto;
-  height: calc(100vh - 170px);
-  width: 100%;
-  box-sizing: border-box;
-  display: block;
 }
 
-/* Search Bar */
-#search-bar {
-  display: block;
-  margin-bottom: 10px;
-  padding: 8px;
-  font-size: 14px;
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
-
-/* Fullscreen Button */
-#fullscreen-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+/* Unified Toolbar */
+#toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Align items to the end */
+  background-color: #f9f9f9;
+  padding: 3px 4px; /* Reduced padding */
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   z-index: 10;
-  padding: 10px;
-  background-color: rgba(0, 0, 0, 0.6);
+  height: 50px; /* Add a fixed height */
+  gap: 10px; /* Add spacing between elements */
+}
+
+#breadcrumbs {
+  flex: 1;
+  font-size: 13px; /* Smaller breadcrumbs */
+}
+
+#search-bar-container {
+  margin: 0 10px; /* Adjust margin to fine-tune positioning */
+}
+
+#search-bar-container app-search-bar {
+  width: 100%;
+  max-width: 350px; /* Limit width */
+}
+
+#fullscreen-btn {
+  background-color: #34a853;
   color: white;
   border: none;
   border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px; /* Smaller icon size */
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 #fullscreen-btn:hover {
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: #2a7a3d;
 }
 
-/* Error Message */
-.error-message {
-  color: red;
-  font-size: 1.2em;
-  text-align: center;
-  padding: 20px;
-  border: 1px solid red;
-  background-color: #ffe5e5;
+/* Chart Styling */
+#chart {
+  flex: 1;
+  overflow: auto;
+  width: 100%;
+  height: calc(100vh - 120px); /* Adjust height to fit better */
+  margin: 0;
 }
 
-@media (max-width: 768px) {
-  #chart-container {
-    height: auto;
-  }
-  .breadcrumbs {
-    font-size: 12px;
-  }
+#tooltip {
+  position: absolute;
+  visibility: hidden;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 8px;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 1000;
+  font-size: 12px;
+}
+
+
+.tooltip ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tooltip ul li {
+  margin: 2px 0;
 }
 

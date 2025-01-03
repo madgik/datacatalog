@@ -10,22 +10,20 @@ import { createTidyTree } from './tidy-tree';
 import { FormsModule } from '@angular/forms';
 import { ErrorService } from '../services/error.service';
 import { NgForOf, NgIf } from '@angular/common';
-import {BreadcrumbComponent} from "./breadcrumb.component";
-import {NodeInfoComponent} from "./node-info.component";
+import {BreadcrumbComponent} from "./breadcrumb/breadcrumb.component";
+import {SearchBarComponent} from "./search-bar/search-bar.component";
 
 @Component({
   selector: 'app-visualization',
   templateUrl: './visualization.component.html',
   styleUrls: ['./visualization.component.css'],
   standalone: true,
-  imports: [NgForOf, NgIf, FormsModule, BreadcrumbComponent, NodeInfoComponent],
+  imports: [NgForOf, NgIf, FormsModule, BreadcrumbComponent, SearchBarComponent],
 })
 export class VisualizationComponent implements OnInit, OnChanges {
   @Input() dataModelHierarchy: any;
 
   breadcrumbPath: string[] = [];
-  searchQuery: string = '';
-  searchSuggestions: string[] = [];
   error: string | null = null;
   isFullScreen = false;
 
@@ -54,30 +52,64 @@ export class VisualizationComponent implements OnInit, OnChanges {
     }
   }
 
-  get hasVariableCount(): boolean {
-    return this.dataModelHierarchy.hasOwnProperty('variableCount');
-  }
-
   /** Initialize visualization and reset breadcrumb */
   initializeVisualization(): void {
     this.breadcrumbPath = [this.dataModelHierarchy?.name || 'Root'];
     this.renderChart();
   }
 
-  /** Handles search input and suggests matching nodes */
-  handleSearch(query: string): void {
-    this.searchSuggestions = this.getAllNodeNames(this.originalData).filter((name) =>
-      name.toLowerCase().includes(query.toLowerCase())
-    );
+  onSearchResult(selectedItem: string): void {
+    this.selectSearchResult(selectedItem); // Call your existing method
   }
 
   /** Select a node based on search result */
   selectSearchResult(selected: string): void {
+
     const targetNode = this.findNodeByName(this.originalData, selected);
-    if (targetNode) {
-      this.breadcrumbPath = [targetNode.name];
-      this.renderChart(targetNode);
+
+    if (!targetNode) {
+      console.warn('No node found for the given search query.');
+      return;
     }
+
+    if (targetNode.children && targetNode.children.length > 0) {
+      // If node has children, make it the new root
+      this.breadcrumbPath = this.getPathToNode(this.originalData, targetNode) || [];
+      this.renderChart(targetNode, targetNode);
+    } else {
+      // If node has no children, make the parent the root and highlight the node
+      const parentNode = this.findParentNode(this.originalData, targetNode);
+
+      if (parentNode) {
+        this.breadcrumbPath = this.getPathToNode(this.originalData, parentNode) || [];
+        this.renderChart(parentNode, targetNode); // Highlight the selected node
+      } else {
+      }
+    }
+  }
+
+
+
+  /** Recursively find the path to a node */
+  getPathToNode(node: any, target: any, path: string[] = []): string[] | null {
+    path.push(node.name);
+    if (node === target) return path;
+
+    for (const child of node.children || []) {
+      const foundPath = this.getPathToNode(child, target, [...path]);
+      if (foundPath) return foundPath;
+    }
+
+    return null;
+  }
+
+  findParentNode(currentNode: any, targetNode: any, parent: any = null): any {
+    if (currentNode === targetNode) return parent;
+    for (const child of currentNode.children || []) {
+      const foundParent = this.findParentNode(child, targetNode, currentNode);
+      if (foundParent) return foundParent;
+    }
+    return null;
   }
 
   /** Recursively find a node by name */
@@ -88,15 +120,6 @@ export class VisualizationComponent implements OnInit, OnChanges {
       if (found) return found;
     }
     return null;
-  }
-
-  /** Gather all node names for search suggestions */
-  getAllNodeNames(node: any, names: string[] = []): string[] {
-    names.push(node.name);
-    for (const child of node.children || []) {
-      this.getAllNodeNames(child, names);
-    }
-    return names;
   }
 
   /** Handle breadcrumb navigation */
@@ -127,7 +150,7 @@ export class VisualizationComponent implements OnInit, OnChanges {
   }
 
   /** Render the Tidy Tree chart */
-  renderChart(node: any = this.originalData): void {
+  renderChart(node: any = this.originalData, highlightedNode: any = null): void {
     const container = this.elementRef.nativeElement.querySelector('#chart');
     if (!container) return;
 
@@ -135,10 +158,9 @@ export class VisualizationComponent implements OnInit, OnChanges {
       this.breadcrumbPath,
       node,
       container,
-      (node) => {
-        this.dataModelHierarchy = node;
-      },
-      (path) => (this.breadcrumbPath = path)
+      (path) => (this.breadcrumbPath = path),
+      highlightedNode // Pass the highlighted node
     );
   }
+
 }

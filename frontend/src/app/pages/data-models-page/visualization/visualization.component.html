@@ -1,28 +1,29 @@
 <div id="chart-container">
-  <!-- Breadcrumb Navigation -->
-  <app-breadcrumb
-    [breadcrumbs]="breadcrumbPath"
-    (breadcrumbClick)="handleBreadcrumbClick($event)"
-  ></app-breadcrumb>
+  <div id="tooltip" class="tooltip"></div>
+  <!-- Unified Toolbar -->
+  <div id="toolbar">
+    <!-- Breadcrumb Navigation -->
+    <div id="breadcrumbs">
+      <app-breadcrumb
+        [breadcrumbs]="breadcrumbPath"
+        (breadcrumbClick)="handleBreadcrumbClick($event)">
+      </app-breadcrumb>
+    </div>
 
-  <!-- Search Input -->
-  <input
-    id="search-bar"
-    type="text"
-    placeholder="Search..."
-    [ngModel]="searchQuery"
-    (ngModelChange)="handleSearch($event)"
-    (keyup.enter)="selectSearchResult(searchQuery)"
-    list="autocomplete-list"
-  />
-  <datalist id="autocomplete-list">
-    <option *ngFor="let suggestion of searchSuggestions" [value]="suggestion"></option>
-  </datalist>
+    <!-- Search Bar -->
+    <div id="search-bar-container">
+      <app-search-bar
+        *ngIf="dataModelHierarchy"
+        [dataModelHierarchy]="dataModelHierarchy"
+        (searchResultSelected)="onSearchResult($event)">
+      </app-search-bar>
+    </div>
 
-  <!-- Fullscreen Toggle -->
-  <button id="fullscreen-btn" (click)="toggleFullScreen()">
-    <i [class]="isFullScreen ? 'fas fa-compress' : 'fas fa-expand'"></i>
-  </button>
+    <!-- Fullscreen Toggle -->
+    <button id="fullscreen-btn" (click)="toggleFullScreen()" aria-label="Toggle Fullscreen">
+      <i [class]="isFullScreen ? 'fas fa-compress' : 'fas fa-expand'"></i>
+    </button>
+  </div>
 
   <!-- Chart or Error Template -->
   <ng-container *ngIf="!error; else errorTemplate">
@@ -33,11 +34,5 @@
       {{ error }}
     </div>
   </ng-template>
-
-  <!-- Node Information -->
-  <app-node-info
-    [data]="dataModelHierarchy"
-    [hasVariableCount]="hasVariableCount"
-  ></app-node-info>
 
 </div>
