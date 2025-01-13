@@ -8,7 +8,7 @@
 .search-icon-circle {
   width: 28px;
   height: 28px;
-  background-color: #34a853;
+  background-color: #0bb3d1;
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -25,7 +25,7 @@
 
 .search-icon-circle i {
   color: #fff;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .search-expanded {
@@ -37,7 +37,6 @@
   padding: 6px;
   border-radius: 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  margin-top: 8px;
 }
 
 .search-input-container {
@@ -66,7 +65,7 @@
 }
 .inline-filters select {
   padding: 2px 4px; /* Reduced padding */
-  font-size: 10px;
+  font-size: 12px;
   color: #555;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -79,8 +78,8 @@
 }
 
 .inline-filters select:hover {
-  background-color: #f1fbf2;
-  border-color: #34a853;
+  background-color: #e8f7fa;
+  border-color: #0bb3d1;
 }
 
 
@@ -112,8 +111,8 @@
 }
 
 .suggestions-container li:hover {
-  background-color: #e8f5e9;
-  color: #34a853;
+  background-color: #e8f7fa;
+  color: #0bb3d1;
 }
 
 .no-results {
@@ -132,7 +131,7 @@
 }
 
 .suggestions-container::-webkit-scrollbar-thumb {
-  background-color: #34a853;
+  background-color: #0bb3d1;
   border-radius: 6px;
   border: 1px solid #f9f9f9;
 }

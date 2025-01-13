@@ -80,7 +80,7 @@
 
 #max-depth-container label {
   font-weight: bold;
-  color: #007bff;
+  color: black;
   font-size: 14px;
 }
 
@@ -94,11 +94,10 @@
 }
 
 #max-depth-container select:hover {
-  border-bottom: 2px solid #007bff; /* Add subtle hover effect */
-  box-shadow: none;
+    box-shadow: none;
+    cursor: pointer;
 }
 
 #max-depth-container select:focus {
-  border-bottom: 2px solid #007bff;
   outline: none;
 }

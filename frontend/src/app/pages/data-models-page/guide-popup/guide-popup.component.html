@@ -1,23 +1,30 @@
-<div class="guide-popup" *ngIf="showPopup">
-  <div class="popup-header">
-  <h2>Explore Brain Data Models</h2>
-    <button class="close-btn" (click)="closePopup()">×</button>
+@if (showPopup) {
+  <div class="popup-container">
+    <div class="overlay" (click)="closePopup()"></div>
+    <div class="guide-popup">
+      <div class="popup-header">
+        <h2>Explore Brain Data Models</h2>
+        <button class="close-btn" (click)="closePopup()">×</button>
+      </div>
+      <div class="popup-body">
+        <p>Welcome! Here's a quick guide to using this tool:</p>
+        <ul>
+          <li>
+            <span class="highlight">Yellow-highlighted nodes</span> can be
+            double-clicked to become the new root.
+          </li>
+          <li>Click any node to access detailed information about it.</li>
+          <li>Use the dropdowns above to select federations and data models.</li>
+          <li>Export data by clicking the <strong>Export</strong> button.</li>
+        </ul>
+        <p>Explore and have fun!</p>
+      </div>
+      <div class="popup-footer">
+        <label>
+          <input type="checkbox" [(ngModel)]="dontShowAgain" /> Don't show this
+          again
+        </label>
+      </div>
+    </div>
   </div>
-  <div class="popup-body">
-    <p>Welcome! Here's a quick guide to using this tool:</p>
-    <ul>
-      <li>
-        <span class="highlight">Yellow-highlighted nodes</span> can be double-clicked to become the new root.
-      </li>
-      <li>Click any node to access detailed information about it.</li>
-      <li>Use the dropdowns above to select federations and data models.</li>
-      <li>Export data by clicking the green <strong>Export</strong> button.</li>
-    </ul>
-    <p>Explore and have fun!</p>
-  </div>
-  <div class="popup-footer">
-    <label>
-      <input type="checkbox" [(ngModel)]="dontShowAgain" /> Don't show this again
-    </label>
-  </div>
-</div>
+}

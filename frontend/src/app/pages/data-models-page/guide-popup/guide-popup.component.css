@@ -1,3 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+/* Popup container */
+.popup-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Overlay to gray out the background */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4); /* Semi-transparent black */
+  z-index: 1; /* Behind the popup */
+}
+
+/* Popup styles */
+.guide-popup {
+  position: relative; /* Positioned relative to the container */
+  z-index: 2; /* On top of the overlay */
+  top: 0;
+  left: 0;
+  transform: translate(0, 0);
+  width: 400px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Rest of the popup styling (header, body, footer) remains the same */
 .guide-popup {
   position: fixed;
   top: 50%;
@@ -10,22 +50,31 @@
   animation: fadeIn 0.3s ease-in-out;
   z-index: 1000;
 }
+
 .popup-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  justify-content: center; /* Center the text horizontally */
+  align-items: center; /* Center items vertically */
   padding: 15px 20px;
-  background: linear-gradient(90deg, #0056b3, #007bff);
+  background: linear-gradient(90deg, #00758c, #00a6c0);
   color: #ffffff;
   font-size: 18px;
-  font-weight: 600;
+  font-family: 'Roboto', sans-serif;
   border-radius: 10px 10px 0 0;
+  position: relative; /* Required for positioning the close button */
+}
+
+.popup-header-close {
+  padding: 15px 20px;
+  color: #ffffff;
+  font-size: 18px;
 }
 
 .popup-header h2 {
   margin: 0;
   font-size: 20px;
-  font-weight: bold;
+  font-weight: normal;
+  align-self: center;
 }
 
 .popup-body {
@@ -47,15 +96,21 @@
   background: none;
   border: none;
   color: #ffffff;
+  position: absolute; /* Absolutely position within the header */
+  top: 20%; /* Align vertically with the header */
+  transform: translateY(-50%); /* Center button vertically */
+  right: 15px; /* Adjust distance from the right */
 }
 
 .close-btn:hover {
   color: #ffcccc;
+  text-shadow: #333;
 }
 
 .highlight {
   color: #ffcc00;
   font-weight: bold;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.699);
 }
 
 @keyframes fadeIn {

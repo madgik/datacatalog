@@ -8,7 +8,6 @@ import {NgIf} from "@angular/common";
   styleUrls: ['./guide-popup.component.css'],
   imports: [
     FormsModule,
-    NgIf
   ],
   standalone: true
 })
