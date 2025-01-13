@@ -1,7 +1,7 @@
 /* General container styling */
 #chart-container {
   position: relative;
-  height: calc(100vh - 190px);
+  height: 100%;
   width: 100%;
   box-sizing: border-box;
   display: flex;
@@ -15,11 +15,12 @@
 
 /* Unified Toolbar */
 #toolbar {
+  flex-wrap: wrap;
   display: flex;
   align-items: center;
-  justify-content: flex-end; /* Align items to the end */
+  justify-content: space-between; /* Align items properly */
   background-color: #f9f9f9;
-  padding: 3px 4px; /* Reduced padding */
+  padding: 5px 10px; /* Adjusted padding */
   border-bottom: 1px solid #ddd;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   z-index: 10;
@@ -27,37 +28,34 @@
   gap: 10px; /* Add spacing between elements */
 }
 
+#toolbar > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 100%; /* Ensure consistent height */
+}
+
 #breadcrumbs {
-  flex: 1;
+  flex-grow: 1;
   font-size: 13px; /* Smaller breadcrumbs */
 }
 
 #search-bar-container {
-  margin: 0 10px; /* Adjust margin to fine-tune positioning */
+  margin: 0;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #search-bar-container app-search-bar {
   width: 100%;
   max-width: 350px; /* Limit width */
-}
-
-#fullscreen-btn {
-  background-color: #34a853;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
+  height: 40px; /* Ensure same height */
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 14px; /* Smaller icon size */
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-#fullscreen-btn:hover {
-  background-color: #2a7a3d;
+  border: none; /* Remove border */
+  background-color: transparent; /* Remove background */
 }
 
 /* Chart Styling */
@@ -65,30 +63,42 @@
   flex: 1;
   overflow: auto;
   width: 100%;
-  height: calc(100vh - 120px); /* Adjust height to fit better */
+  height: 100%; /* Adjust height to fit better */
   margin: 0;
 }
 
-#tooltip {
-  position: absolute;
-  visibility: hidden;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 8px;
-  border-radius: 4px;
-  pointer-events: none;
-  z-index: 1000;
-  font-size: 12px;
-}
-
-
-.tooltip ul {
-  list-style: none;
+/* Max Depth Dropdown Styling */
+#max-depth-container {
+  margin: 0;
   padding: 0;
-  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: transparent; /* Remove box background */
+  height: 40px; /* Ensure consistent height with search bar */
 }
 
-.tooltip ul li {
-  margin: 2px 0;
+#max-depth-container label {
+  font-weight: bold;
+  color: #007bff;
+  font-size: 14px;
 }
 
+#max-depth-container select {
+  font-size: 14px;
+  padding: 4px 8px;
+  border: none; /* Remove border */
+  background-color: transparent; /* Remove background */
+  color: #333;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#max-depth-container select:hover {
+  border-bottom: 2px solid #007bff; /* Add subtle hover effect */
+  box-shadow: none;
+}
+
+#max-depth-container select:focus {
+  border-bottom: 2px solid #007bff;
+  outline: none;
+}

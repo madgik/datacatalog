@@ -25,7 +25,8 @@ export class VisualizationComponent implements OnInit, OnChanges {
 
   breadcrumbPath: string[] = [];
   error: string | null = null;
-  isFullScreen = false;
+  maxDepth: number = 1;
+  newAvailableDepths: number = 5;
 
   private originalData: any;
 
@@ -46,16 +47,21 @@ export class VisualizationComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+
     if (changes['dataModelHierarchy']?.currentValue) {
       this.originalData = this.dataModelHierarchy;
       this.initializeVisualization();
     }
   }
 
+
   /** Initialize visualization and reset breadcrumb */
   initializeVisualization(): void {
     this.breadcrumbPath = [this.dataModelHierarchy?.name || 'Root'];
     this.renderChart();
+  }
+  createArray(size: number): number[] {
+    return Array.from({ length: size }, (_, i) => i + 1);
   }
 
   onSearchResult(selectedItem: string): void {
@@ -82,12 +88,21 @@ export class VisualizationComponent implements OnInit, OnChanges {
 
       if (parentNode) {
         this.breadcrumbPath = this.getPathToNode(this.originalData, parentNode) || [];
-        this.renderChart(parentNode, targetNode); // Highlight the selected node
+        this.maxDepth = 1
+        this.renderChart(parentNode, targetNode, this.maxDepth); // Highlight the selected node
       } else {
       }
     }
   }
 
+  /** Handle maxDepth change */
+  onMaxDepthChange(): void {
+    // Get the current node based on the breadcrumb path
+    const currentNode = this.findNodeByPath(this.originalData, this.breadcrumbPath);
+
+    // Re-render the chart while keeping the breadcrumb intact
+    this.renderChart(currentNode, null, this.maxDepth);
+  }
 
 
   /** Recursively find the path to a node */
@@ -124,9 +139,16 @@ export class VisualizationComponent implements OnInit, OnChanges {
 
   /** Handle breadcrumb navigation */
   handleBreadcrumbClick(index: number): void {
+    // Slice the breadcrumb path to the clicked index
     this.breadcrumbPath = this.breadcrumbPath.slice(0, index + 1);
+
+    // Find the target node based on the trimmed breadcrumb path
     const targetNode = this.findNodeByPath(this.originalData, this.breadcrumbPath);
-    this.renderChart(targetNode);
+
+    // Render the chart with the adjusted maxDepth
+    if (targetNode) {
+      this.renderChart(targetNode);
+    }
   }
 
   /** Recursively find a node based on breadcrumb path */
@@ -137,30 +159,24 @@ export class VisualizationComponent implements OnInit, OnChanges {
     );
   }
 
-  /** Toggle full-screen mode */
-  toggleFullScreen(): void {
-    const chartContainer = this.elementRef.nativeElement.querySelector('#chart-container');
-    if (!chartContainer) return;
-
-    if (!document.fullscreenElement) {
-      chartContainer.requestFullscreen().then(() => (this.isFullScreen = true));
-    } else {
-      document.exitFullscreen().then(() => (this.isFullScreen = false));
-    }
-  }
 
   /** Render the Tidy Tree chart */
-  renderChart(node: any = this.originalData, highlightedNode: any = null): void {
+  renderChart(node: any = this.originalData, highlightedNode: any = null, maxDepth: number | null = null): void {
     const container = this.elementRef.nativeElement.querySelector('#chart');
     if (!container) return;
-
     createTidyTree(
-      this.breadcrumbPath,
+      this.breadcrumbPath, // Use the breadcrumb path as-is
       node,
       container,
-      (path) => (this.breadcrumbPath = path),
-      highlightedNode // Pass the highlighted node
+      (path) => {
+        this.breadcrumbPath = path;
+      },
+      (newAvailableDepths) => {
+        this.newAvailableDepths = newAvailableDepths; // Update the available depths
+        this.maxDepth = newAvailableDepths; // Update the available depths
+      },
+      highlightedNode,
+      maxDepth
     );
   }
-
 }
