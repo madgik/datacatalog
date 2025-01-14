@@ -2,7 +2,7 @@ import * as d3 from 'd3';
 import { HierarchyPointNode, HierarchyPointLink } from 'd3-hierarchy';
 
 export function createTidyTree(
-  providedPath:any,
+  providedPath: any,
   data: any,
   container: HTMLElement,
   onBreadcrumbUpdate: (path: string[]) => void,
@@ -11,6 +11,7 @@ export function createTidyTree(
   maxDepth: number | null
 ): void {
   const originalData = JSON.parse(JSON.stringify(data)); // Save the original data
+
   const tooltip = d3
     .select("body") // Append to body to avoid SVG clipping
     .append("div")
@@ -26,14 +27,14 @@ export function createTidyTree(
 
   const showTooltip = (_event: MouseEvent, d: any) => {
     tooltip
-    .html(() => {
-      let tooltipContent = `<strong>Name:</strong> ${d.data.name || "N/A"}`;
-      tooltipContent += d.data.code ? `<br><strong>Code:</strong> ${d.data.code}` : "";
+      .html(() => {
+        let tooltipContent = `<strong>Name:</strong> ${d.data.name || "N/A"}`;
+        tooltipContent += d.data.code ? `<br><strong>Code:</strong> ${d.data.code}` : "";
 
-      if (d.data.variableCount) {
-        tooltipContent += `<br><strong>Variable Count:</strong> ${d.data.variableCount}`;
-      } else {
-        tooltipContent += d.data.description
+        if (d.data.variableCount) {
+          tooltipContent += `<br><strong>Variable Count:</strong> ${d.data.variableCount}`;
+        } else {
+          tooltipContent += d.data.description
             ? `<br><strong>Description:</strong> ${d.data.description}`
             : "";
 
@@ -46,31 +47,32 @@ export function createTidyTree(
               <p><strong>Enumerations:</strong></p>
               <ul class="enumerations-list">
                 ${d.data.enumerations
-                  .map((enumItem: { label: string }) => `<li>${enumItem.label}</li>`)
-                  .join("")}
+                .map((enumItem: { label: string }) => `<li>${enumItem.label}</li>`)
+                .join("")}
               </ul>
             `;
           }
-      }
+        }
 
-      tooltipContent += d.data.min ? `<br><strong>Min:</strong> ${d.data.min}` : "";
-      tooltipContent += d.data.max ? `<br><strong>Max:</strong> ${d.data.max}` : "";
-      tooltipContent += d.data.units ? `<br><strong>Units:</strong> ${d.data.units}` : "";
-      tooltipContent += d.data.methodology
-        ? `<br><strong>Methodology:</strong> ${d.data.methodology}`
-        : "";
+        tooltipContent += d.data.min ? `<br><strong>Min:</strong> ${d.data.min}` : "";
+        tooltipContent += d.data.max ? `<br><strong>Max:</strong> ${d.data.max}` : "";
+        tooltipContent += d.data.units ? `<br><strong>Units:</strong> ${d.data.units}` : "";
+        tooltipContent += d.data.methodology
+          ? `<br><strong>Methodology:</strong> ${d.data.methodology}`
+          : "";
 
-      return tooltipContent;
-    })
-    .style("visibility", "visible")
-    .style("top", `${_event.pageY + 10}px`)
-    .style("left", `${_event.pageX + 20}px`);
-};
+        return tooltipContent;
+      })
+      .style("visibility", "visible")
+      .style("top", `${_event.pageY + 10}px`)
+      .style("left", `${_event.pageX + 20}px`);
+  };
 
-const hideTooltip = () => {
-  console.log('Tooltip hidden');
-  tooltip.style("visibility", "hidden");
-};
+  const hideTooltip = () => {
+    console.log('Tooltip hidden');
+    tooltip.style("visibility", "hidden");
+  };
+
   const pruneTreeToDepth = (node: any, depth: number, maxDepth: number | null): void => {
     if (maxDepth !== null && depth >= maxDepth) {
       delete node.children;
@@ -128,11 +130,10 @@ const hideTooltip = () => {
     return path;
   };
 
-  // Render the tree
-  const renderTree = (rootData: any, maxDepth: number | null ) => {
+  // Zoom and pan functionalities
 
+  const renderTree = (rootData: any, maxDepth: number | null) => {
     container.innerHTML = ''; // Clear existing visualization
-
 
     const baseWidth = 2500;
     const baseHeight = 940;
@@ -141,7 +142,7 @@ const hideTooltip = () => {
 
     const root = d3.hierarchy(rootData);
 
-    if (maxDepth == null){
+    if (maxDepth == null) {
       onAvailableDepthsUpdate(calculateMaxDepth(root));
     }
 
@@ -177,10 +178,10 @@ const hideTooltip = () => {
     adjustedOffsetX = adjustedOffsetX - 1000 + dynamicWidth / 2
 
     const paddingX = 10, paddingY = 10;
-    const verticalOffset = (2.5 * baseHeight - dynamicHeight)/ 8;
+    const verticalOffset = (2.5 * baseHeight - dynamicHeight) / 8;
 
     // Ensure the offset is non-negative (only for smaller diagrams)
-    const adjustedPaddingY = Math.max(paddingY, verticalOffset) ;
+    const adjustedPaddingY = Math.max(paddingY, verticalOffset);
     const viewBoxWidth = dynamicWidth + paddingX * 2;
     const viewBoxHeight = dynamicHeight + paddingY * 2;
 
@@ -188,10 +189,16 @@ const hideTooltip = () => {
       .attr('width', baseWidth)
       .attr('height', dynamicHeight)
       .attr('viewBox', `${y0 - paddingX} ${x0 - paddingY} ${viewBoxWidth} ${viewBoxHeight}`)
-      .attr('style', 'max-width: 100%; height: auto; font: 10px sans-serif;')
+      .attr('style', 'max-width: 100%; height: auto; font: 10px sans-serif; cursor: grab;');
 
     const g = svg.append('g')
       .attr('transform', `translate(${adjustedOffsetX}, ${adjustedPaddingY})`);
+
+    const zoom = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.5, 2]) // Allow zooming between 50% and 200%
+      .on('zoom', (event) => g.attr('transform', event.transform));
+
+    svg.call(zoom as any);
 
     // Render links
     g.append('g')
@@ -255,25 +262,25 @@ const hideTooltip = () => {
       })
       .on("mouseleave", () => {
         hideTooltip()
-    });
+      });
 
     node.append('circle')
-    .attr('fill', d => {
-      if (highlightedNode && d.data.name === highlightedNode.name) {
-        return 'red'; // Highlight the node in red
-      }
-      if (d.depth === 0) {
-        return '#4caf50'; // Root node gets green color
-      }d.data.hasOwnProperty()
-      return d.data.hasOwnProperty('variableCount') ? '#007acc' : '#555'; // Other nodes based on depth
-    })
-    .attr('stroke', d => (highlightedNode && d.data.name === highlightedNode.name ? '#ff0000' : (d.depth === 0 ? '#2e7d32' : null))) // Highlighted stroke red
-    .attr('r', d => {
-      if (highlightedNode && d.data.name === highlightedNode.name) {
-        return 6; // Highlighted node has a bigger radius
-      }
-      return d.depth === 0 ? 8 : (d.data.hasOwnProperty('variableCount') ? 5 : 2.5);
-    });
+      .attr('fill', d => {
+        if (highlightedNode && d.data.name === highlightedNode.name) {
+          return 'red'; // Highlight the node in red
+        }
+        if (d.depth === 0) {
+          return '#4caf50'; // Root node gets green color
+        } d.data.hasOwnProperty()
+        return d.data.hasOwnProperty('variableCount') ? '#007acc' : '#555'; // Other nodes based on depth
+      })
+      .attr('stroke', d => (highlightedNode && d.data.name === highlightedNode.name ? '#ff0000' : (d.depth === 0 ? '#2e7d32' : null))) // Highlighted stroke red
+      .attr('r', d => {
+        if (highlightedNode && d.data.name === highlightedNode.name) {
+          return 6; // Highlighted node has a bigger radius
+        }
+        return d.depth === 0 ? 8 : (d.data.hasOwnProperty('variableCount') ? 5 : 2.5);
+      });
 
     node.append('text')
       .attr('dy', '0.31em')
@@ -288,7 +295,7 @@ const hideTooltip = () => {
     if (svg.node() !== null) {
       container.appendChild(svg.node() as Node);
     }
-  };
 
+  };
   renderTree(data, maxDepth);
 }
