@@ -142,9 +142,7 @@ export function createTidyTree(
 
     const root = d3.hierarchy(rootData);
 
-    if (maxDepth == null) {
-      onAvailableDepthsUpdate(calculateMaxDepth(root));
-    }
+    onAvailableDepthsUpdate(calculateMaxDepth(root));
 
     pruneTreeToDepth(root, 0, maxDepth); // Prune the tree to the max depth
     const tree = d3.tree<HierarchyPointNode<any>>().nodeSize([dx, dy]);
@@ -242,6 +240,11 @@ export function createTidyTree(
 
         if (originalData === d.data) {
           console.log("Double-clicked node is already the current root, doing nothing.");
+          return;
+        }
+
+        if (!d.data.hasOwnProperty('variableCount')) {
+          console.log("Double-clicked node is not a parent, doing nothing.");
           return;
         }
 
