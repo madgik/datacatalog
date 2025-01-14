@@ -11,15 +11,18 @@
         (federationChange)="onSelectedFederationChange($event)"
       ></app-federation-selector>
 
-      @if(selectedDataModel && (crossSectionalModels.length > 0 || longitudinalModels.length > 0)){
-        <app-data-model-selector
-          [crossSectionalModels]="crossSectionalModels"
-          [longitudinalModels]="longitudinalModels"
-          [defaultModel]="selectedDataModel"
-          (dataModelChange)="onSelectedDataModelChange($event)"
-        ></app-data-model-selector>
+      @if(selectedDataModel && (crossSectionalModels.length > 0 ||
+      longitudinalModels.length > 0)){
+      <app-data-model-selector
+        [crossSectionalModels]="crossSectionalModels"
+        [longitudinalModels]="longitudinalModels"
+        [defaultModel]="selectedDataModel"
+        (dataModelChange)="onSelectedDataModelChange($event)"
+      ></app-data-model-selector>
       }
+    </div>
 
+    <div class="export-options-btns">
       <app-export-options
         [selectedFileType]="selectedFileType()"
         (export)="exportDataModel($event)"
@@ -27,17 +30,15 @@
     </div>
 
     @if(isDomainExpert){
-      <app-action-menu
-        [isSelectedDataModelReleased]="selectedDataModel?.released ?? false"
-        (action)="handleAction($event)"
-        (menuVisibleChange)="handleMenuToggle($event)"
-      ></app-action-menu>
+    <app-action-menu
+      [isSelectedDataModelReleased]="selectedDataModel?.released ?? false"
+      (action)="handleAction($event)"
+      (menuVisibleChange)="handleMenuToggle($event)"
+    ></app-action-menu>
     }
   </div>
 
-  <app-visualization
-    [dataModelHierarchy]="d3Data"
-  ></app-visualization>
+  <app-visualization [dataModelHierarchy]="d3Data"></app-visualization>
 </div>
 }
 
