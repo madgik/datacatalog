@@ -98,8 +98,8 @@ export class VisualizationComponent implements OnInit, OnChanges {
 
       if (parentNode) {
         this.breadcrumbPath = this.getPathToNode(this.originalData, parentNode) || [];
+        this.renderChart(parentNode, targetNode, 1); // Highlight the selected node
         this.maxDepth = 1
-        this.renderChart(parentNode, targetNode, this.maxDepth); // Highlight the selected node
       } else {
       }
     }
