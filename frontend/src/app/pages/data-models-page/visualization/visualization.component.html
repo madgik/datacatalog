@@ -8,6 +8,13 @@
       ></app-breadcrumb>
     </div>
 
+    <div id="zoom-control">
+      <label for="zoomToggle">{{ isZoomEnabled ? 'Zoom Enabled:' : 'Zoom Disabled:' }}</label>
+      <input type="checkbox" id="zoomToggle" [(ngModel)]="isZoomEnabled" (change)="onZoomToggleChange()" />
+      <label for="zoomToggle" class="checkbox-indicator"></label>
+    </div>
+
+
     <div id="max-depth-container">
       <label for="maxDepth">Max Depth:</label>
       <select id="maxDepth" [(ngModel)]="maxDepth" (change)="onMaxDepthChange()">

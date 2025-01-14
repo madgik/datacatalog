@@ -27,6 +27,16 @@ export class VisualizationComponent implements OnInit, OnChanges {
   error: string | null = null;
   maxDepth: number = 1;
   newAvailableDepths: number = 5;
+  isZoomEnabled = true; // Default state
+
+  toggleZoom() {
+    this.isZoomEnabled = !this.isZoomEnabled;
+  }
+
+  onZoomToggleChange() {
+    // Re-render the tree when zoom state changes
+    this.renderChart();
+  }
 
   private originalData: any;
 
@@ -176,7 +186,8 @@ export class VisualizationComponent implements OnInit, OnChanges {
         this.maxDepth = newAvailableDepths; // Update the available depths
       },
       highlightedNode,
-      maxDepth
+      maxDepth,
+      this.isZoomEnabled
     );
   }
 }

@@ -8,7 +8,8 @@ export function createTidyTree(
   onBreadcrumbUpdate: (path: string[]) => void,
   onAvailableDepthsUpdate: (newAvailableDepths: number) => void,
   highlightedNode: any = null,
-  maxDepth: number | null
+  maxDepth: number | null,
+  isZoomEnabled: boolean = true
 ): void {
   const originalData = JSON.parse(JSON.stringify(data)); // Save the original data
 
@@ -194,11 +195,12 @@ export function createTidyTree(
     const g = svg.append('g')
       .attr('transform', `translate(${adjustedOffsetX}, ${adjustedPaddingY})`);
 
-    const zoom = d3.zoom<SVGSVGElement, unknown>()
-      .scaleExtent([0.5, 2]) // Allow zooming between 50% and 200%
-      .on('zoom', (event) => g.attr('transform', event.transform));
-
-    svg.call(zoom as any);
+    if (isZoomEnabled) {
+      const zoom = d3.zoom<SVGSVGElement, unknown>()
+        .scaleExtent([0.5, 2]) // Allow zooming between 50% and 200%
+        .on('zoom', (event) => g.attr('transform', event.transform));
+      svg.call(zoom as any);
+    }
 
     // Render links
     g.append('g')

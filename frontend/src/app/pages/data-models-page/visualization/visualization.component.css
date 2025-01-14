@@ -101,3 +101,65 @@
 #max-depth-container select:focus {
   outline: none;
 }
+
+#zoom-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 15px;
+  font-size: 14px;
+}
+
+/* Hide the default checkbox */
+#zoomToggle {
+  display: none;
+}
+
+/* Style the indicator */
+.checkbox-indicator {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 2px solid #ccc;
+  margin-left: 10px;
+  position: relative;
+  text-align: center;
+  line-height: 16px;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  color: white;
+  cursor: pointer;
+}
+
+/* Green checkmark when enabled */
+#zoomToggle:checked + .checkbox-indicator {
+  background-color: green;
+  border-color: green;
+}
+
+#zoomToggle:checked + .checkbox-indicator::after {
+  content: '✓';
+  color: white;
+  font-size: 16px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Red X when disabled */
+#zoomToggle:not(:checked) + .checkbox-indicator {
+  background-color: red;
+  border-color: red;
+}
+
+#zoomToggle:not(:checked) + .checkbox-indicator::after {
+  content: '✗';
+  color: white;
+  font-size: 16px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
