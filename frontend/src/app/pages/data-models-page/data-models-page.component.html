@@ -27,15 +27,15 @@
         [selectedFileType]="selectedFileType()"
         (export)="exportDataModel($event)"
       ></app-export-options>
-    </div>
 
-    @if(isDomainExpert){
-    <app-action-menu
-      [isSelectedDataModelReleased]="selectedDataModel?.released ?? false"
-      (action)="handleAction($event)"
-      (menuVisibleChange)="handleMenuToggle($event)"
-    ></app-action-menu>
-    }
+      @if(isDomainExpert){
+      <app-action-menu
+        [isSelectedDataModelReleased]="selectedDataModel?.released ?? false"
+        (action)="handleAction($event)"
+        (menuVisibleChange)="handleMenuToggle($event)"
+      ></app-action-menu>
+      }
+    </div>
   </div>
 
   <app-visualization [dataModelHierarchy]="d3Data"></app-visualization>
