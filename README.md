@@ -1,8 +1,8 @@
-# DataCatalogue
+# DataCatalog
 
 ## Overview
 
-DataCatalogue (DC) is a component of the [Medical Informatics Platform](https://mip.ebrains.eu/) (MIP) for [EBRAINS](https://www.ebrains.eu/). It provides functionalities to:
+DataCatalog (DC) is a component of the [Medical Informatics Platform](https://mip.ebrains.eu/) (MIP) for [EBRAINS](https://www.ebrains.eu/). It provides functionalities to:
 
 - Present the medical conditions linked to data within the MIP.
 - Present and visualize Common Data Elements (CDEs) data models associated with these medical conditions.

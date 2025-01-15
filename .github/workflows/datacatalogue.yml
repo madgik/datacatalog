@@ -1,4 +1,4 @@
-name: Datacatalogue CI with Maven
+name: Datacatalog CI with Maven
 
 on: [push, pull_request]
 
