@@ -6,7 +6,7 @@
     [(ngModel)]="selectedFederation"
     (change)="onFederationChange()"
   >
-    <option [ngValue]="null">Select Federation</option>
+    <option [ngValue]="null">All Federations</option>
     @for (federation of federations; track federation){
       <option
         [ngValue]="federation"
