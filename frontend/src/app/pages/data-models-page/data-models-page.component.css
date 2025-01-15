@@ -25,6 +25,6 @@
 }
 
 .export-options-btns {
-  align-items: flex-start;
+  align-items: flex-end;
   display: flex;
 }

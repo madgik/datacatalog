@@ -53,6 +53,8 @@
   align-items: center;
   justify-content: center;
   padding: 6px 16px; /* Slightly larger for better usability */
+  width: max-content;
+  height: fit-content;
   font-size: 15px;
   font-weight: 600;
   background: linear-gradient(90deg, #00758c, #00a6c0);
