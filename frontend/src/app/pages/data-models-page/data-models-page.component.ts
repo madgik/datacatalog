@@ -44,8 +44,6 @@ import {GuidePopupComponent} from "./guide-popup/guide-popup.component";
   ],
   standalone: true
 })
-//TODO:request access for federation
-//TODO:filters
 export class DataModelsPageComponent implements OnInit{
   d3Data: any;
   federations: Federation[] = [];

@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   data_quality_tool:
     build:
@@ -6,8 +8,8 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - FLASK_ENV=development
-      - FLASK_DEBUG=1
+      - FLASK_ENV=${FLASK_ENV}
+      - FLASK_DEBUG=${FLASK_DEBUG}
 
   datacatalog_db:
     image: postgres:15
@@ -15,13 +17,13 @@ services:
       - ./.stored_data/datacatalogdb:/var/lib/postgresql/data
     hostname: datacatalog_db
     environment:
-      POSTGRES_PASSWORD: test
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     command: -p 5432
     ports:
-      - '5432:5432'
+      - "5432:5432"
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -35,30 +37,30 @@ services:
       - "8090:8090"
     environment:
       ### Database ###
-      DB_URL: jdbc:postgresql://datacatalog_db:5432/postgres
-      DB_USER: postgres
-      DB_PASSWORD: test
+      - DB_URL=${DB_URL}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
       ### Frontend ###
-      PUBLIC_HOST: http://localhost:4200
-      DQT_URL: http://data_quality_tool:8000
+      - PUBLIC_HOST=${PUBLIC_HOST}
+      - DQT_URL=${DQT_URL}
       ### Keycloak ###
-      AUTHENTICATION: 1
-      KEYCLOAK_AUTH_URL: https://iam.ebrains.eu/auth/
-      KEYCLOAK_REALM: MIP
-      KEYCLOAK_CLIENT_ID: datacatalogue
-      KEYCLOAK_CLIENT_SECRET: s66onAvpe6Bhhp476PnDM5XitZaMjfKG
-      KEYCLOAK_SSL_REQUIRED: none
+      - AUTHENTICATION=${AUTHENTICATION}
+      - KEYCLOAK_AUTH_URL=${KEYCLOAK_AUTH_URL}
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
+      - KEYCLOAK_SSL_REQUIRED=${KEYCLOAK_SSL_REQUIRED}
     depends_on:
       datacatalog_db:
         condition: service_healthy
     restart: unless-stopped
 
-#  frontend:
-#    build:
-#      context: ./frontend
-#      dockerfile: Dockerfile
-#    container_name: frontend
-#    ports:
-#      - "80:80" # Expose the frontend on port 80
-#    depends_on:
-#      - backend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "80:80" # Expose the frontend on port 80
+    depends_on:
+      - backend
