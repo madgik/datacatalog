@@ -1,5 +1,12 @@
-<div class="export-options">
-  <label for="file-type-select" class="export-label">Format:</label>
+<!-- Export Button -->
+<div class="export-container" (document:click)="closeDropdown($event)">
+  <button class="export-icon-button" (click)="toggleDropdown($event)">
+    <i class="fas fa-download"></i>
+  </button>
+
+  <!-- Dropdown Menu -->
+  <div *ngIf="isDropdownVisible" class="dropdown-menu">
+    <label for="file-type-select" class="export-label">Format:</label>
     <select
       id="file-type-select"
       class="dropdown"
@@ -9,7 +16,6 @@
       <option value="json">JSON</option>
       <option value="xlsx">XLSX</option>
     </select>
-  <button class="export-confirm-button" (click)="onExport()">
-    <i class="printer-icon"></i> Export
-  </button>
+    <button class="confirm-button" (click)="onExport()">Confirm</button>
+  </div>
 </div>
