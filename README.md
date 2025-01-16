@@ -2,56 +2,70 @@
 
 ## Overview
 
-DataCatalog (DC) is a component of the [Medical Informatics Platform](https://mip.ebrains.eu/) (MIP) for [EBRAINS](https://www.ebrains.eu/). It provides functionalities to:
+DataCatalog (DC) is a component of the [Medical Informatics Platform](https://mip.ebrains.eu/) (MIP) under the [EBRAINS](https://www.ebrains.eu/) initiative. It enables seamless management, visualization, and access to data models and medical conditions.
 
-- Present the medical conditions linked to data within the MIP.
-- Present and visualize Common Data Elements (CDEs) data models associated with these medical conditions.
-- Manage (create, edit, delete) data models, complete with version control, accessible by authorized accounts. Supported file formats include XLSX and JSON.
+### Key Features
+
+- **Data Presentation:** Displays medical conditions linked to datasets within the MIP.
+- **Visualization:** Interactive tools for exploring Common Data Elements (CDEs) and metadata hierarchies.
+- **Data Management:** Create, edit, delete, and version control data models using XLSX and JSON file formats.
+- **Role-Based Access:** Secure access and operation control via defined user roles and Keycloak integration.
 
 ## User Roles and Permissions
 
-### Roles
+### Defined Roles
 
-- **DOMAIN\_EXPERT**: Responsible for creating, editing, deleting, and releasing unreleased data models.
-- **DC\_ADMIN**: Manages federations and all associated functionalities.
+- **DOMAIN\_EXPERT**:
+  - Responsible for creating, editing, deleting, and releasing unreleased data models.
+- **DC\_ADMIN**:
+  - Manages federations and all associated functionalities.
+
+### Permissions Summary
+
+| Feature                | DOMAIN\_EXPERT | DC\_ADMIN |
+|------------------------|----------------|------------|
+| Create/Edit Data Model | Yes            | No         |
+| Delete Data Model      | Yes            | No         |
+| Manage Federations     | No             | Yes        |
+| Release Data Models    | Yes            | No         |
+
+**Note:** Once a data model is released, it becomes immutable and cannot be modified or deleted.
 
 ## Features
 
 ### Informative Features (No Login Required)
 
-Without logging in, users can access the following features:
+Users can access the following features without logging in:
 
 #### Federations
 
 - View all available federations.
-- Access detailed information for each federation.
-- Navigate to the public URL of a federation.
+- Access detailed federation information.
+- Navigate to the public URL of each federation.
 
 #### Data Models
 
-- Browse all released data models within each federation.
-- View metadata details.
-- Interact with a zoomable tree structure to visualize metadata hierarchies.
-- Access detailed information about each CDE.
-- Download JSON/XLSX data models 's hierarchy in a json format.
+- Browse all released data models within federations.
+- View detailed metadata.
+- Visualize metadata hierarchies using a zoomable tidy tree.
+- Access CDE-specific information.
+- Download data models in JSON or XLSX format.
 
-### Management Features (Login and Role Required)
+### Management Features (Login Required)
 
-Authenticated users, authorized through a Keycloak instance configured for MIP, gain access to management features:
+Authenticated users with proper roles gain access to management features, including:
 
-- **DC\_ADMIN**: Complete control over all federation operations.
-- **DOMAIN\_EXPERT**: Full permissions to create, edit, delete, and release unreleased data models.
-
-**Note:** Released data models are immutable and cannot be edited or deleted.
+- **Manage Federations:** Full control over federations (DC\_ADMIN).
+- **Manage Data Models:** Create, edit, delete, and release unreleased data models (DOMAIN\_EXPERT).
 
 ## Installation and Setup
 
-### System Requirements
+### Prerequisites
 
 - Docker
 - Docker Compose
 
-### Installation
+### Installation Steps
 
 1. Clone the repository:
    ```bash
@@ -59,32 +73,24 @@ Authenticated users, authorized through a Keycloak instance configured for MIP, 
    cd datacatalog
    ```
 
-### Docker Setup
-
-This project includes a `docker-compose.yml` file for deploying services in Docker containers.
-
-#### Steps to Deploy with Docker Compose
-
-1. Install Docker and Docker Compose if not already installed.
-
-2. Create a `.env` file in the project root and populate it with the following variables:
+2. Create a `.env` file in the project root with the following configurations:
 
    ```env
-   # Data Quality Tool
+   # Flask Environment
    FLASK_ENV=development
    FLASK_DEBUG=1
 
    # Database
    POSTGRES_PASSWORD=test
-
-   # Backend
+   
+   # Backend Configuration
    DB_URL=jdbc:postgresql://datacatalog_db:5432/postgres
    DB_USER=postgres
    DB_PASSWORD=test
-   PUBLIC_HOST=http://localhost:4200; this is the ip in case you want to have the frontend in development mode and not dockerized
+   PUBLIC_HOST=http://localhost:4200 ;This url for frontend on development
    DQT_URL=http://data_quality_tool:8000
 
-   # Keycloak
+   # Keycloak Authentication
    AUTHENTICATION=1
    KEYCLOAK_AUTH_URL=https://iam.ebrains.eu/auth/
    KEYCLOAK_REALM=MIP
@@ -93,11 +99,36 @@ This project includes a `docker-compose.yml` file for deploying services in Dock
    KEYCLOAK_SSL_REQUIRED=none
    ```
 
-3. Start the services:
+3. Deploy using Docker Compose:
 
    ```bash
    docker-compose up --build
    ```
 
-4. Access the application at [http://localhost](http://localhost).
+4. Access the application in your browser at [http://localhost](http://localhost).
+
+## Development Setup
+
+For development purposes, you can run the frontend and backend separately:
+
+### Frontend
+
+1. Navigate to the `frontend` folder:
+   ```bash
+   cd frontend
+   ```
+
+2. Install dependencies using npm:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   ng serve
+   ```
+
+---
+
+**DataCatalog** is maintained by the Medical Informatics Platform team under EBRAINS. For more information, visit [EBRAINS](https://www.ebrains.eu/).
 

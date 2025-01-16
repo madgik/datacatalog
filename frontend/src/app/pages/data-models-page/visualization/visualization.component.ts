@@ -97,7 +97,9 @@ export class VisualizationComponent implements OnInit, OnChanges {
 
   onMaxDepthChange(): void {
     const currentNode = this.findNodeByPath(this.originalData, this.breadcrumbPath);
+    const currentMaxDepth = this.maxDepth;
     this.renderChart(currentNode, null, this.maxDepth);
+    this.maxDepth = currentMaxDepth;
   }
 
   private getPathToNode(node: any, target: any, path: string[] = []): string[] | null {
