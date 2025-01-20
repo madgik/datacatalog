@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+      - name: backend
+        image: "{{ .Values.datacatalog_images.repository }}/datacatalog_backend:{{ .Values.datacatalog_images.tag }}"
+        ports:
+        - containerPort: 8090
+        env:
+        - name: DB_URL
+          value: "{{ .Values.backend.dbUrl }}"
+        - name: DB_USER
+          value: "{{ .Values.backend.dbUser }}"
+        - name: DB_PASSWORD
+          value: "{{ .Values.backend.dbPassword }}"
+        - name: PUBLIC_HOST
+          value: "{{ .Values.backend.publicHost }}"
+        - name: DQT_URL
+          value: "{{ .Values.backend.dqtUrl }}"
+        - name: KEYCLOAK_AUTH_URL
+          value: "{{ .Values.backend.keycloak.authUrl }}"
+        - name: KEYCLOAK_REALM
+          value: "{{ .Values.backend.keycloak.realm }}"
+        - name: KEYCLOAK_CLIENT_ID
+          value: "{{ .Values.backend.keycloak.clientId }}"
+        - name: KEYCLOAK_CLIENT_SECRET
+          value: "{{ .Values.backend.keycloak.clientSecret }}"
+        - name: KEYCLOAK_SSL_REQUIRED
+          value: "{{ .Values.backend.keycloak.sslRequired }}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: backend
+  ports:
+  - protocol: TCP
+    port: 8090
+    targetPort: 8090
+    nodePort: 30090  # Static NodePort for backend
+  type: NodePort

@@ -23,12 +23,12 @@ logging:
 ### DATABASE CONFIGURATION ###
 spring:
   datasource:
-    url: {{ default .Env.DB_URL "jdbc:postgresql://datacatalog_db:5432/postgres" }}
+    url: {{ default .Env.DB_URL "jdbc:postgresql://datacatalogdb:5432/postgres" }}
     username: {{ default .Env.DB_USER "postgres" }}
     password: {{ default .Env.DB_PASSWORD "test" }}
     driver-class-name: org.postgresql.Driver
   flyway:
-      url: {{ default .Env.DB_URL "jdbc:postgresql://datacatalog_db:5432/postgres" }}
+      url: {{ default .Env.DB_URL "jdbc:postgresql://datacatalogdb:5432/postgres" }}
       username: {{ default .Env.DB_USER "postgres" }}
       password: {{ default .Env.DB_PASSWORD "test" }}
       baseline-on-migrate: true

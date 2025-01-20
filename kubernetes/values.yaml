@@ -1,0 +1,40 @@
+namespace: default
+
+datacatalog_images:
+  repository: madgik
+  tag: 1.0.0_candidate
+
+dqt:
+  flaskEnv: "development"
+  flaskDebug: "1"
+
+storageClass:
+  name: k8s-local-storage
+  provisioner: microk8s.io/hostpath
+  volumeBindingMode: Immediate
+
+datacatalogDb:
+  storageClassName: k8s-local-storage
+  image: postgres:15
+  password: "test"
+  db: "datacatalog"
+  user: "postgres"
+  storage: 5Gi
+
+backend:
+  dbUrl: "jdbc:postgresql://datacatalogdb:5432/datacatalog"
+  dbUser: "postgres"
+  dbPassword: "test"
+  publicHost: "http://192.168.123.108:30080"
+  dqtUrl: "http://data-quality-tool:8000"
+  authentication: "true"
+  keycloak:
+    authUrl: "https://iam.ebrains.eu/auth/"
+    realm: "MIP"
+    clientId: "datacatalogue"
+    clientSecret: ""
+    sslRequired: "none"
+
+persistence:
+  enabled: true
+  accessModes: ["ReadWriteOnce"]

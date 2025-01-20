@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-quality-tool
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-quality-tool
+  template:
+    metadata:
+      labels:
+        app: data-quality-tool
+    spec:
+      containers:
+      - name: dqt
+        image: "{{ .Values.datacatalog_images.repository }}/datacatalog_data_quality_tool:{{ .Values.datacatalog_images.tag }}"
+        ports:
+        - containerPort: 8000
+        env:
+        - name: FLASK_ENV
+          value: "{{ .Values.dqt.flaskEnv }}"
+        - name: FLASK_DEBUG
+          value: "{{ .Values.dqt.flaskDebug }}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-quality-tool
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: data-quality-tool
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000

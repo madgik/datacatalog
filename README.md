@@ -84,10 +84,10 @@ Authenticated users with proper roles gain access to management features, includ
    POSTGRES_PASSWORD=test
    
    # Backend Configuration
-   DB_URL=jdbc:postgresql://datacatalog_db:5432/postgres
+   DB_URL=jdbc:postgresql://datacatalogdb:5432/postgres
    DB_USER=postgres
    DB_PASSWORD=test
-   PUBLIC_HOST=http://localhost:4200 ;This url for frontend on development
+   PUBLIC_HOST=http://localhost ; In case of having frontend on development set this to 'http://localhost:4200'.
    DQT_URL=http://data_quality_tool:8000
 
    # Keycloak Authentication

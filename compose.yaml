@@ -11,11 +11,11 @@ services:
       - FLASK_ENV=${FLASK_ENV}
       - FLASK_DEBUG=${FLASK_DEBUG}
 
-  datacatalog_db:
+  datacatalogdb:
     image: postgres:15
     volumes:
       - ./.stored_data/datacatalogdb:/var/lib/postgresql/data
-    hostname: datacatalog_db
+    hostname: datacatalogdb
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     command: -p 5432
@@ -51,7 +51,7 @@ services:
       - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET}
       - KEYCLOAK_SSL_REQUIRED=${KEYCLOAK_SSL_REQUIRED}
     depends_on:
-      datacatalog_db:
+      datacatalogdb:
         condition: service_healthy
     restart: unless-stopped
 
