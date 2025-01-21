@@ -24,18 +24,18 @@
 }
 
 /* Popup styles */
-.guide-popup {
-  position: relative; /* Positioned relative to the container */
-  z-index: 2; /* On top of the overlay */
+/* .guide-popup {
+  position: relative;
+  z-index: 2;
   top: 0;
   left: 0;
   transform: translate(0, 0);
-  width: 400px;
+  width: 600px;
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   animation: fadeIn 0.3s ease-in-out;
-}
+} */
 
 /* Rest of the popup styling (header, body, footer) remains the same */
 .guide-popup {
@@ -43,7 +43,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 400px;
+  width: 600px;
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);

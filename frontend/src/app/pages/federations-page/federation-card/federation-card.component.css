@@ -13,9 +13,8 @@
 }
 
 .federation-card:hover {
-  transform: translateY(-5px);
+  /* transform: translateY(-5px); */
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  gap: 30px; /* Adjust spacing for hover effect */
   background-color: #eef7ff; /* Slightly different background on hover */
 }
 
@@ -29,10 +28,6 @@
               margin-right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.federation-card:hover .federation-image {
-  width: 220px; /* Slightly larger on hover */
-}
-
 .federation-content {
   flex: 1;
   padding-left: 20px; /* Maintain consistent spacing */
@@ -40,19 +35,18 @@
               flex 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.federation-card:hover .federation-content {
-  padding-left: 10px; /* Adjust padding dynamically */
+.federation-content li {
+  list-style: none;
 }
 
 .federation-content h3 {
   font-size: 1.4em; /* Slightly larger font size */
   margin-bottom: 10px;
   color: #444; /* Slightly softer color */
-  transition: font-size 0.3s ease, color 0.3s ease;
+  transition: color 0.3s ease;
 }
 
 .federation-card:hover .federation-content h3 {
-  font-size: 1.5em;
   color: #007b8f; /* Highlighted color on hover */
 }
 
@@ -92,11 +86,7 @@ button {
   border-radius: 6px; /* Softer edges */
   cursor: pointer;
   font-size: 1em; /* Larger buttons */
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-button:hover {
-  transform: scale(1.05); /* Slightly larger hover effect */
+  transition: background-color 0.3s ease;
 }
 
 /* Individual Button Styles */
