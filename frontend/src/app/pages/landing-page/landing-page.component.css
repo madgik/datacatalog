@@ -34,6 +34,7 @@ p {
   align-content: center;
   gap: 1rem;
 }
+
 /* Landing Page Styling */
 .landing-page {
   padding: 20px;
@@ -95,6 +96,8 @@ p {
 .image-caption p {
   font-size: 0.9rem;
   margin: 5px 0 0;
+  font-weight: lighter;
+  color: white;
 }
 
 /* Description Section Styling */
@@ -159,9 +162,9 @@ p {
 
 /* Icon Styling */
 .info-icon {
-  font-size: 3rem; /* Adjust size for prominence */
-  color: #00758c; /* Icon color */
-  background-color: #f0f0f0; /* Subtle background */
+  font-size: 3rem;
+  color: #00758c;
+  background-color: #f0f0f0;
   padding: 15px;
   border-radius: 50%;
   display: flex;
@@ -188,40 +191,76 @@ p {
   margin-bottom: 20px;
 }
 
-.cta {
+/* Floating Button */
+.floating-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.floating-button button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
   display: flex;
   justify-content: center;
-  margin-top: 1%;
-}
-
-.cta-button {
-  padding: 12px 20px;
-  font-size: 1rem;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(45deg, #18a2b8, #1ac6d0);
+  align-items: center;
   cursor: pointer;
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
+  background: none; /* Removes any background color */
+  border: none; /* Ensures no border is applied */
+  outline: none; /* Removes focus outline */
+  padding: 0; /* Removes padding around the logo */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Shadow for depth */
 }
 
-.cta-button:hover {
-  transform: scale(1.05);
-  background: linear-gradient(45deg, #127a91, #159cb3);
+.floating-button button img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%; /* Ensure it's a perfect circle */
+  background: none; /* Ensure no background color */
+  box-shadow: none;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .info-card {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .info-card.reverse {
-    flex-direction: column;
-  }
+/* Tooltip Styling */
+.floating-button:hover::after {
+  content: attr(aria-label);
+  position: absolute;
+  bottom: 55px; /* Place above the button */
+  left: -30px;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
+.floating-button:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Ensure no clipping issue with tooltip */
+.floating-button {
+  overflow: visible;
+}
+
+/* Ensure no outline or background for the button */
+.floating-button button:focus {
+  outline: none;
+  background: none;
+}
 
 /* Responsive Adjustments */
 @media (max-width: 1024px) {

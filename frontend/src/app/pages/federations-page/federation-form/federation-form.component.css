@@ -1,12 +1,12 @@
 /* General container styling */
 .federation-form {
-  background: linear-gradient(145deg, #ffffff, #f9f9f9); /* Subtle gradient */
+  background: linear-gradient(145deg, #fcffff, #f9f9f9); /* Subtle gradient */
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Soft shadow */
   max-width: 700px;
   margin: 50px auto;
   padding: 40px;
   border-radius: 12px;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Roboto', sans-serif;
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
@@ -26,7 +26,8 @@
 
 /* Labels */
 .federation-form label {
-  font-weight: 600;
+  font-weight: 500;
+  font-family: 'Roboto', sans-serif;
   margin-top: 15px;
   display: block;
   font-size: 14px;
@@ -53,8 +54,19 @@
 .federation-form input[type="url"]:focus,
 .federation-form select:focus,
 .federation-form textarea:focus {
-  border-color: #4CAF50;
-  box-shadow: 0 0 8px rgba(76, 175, 80, 0.2);
+  border-color: #159cb3;
+  background-color: #06b2bb10;
+  box-shadow: 0 0 8px rgba(165, 244, 250, 0.2);
+  outline: none;
+}
+
+.federation-form input[type="text"]:required:invalid,
+.federation-form input[type="url"]:required:invalid,
+.federation-form select:required:invalid,
+.federation-form textarea:required:invalid {
+  border-color: #159cb3;
+  background-color: rgba(255, 0, 0, 0.034);
+  box-shadow: 0 0 8px rgba(165, 244, 250, 0.2);
   outline: none;
 }
 
@@ -93,9 +105,9 @@
 }
 
 .data-model-card:hover {
-  border: 1px solid #4CAF50;
+  border: 1px solid #18a2b8;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  background-color: #4CAF50;
+  background-color: #18a3b811;
   color: white;
 }
 
@@ -105,11 +117,15 @@
   color: #555;
 }
 
+.data-model-name {
+  margin-left: 5px;
+}
+
 /* Button */
 .federation-form button[type="submit"] {
   width: 100%;
   padding: 12px;
-  background-color: #4CAF50;
+  background: linear-gradient(45deg, #18a2b8, #a2f1f5);
   color: white;
   border: none;
   border-radius: 6px;
@@ -122,7 +138,7 @@
 }
 
 .federation-form button[type="submit"]:hover {
-  background-color: #45a049;
+  background-color: #a2f1f5;
   transform: scale(1.02);
 }
 
@@ -147,7 +163,6 @@
     padding: 10px;
   }
 }
-
 /* Breadcrumb */
 .breadcrumb {
   margin-bottom: 20px;
@@ -157,10 +172,10 @@
 
 .breadcrumb a {
   text-decoration: none;
-  color: #4CAF50;
+  color: #06b2bb;
   transition: color 0.3s;
 }
 
 .breadcrumb a:hover {
-  color: #388e3c;
+  color: #16a6ad;
 }
