@@ -1,237 +1,246 @@
 /* General Styles */
 body {
-font-family: 'Roboto', sans-serif;
-margin: 0;
-padding: 0;
-background-color: #f5f5f5; /* Light background */
-color: #333;
+  font-family: "Roboto", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+  color: #333;
 }
 
 h2, h3 {
-margin: 0;
+  margin: 0;
 }
 
-/* Container for the landing page */
+h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+p {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+.welcome {
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  gap: 1rem;
+}
+/* Landing Page Styling */
 .landing-page {
-padding: 20px;
+  padding: 20px;
 }
 
 /* Federation Container */
 .federation-container {
-display: flex;
-justify-content: space-between;
-align-items: flex-start;
-gap: 30px;
-padding: 20px;
-margin-top: 50px; /* Added margin to increase space below the navbar */
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  margin-top: 40px;
 }
 
 /* Image Gallery Styling */
 .image-gallery {
-width: 65%; /* Wider gallery to emphasize visual content */
+  width: 65%;
 }
+
 .image-container {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Wider columns */
-gap: 20px; /* Space between items */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
 }
 
 .image-item {
-width: 100%; /* Full width of the grid cell */
-height: 220px; /* Reduced height to emphasize width */
-position: relative;
-cursor: pointer;
-border-radius: 12px; /* Slightly rounded corners */
-overflow: hidden;
-transition: transform 0.3s ease;
-background-color: #f0f0f0; /* Fallback background */
+  position: relative;
+  cursor: pointer;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
 }
 
 .image-item img {
-width: 100%;
-height: 100%;
-object-fit: cover; /* Ensures the image fully fills the container */
-border-radius: 12px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
-
-@media (max-width: 768px) {
-.image-item {
-  height: 250px; /* Slightly smaller height for mobile devices */
-}
-}
-
-@media (max-width: 480px) {
-.image-item {
-  height: 200px; /* Further reduced height for very small screens */
-}
-}
-
 
 .image-item:hover {
-transform: scale(1.1); /* Subtle zoom on hover */
+  transform: scale(1.05);
 }
 
 .image-caption {
-position: absolute;
-bottom: 0;
-left: 0;
-width: 100%;
-text-align: center;
-background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3)); /* Gradient overlay */
-color: #fff;
-padding: 10px;
-font-size: 0.9em;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3));
+  color: white;
+  padding: 10px;
 }
 
 .image-caption h3 {
-font-size: 1.2em; /* Increase heading size */
-margin: 0;
+  font-size: 1.2rem;
+  margin: 0;
 }
 
 .image-caption p {
-font-size: 0.9em; /* Slightly smaller paragraph text */
-margin: 5px 0 0 0;
+  font-size: 0.9rem;
+  margin: 5px 0 0;
 }
 
 /* Description Section Styling */
 .description {
-width: 30%; /* Adjusted width for better proportion */
-text-align: left; /* Left-align for consistency */
-padding: 25px;
-background-color: #f9f9f9;
-border-radius: 15px;
-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-display: flex;
-flex-direction: column;
-align-items: flex-start;
+  width: 30%;
+  padding: 25px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .description h2 {
-font-size: 1.8em; /* Increased heading size */
-margin-bottom: 15px;
-color: #333;
+  font-size: 1.8rem;
+  margin-bottom: 15px;
 }
 
 .description p {
-font-size: 1.1em; /* Increased paragraph text size */
-line-height: 1.6;
-margin-bottom: 20px;
-color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
 }
 
-.description button {
-margin-top: 15px;
-padding: 12px 25px;
-font-size: 1em;
-background-color: #18a2b8;
-color: white;
-border: none;
-border-radius: 8px;
-cursor: pointer;
-transition: background-color 0.3s ease;
+/* Gradient Button Styling */
+.gradient-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(90deg, #00758c, #00a6c0);
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
 }
 
-.description button:hover {
-background-color: #127a91;
+.gradient-button:hover {
+  background: linear-gradient(90deg, #005f73, #00758c);
+  transform: scale(1.05);
 }
 
-/* Federation Section Styles */
-.federations {
-display: flex;
-flex-wrap: wrap; /* Support multiple rows for responsiveness */
-justify-content: space-between;
-padding: 40px 20px;
-gap: 20px;
-background-color: #fafafa;
+/* General Styling */
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 40px 20px;
 }
 
-.federation {
-flex: 1 1 calc(45% - 20px); /* Responsive column width */
-text-align: left;
-padding: 20px;
-background: #f9f9f9;
-border-radius: 15px;
-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Shadow for card effect */
+/* Card Layout */
+.info-card {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  gap: 20px;
+  overflow: hidden;
 }
 
-.federation h2 {
-font-size: 1.6em;
-color: #795548;
-margin-bottom: 10px;
+.info-card.reverse {
+  flex-direction: row-reverse;
 }
 
-.federation p {
-font-size: 1em;
-color: #333;
-line-height: 1.5;
+/* Icon Styling */
+.info-icon {
+  font-size: 3rem; /* Adjust size for prominence */
+  color: #00758c; /* Icon color */
+  background-color: #f0f0f0; /* Subtle background */
+  padding: 15px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Call-to-Action Styles */
+.info-content {
+  flex: 1;
+  text-align: left;
+}
+
+.info-content h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.info-content p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #555;
+  margin-bottom: 20px;
+}
+
 .cta {
-text-align: center;
-padding: 30px;
+  display: flex;
+  justify-content: center;
+  margin-top: 1%;
 }
 
-.cta button {
-width: 200px;
-font-size: 1.2em;
-padding: 15px 30px;
-margin-top: 20px;
-border-radius: 50px;
-background: linear-gradient(45deg, #18a2b8, #1ac6d0);
-color: white;
-border: none;
-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Button shadow for depth */
-cursor: pointer;
-transition: background-color 0.3s ease-in-out, transform 0.2s ease;
+.cta-button {
+  padding: 12px 20px;
+  font-size: 1rem;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(45deg, #18a2b8, #1ac6d0);
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
 }
 
-.cta button:hover {
-background: linear-gradient(45deg, #127a91, #159cb3);
-transform: scale(1.05); /* Subtle zoom effect */
+.cta-button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(45deg, #127a91, #159cb3);
 }
 
 /* Responsive Design */
+@media (max-width: 768px) {
+  .info-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .info-card.reverse {
+    flex-direction: column;
+  }
+}
+
+
+/* Responsive Adjustments */
 @media (max-width: 1024px) {
-.federation-container {
-  flex-direction: column;
-  align-items: center;
-  margin-top: 30px; /* Adjusted for responsive design */
-}
+  .federation-container {
+    flex-direction: column;
+    align-items: center;
+  }
 
-.image-gallery,
-.description {
-  width: 90%; /* Full width for tablets */
-}
-
-.image-container {
-  grid-template-columns: repeat(2, 1fr); /* 2 items per row for tablets */
-  gap: 15px;
-}
-
-.image-item {
-  height: 150px; /* Reduced height for smaller screens */
-}
-
-.actions i {
-  font-size: 1.2em; /* Even smaller icons for tablets */
-}
+  .image-gallery, .description {
+    width: 90%;
+  }
 }
 
 @media (max-width: 768px) {
   .image-container {
-    grid-template-columns: 1fr; /* Single column layout for mobile */
-  }
-
-  .image-item {
-    height: 150px;
+    grid-template-columns: 1fr;
   }
 
   .description {
-    width: 100%; /* Full width for mobile */
-  }
-
-  .federation {
     width: 100%;
     text-align: center;
   }
