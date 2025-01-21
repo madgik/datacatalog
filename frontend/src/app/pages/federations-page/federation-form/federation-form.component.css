@@ -179,3 +179,54 @@
 .breadcrumb a:hover {
   color: #16a6ad;
 }
+
+/* Close X Button */
+.close-x-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: #fff;
+  color: #333;
+  font-size: 20px;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.close-x-btn:hover {
+  background: #f5f5f5;
+  color: #ff0000;
+}
+
+/* Close Button at the Bottom */
+.close-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(145deg, #ff4e4e, #ff7979);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.3s;
+  margin-top: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.close-btn:hover {
+  background-color: #ff4e4e;
+  transform: scale(1.02);
+}
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 50%;
+  margin-top: 20px;
+}
