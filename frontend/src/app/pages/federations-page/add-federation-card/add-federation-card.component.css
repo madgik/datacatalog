@@ -1,4 +1,4 @@
-.add-new-card {
+/* .add-new-card {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -34,4 +34,70 @@
 .add-new-card h3 {
   font-size: 1em;
   color: #333;
+} */
+/* Floating Add Federation Button */
+.add-federation-button {
+  position: fixed;
+  top: 9%;
+  right: 1%;
+  z-index: 1000;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #056675, #2bd9e6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;
+  border: none;
+}
+
+/* Tooltip Styling */
+.add-federation-button:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: -10px; /* Place above the button */
+  left: -40px;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.add-federation-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.add-federation-button::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.add-federation-button:hover::after {
+  opacity: 1;
+  visibility: visible;
 }
