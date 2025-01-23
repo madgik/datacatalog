@@ -138,10 +138,14 @@ p {
 
 /* General Styling */
 .info-section {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
   padding: 40px 20px;
+  align-items: start;
+  position: relative;
+  margin-bottom: 50px;
+
 }
 
 /* Card Layout */
@@ -271,6 +275,14 @@ p {
 
   .image-gallery, .description {
     width: 90%;
+  }
+
+  .info-section {
+    grid-template-columns: 1fr;
+  }
+
+  .info-card:nth-child(2) {
+    transform: none;
   }
 }
 
