@@ -5,13 +5,12 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { Federation } from '../interfaces/federations.interface';
 import { DataModelService } from './data-model.service';
 import {DataModel} from "../interfaces/data-model.interface";
-import {environment} from "../environment";
 
 @Injectable({
   providedIn: 'root',
 })
 export class FederationService {
-  private apiUrl = `${environment.backendUrl}/services/federations`;
+  private apiUrl = `/services/federations`;
 
   constructor(private http: HttpClient, private dataModelService: DataModelService) {}
 

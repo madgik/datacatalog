@@ -27,9 +27,7 @@ public class ActiveUserService {
      */
     public UserDTO getActiveUser(Authentication authentication) {
         UserDTO activeUserDTO;
-        System.out.println("authenticationIsEnabled: " + authenticationIsEnabled + " authentication:" + authentication);
-
-        if (authenticationIsEnabled && authentication != null) {
+        if (authenticationIsEnabled) {
             // Extract user information from OIDC
             OidcUserInfo userInfo = ((DefaultOidcUser) authentication.getPrincipal()).getUserInfo();
             List<String> roles = authentication.getAuthorities().stream()

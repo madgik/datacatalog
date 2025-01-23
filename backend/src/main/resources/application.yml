@@ -22,12 +22,12 @@ logging:
 ### DATABASE CONFIGURATION ###
 spring:
   datasource:
-    url: jdbc:postgresql://datacatalog_db:5432/postgres
+    url: jdbc:postgresql://datacatalogdb:5432/postgres
     username: postgres
     password: test
     driver-class-name: org.postgresql.Driver
   flyway:
-    url: jdbc:postgresql://datacatalog_db:5432/postgres
+    url: jdbc:postgresql://datacatalogdb:5432/postgres
     user: postgres
     password: test
     baseline-on-migrate: true

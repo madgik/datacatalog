@@ -1,0 +1,51 @@
+@if (showPopup) {
+  <div class="popup-container">
+    <div class="overlay" (click)="closePopup()"></div>
+    <div class="guide-popup">
+      <div class="popup-header">
+        <h2>Explore Brain Data Models</h2>
+        <button class="close-btn" (click)="closePopup()">×</button>
+      </div>
+      <div class="popup-body">
+        <p>Welcome! Here's a quick guide to using this data model visualizer:</p>
+        <ul>
+          <li>
+            <span class="highlight">Yellow-highlighted nodes</span> can be
+            double-clicked to set them as the new root.
+            Use the breadcrumb at the top-left of the chart to view the current root or navigate back to previous nodes.
+          </li>
+          <li>
+            Enable or disable the chart's zoom functionality as needed:
+            <ul>
+              <li>Zoom is ideal for shallow or less deeply nested trees.</li>
+              <li>Disabling zoom is better for more complex, deeply nested trees.</li>
+            </ul>
+          </li>
+          <li>
+            Search for specific variables or groups using the search icon. You can also filter variables by type.
+          </li>
+          <li>
+            Selecting a group sets it as the new root.
+            Selecting a variable sets its parent group as the root.
+          </li>
+          <li>
+            Adjust the tree depth by selecting a value from the dropdown.
+          </li>
+          <li>
+            Use the dropdowns above to select federations and data models.
+          </li>
+          <li>
+            Download data by clicking the "Download" button on the right.
+          </li>
+        </ul>
+        <p>Explore and have fun!</p>
+      </div>
+      <div class="popup-footer">
+        <label>
+          <input type="checkbox" [(ngModel)]="dontShowAgain" /> Don't show this
+          again
+        </label>
+      </div>
+    </div>
+  </div>
+}

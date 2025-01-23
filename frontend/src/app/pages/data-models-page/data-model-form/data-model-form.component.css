@@ -197,3 +197,13 @@
     transform: rotate(360deg);
   }
 }
+
+.error-message {
+  color: red;
+  font-weight: bold;
+  margin: 10px 0;
+  border: 1px solid red;
+  padding: 10px;
+  background-color: #ffe6e6;
+  border-radius: 5px;
+}

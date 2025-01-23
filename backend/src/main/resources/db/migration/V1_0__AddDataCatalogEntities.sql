@@ -15,7 +15,7 @@ CREATE TABLE federation (
                             url VARCHAR(255),
                             records INT,
                             institutions INT,
-                            description VARCHAR(500)
+                            description VARCHAR(3000)
 );
 
 CREATE TABLE federation_data_model (

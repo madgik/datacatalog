@@ -14,7 +14,7 @@ RUN pip install poetry
 RUN poetry config virtualenvs.create false
 
 # Install project dependencies
-RUN poetry install --no-dev
+RUN poetry install --without dev
 
 # Expose the port your app runs on
 EXPOSE 8000

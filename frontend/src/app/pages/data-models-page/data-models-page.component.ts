@@ -13,13 +13,13 @@ import { DataModel } from "../../interfaces/data-model.interface";
 import { FederationSelectorComponent } from "./federation-selector/federation-selector.component";
 import { VisualizationComponent } from "./visualization/visualization.component";
 import { ActionMenuComponent } from "./action-menu/action-menu.component";
-import { NodeInfoComponent } from "./node-info/node-info.component";
 import { DataModelSelectorComponent } from "./data-model-selector/data-model-selector.component";
 import { ExportOptionsComponent } from "./export-options/export-options.component";
 import {ErrorService} from "./services/error.service";
 import {ConfirmationDialogComponent} from "./confirmation-dialog/confirmation-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {DataModelFormComponent} from "./data-model-form/data-model-form.component";
+import {GuidePopupComponent} from "./guide-popup/guide-popup.component";
 
 
 @Component({
@@ -37,29 +37,23 @@ import {DataModelFormComponent} from "./data-model-form/data-model-form.componen
     FederationSelectorComponent,
     VisualizationComponent,
     ActionMenuComponent,
-    NodeInfoComponent,
     DataModelSelectorComponent,
     ExportOptionsComponent,
-    RouterOutlet
+    RouterOutlet,
+    GuidePopupComponent,
   ],
   standalone: true
 })
-//TODO:request access for federation
-//TODO:filters
 export class DataModelsPageComponent implements OnInit{
-  visualizationType = 'TidyTree';
   d3Data: any;
   federations: Federation[] = [];
   selectedFederation: Federation | null = null;
   selectedDataModel: DataModel | null | undefined;
-  selectedNode: any;
   isDomainExpert = false;
   selectedFileType = signal<'json' | 'xlsx'>('json');
-  nodeInfoVisible: boolean = true;
   crossSectionalModels: DataModel[] = [];
   longitudinalModels: DataModel[] = [];
   menuVisible = signal(false);
-
 
   constructor(
     private federationService: FederationService,
@@ -114,13 +108,11 @@ export class DataModelsPageComponent implements OnInit{
     } else {
       if (this.isDomainExpert){
         this.dataModelService.getAllDataModels().subscribe((dataModels) => {
-          console.log("this.selectedDataModel",this.selectedDataModel)
           this.handleDataModelResponse(dataModels);
         });
       }
       else {
         this.dataModelService.getAllReleasedDataModels().subscribe((dataModels) => {
-          console.log("this.selectedDataModel",this.selectedDataModel)
           this.handleDataModelResponse(dataModels);
         });
       }
@@ -134,20 +126,13 @@ export class DataModelsPageComponent implements OnInit{
     if (dataModels.length > 0) {
       this.selectedDataModel = crossSectional[0] || longitudinal[0] || null;
     }
-    console.log("this.selectedDataModel",this.selectedDataModel)
     this.loadVisualizationData();
   }
 
   loadVisualizationData(): void {
     if (this.selectedDataModel) {
       this.d3Data = this.dataModelService.convertToD3Hierarchy(this.selectedDataModel);
-      this.selectedNode = this.d3Data;
     }
-  }
-
-  onSelectedNodeChange(node: any): void {
-    this.selectedNode = node;
-    console.log("this.selectedNode:", this.selectedNode);
   }
 
   onSelectedDataModelChange(selectedDataModel: DataModel | null): void {
@@ -160,12 +145,8 @@ export class DataModelsPageComponent implements OnInit{
     this.loadDataModels();
   }
 
-  onNodeInfoVisibilityChange(visible: boolean): void {
-    this.nodeInfoVisible = visible;
-  }
 
   handleAction(action: string): void {
-    console.log('Action Triggered:', action);
     switch (action) {
       case 'add':
         this.goToAddDataModel();

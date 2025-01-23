@@ -1,57 +1,46 @@
+<app-guide-popup></app-guide-popup>
 @if(!isChildRouteActive()){
-  <div class="container">
-    <div class="top-bar">
-      <!-- Dropdowns container for data model-specific settings -->
-      <div class="dropdown-container">
-        <app-federation-selector
-          [isDomainExpert]="isDomainExpert"
-          [defaultFederation]="selectedFederation"
-          (federationChange)="onSelectedFederationChange($event)"
-        ></app-federation-selector>
 
-        @if(selectedDataModel && (crossSectionalModels.length > 0 || longitudinalModels.length > 0)){
-          <app-data-model-selector
-            [crossSectionalModels]="crossSectionalModels"
-            [longitudinalModels]="longitudinalModels"
-            [defaultModel]="selectedDataModel"
-            (dataModelChange)="onSelectedDataModelChange($event)"
-          ></app-data-model-selector>
-        }
+<div class="container">
+  <div class="top-bar">
+    <!-- Dropdowns container for data model-specific settings -->
+    <div class="dropdown-container">
+      <app-federation-selector
+        [isDomainExpert]="isDomainExpert"
+        [defaultFederation]="selectedFederation"
+        (federationChange)="onSelectedFederationChange($event)"
+      ></app-federation-selector>
 
-        <app-export-options
-          [selectedFileType]="selectedFileType()"
-          (export)="exportDataModel($event)"
-        ></app-export-options>
-      </div>
-
-      @if(isDomainExpert){
-          <app-action-menu
-            [isSelectedDataModelReleased]="selectedDataModel?.released ?? false"
-            (action)="handleAction($event)"
-            (menuVisibleChange)="handleMenuToggle($event)"
-          ></app-action-menu>
+      @if(selectedDataModel && (crossSectionalModels.length > 0 ||
+      longitudinalModels.length > 0)){
+      <app-data-model-selector
+        [crossSectionalModels]="crossSectionalModels"
+        [longitudinalModels]="longitudinalModels"
+        [defaultModel]="selectedDataModel"
+        (dataModelChange)="onSelectedDataModelChange($event)"
+      ></app-data-model-selector>
       }
     </div>
 
-    <app-visualization
-      [visualizationType]="visualizationType"
-      [d3Data]="d3Data"
-      (selectedNodeChange)="onSelectedNodeChange($event)">
-    </app-visualization>
+    <div class="export-options-btns">
+      <app-export-options
+        [selectedFileType]="selectedFileType()"
+        (export)="exportDataModel($event)"
+      ></app-export-options>
 
-    @if(!menuVisible()){
-      <div>
-        @if(selectedNode){
-          <app-node-info
-            [selectedNode]="selectedNode"
-            (visibilityChange)="onNodeInfoVisibilityChange($event)"
-          ></app-node-info>
-        }
-      </div>
-    }
+      @if(isDomainExpert){
+      <app-action-menu
+        [isSelectedDataModelReleased]="selectedDataModel?.released ?? false"
+        (action)="handleAction($event)"
+        (menuVisibleChange)="handleMenuToggle($event)"
+      ></app-action-menu>
+      }
+    </div>
   </div>
-}
 
+  <app-visualization [dataModelHierarchy]="d3Data"></app-visualization>
+</div>
+}
 
 <!-- Child route outlet for Add and Update forms -->
 <router-outlet></router-outlet>

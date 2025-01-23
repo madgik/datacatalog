@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import {DataModel} from "../interfaces/data-model.interface";
-import {environment} from "../environment";
 
 @Injectable({
   providedIn: 'root',
 })
 export class DataModelService {
-  private apiUrl = `${environment.backendUrl}/services/datamodels`;
+  private apiUrl = `/services/datamodels`;
   private dataModels: any[] = []; // Cache for all data models
   private dataModelsLoaded = false; // Flag to track cache loading
 
@@ -121,35 +120,40 @@ export class DataModelService {
     return { crossSectional, longitudinal };
   }
 
-  // Convert data model to D3 hierarchy format
-  convertToD3Hierarchy(data: any): any {
-    const convertVariables = (variables: any[]) =>
-      variables.map((v) => ({
-        name: v.label,
-        value: 1,
-        ...v,
-      }));
+  // Convert data model to D3 hierarchy format with variable count for groups
+convertToD3Hierarchy(data: any): any {
+  const convertVariables = (variables: any[]): any[] =>
+    variables.map((v) => ({
+      name: v.label,
+      value: 1,
+      ...v,
+    }));
 
-    const convertGroups = (groups: any) =>
-      groups.map((g: any) => ({
+  const convertGroups = (groups: any[]): any[] =>
+    groups.map((g: any) => {
+      const variableNodes = convertVariables(g.variables || []);
+      const groupNodes = convertGroups(g.groups || []);
+      const totalVariableCount = variableNodes.length + groupNodes.reduce((count, group) => count + (group.variableCount || 0), 0);
+
+      return {
         name: g.label,
         code: g.code,
-        children: [
-          ...convertVariables(g.variables || []),
-          ...convertGroups(g.groups || []),
-        ],
-      }));
+        variableCount: totalVariableCount, // Track total variables in the group and subgroups
+        children: [...variableNodes, ...groupNodes],
+      };
+    });
 
-    return  {
-      name: data.label,
-      code: data.code,
-      children: [
-        ...convertVariables(data.variables || []),
-        ...convertGroups(data.groups || []),
-      ],
-    };
+  const rootVariables = convertVariables(data.variables || []);
+  const rootGroups = convertGroups(data.groups || []);
+  const rootVariableCount = rootVariables.length + rootGroups.reduce((count, group) => count + (group.variableCount || 0), 0);
 
-  }
+  return {
+    name: data.label,
+    code: data.code,
+    variableCount: rootVariableCount, // Track total variables for the root
+    children: [...rootVariables, ...rootGroups],
+  };
+}
 
   //CRUD:
 
@@ -184,13 +188,49 @@ export class DataModelService {
     return this.http.post<void>(url, formData).pipe(
       switchMap(() => this.reloadDataModels()), // Reload data models after creation
       tap(() => console.log('Data model created successfully from Excel.')),
-      catchError((error) => {
-        console.error('Error creating Excel data model:', error);
-        return throwError(() => error);
-      })
-    );
+      catchError((error: HttpErrorResponse) => {
+        console.error('Sanitized error response:', error.error.replace(/<EOL>/g, '\n'));
+        const errorMessage = this.extractErrorMessage(error, 'creating Excel data model');
+        return throwError(() => errorMessage);
+        }
+      )
+    )
   }
 
+  private extractErrorMessage(error: HttpErrorResponse, action: string): string {
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      return `An error occurred while ${action}: ${error.error.message}`;
+    } else if (typeof error.error === 'string') {
+      try {
+        // Replace <EOL> with actual newlines
+        const sanitizedError = error.error.replace(/<EOL>/g, '\n').trim();
+
+        // Extract JSON from the string if it exists
+        const jsonStartIndex = sanitizedError.indexOf('{');
+        const jsonEndIndex = sanitizedError.lastIndexOf('}');
+        if (jsonStartIndex !== -1 && jsonEndIndex !== -1) {
+          const jsonString = sanitizedError.substring(jsonStartIndex, jsonEndIndex + 1);
+          const parsedError = JSON.parse(jsonString);
+          if (parsedError.error) {
+            return `Error while ${action}: ${parsedError.error}`;
+          }
+        }
+
+        // If JSON parsing fails, return sanitized string
+        return `An unexpected error occurred while ${action}: ${sanitizedError}`;
+      } catch (e) {
+        // If an error occurs during parsing, return the raw error
+        return `An unexpected error occurred while ${action}: ${error.error}`;
+      }
+    } else if (error.error && error.error.error) {
+      // Error object already parsed
+      return `Error while ${action}: ${error.error.error}`;
+    }
+
+    // Default fallback
+    return `An unexpected error occurred while ${action}: ${error.message}`;
+  }
 
   createDataModelFromJson(file: File): Observable<void> {
     const url = `${this.apiUrl}`;
@@ -208,7 +248,9 @@ export class DataModelService {
                 observer.complete();
               });
             },
-            error: (error) => observer.error(error),
+            error: (error: HttpErrorResponse) => {
+              observer.error(this.extractErrorMessage(error, 'creating JSON data model'));
+            },
           });
         } catch (error) {
           observer.error('Error parsing JSON file: ' + error);
@@ -217,7 +259,6 @@ export class DataModelService {
       reader.readAsText(file);
     });
   }
-
 
 
   updateDataModelFromJson(dataModelId: string, file: File): Observable<void> {
@@ -236,7 +277,9 @@ export class DataModelService {
                 observer.complete();
               });
             },
-            error: (error) => observer.error(error),
+            error: (error: HttpErrorResponse) => {
+              observer.error(this.extractErrorMessage(error, 'updating JSON data model'));
+            },
           });
         } catch (error) {
           observer.error('Error parsing JSON file: ' + error);
@@ -245,7 +288,6 @@ export class DataModelService {
       reader.readAsText(file);
     });
   }
-
   updateDataModelFromExcel(dataModelId: string, file: File, version: string, longitudinal: string): Observable<any[]> {
     const url = `${this.apiUrl}/${dataModelId}/excel`;
 
@@ -257,9 +299,9 @@ export class DataModelService {
     return this.http.put<void>(url, formData).pipe(
       switchMap(() => this.reloadDataModels()), // Reload data models after update
       tap(() => console.log('Data model updated successfully (Excel).')),
-      catchError((error) => {
-        console.error('Error updating data model (Excel):', error);
-        return throwError(() => error);
+      catchError((error: HttpErrorResponse) => {
+        const errorMessage = this.extractErrorMessage(error, 'updating Excel data model');
+        return throwError(() => errorMessage);
       })
     );
   }

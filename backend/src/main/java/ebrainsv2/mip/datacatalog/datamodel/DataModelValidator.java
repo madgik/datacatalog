@@ -1,72 +1,40 @@
 package ebrainsv2.mip.datacatalog.datamodel;
 
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
 
 public class DataModelValidator {
+    public static String validateJson(String dqtValidateJsonUrl, DataModelDTO dataModelDTO) throws IOException {
+        // Serialize DataModelDTO to JSON
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(dataModelDTO);
 
-    public static boolean containsRequiredDataset(List<CommonDataElementDTO> variables, List<DataModelMetadataGroupDTO> groups) {
-        boolean datasetValid = false;
+        // Setup the request to Flask API
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-        if (variables != null) {
-            datasetValid = variables.stream()
-                    .anyMatch(v -> v.code().equals("dataset") &&
-                            v.sql_type().equals("text") &&
-                            Boolean.TRUE.equals(v.isCategorical()));
-        }
+        HttpEntity<String> requestEntity = new HttpEntity<>(json, headers);
 
-        if (!datasetValid && groups != null) {
-            datasetValid = groups.stream()
-                    .anyMatch(g -> containsRequiredDataset(g.variables(), g.groups()));
-        }
-
-        return datasetValid;
-    }
-
-
-    public static void validateLongitudinalElements(List<CommonDataElementDTO> variables, List<DataModelMetadataGroupDTO> groups) {
-        validateSubjectId(variables, groups); // Validate presence of subjectid
-        validateVisitId(variables, groups); // Validate visitid with specific criteria
-    }
-
-    private static void validateSubjectId(List<CommonDataElementDTO> variables, List<DataModelMetadataGroupDTO> groups) {
-        boolean hasSubjectId = variables.stream().anyMatch(v -> v.code().equals("subjectid")) ||
-                groups.stream().anyMatch(g -> validatePresenceInGroup(g, "subjectid"));
-
-        if (!hasSubjectId) {
-            throw new InvalidDataModelError("CDE 'subjectid' is missing for a longitudinal study.");
+        RestTemplate restTemplate = new RestTemplate();
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(dqtValidateJsonUrl, requestEntity, String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("Validation success: " + response.getBody());
+                return response.getBody();
+            } else {
+                System.err.println("Validation failed with status: " + response.getStatusCode() + ", Body: " + response.getBody());
+                throw new RuntimeException("JSON validation failed: " + response.getBody());
+            }
+        } catch (Exception e) {
+            System.err.println("Unexpected error occurred while validating JSON: " + e.getMessage());
+            throw e;
         }
     }
 
-    private static void validateVisitId(List<CommonDataElementDTO> variables, List<DataModelMetadataGroupDTO> groups) {
-        boolean hasValidVisitId = variables.stream().anyMatch(DataModelValidator::isValidVisitId) ||
-                groups.stream().anyMatch(DataModelValidator::validateValidVisitIdInGroup);
-
-        if (!hasValidVisitId) {
-            throw new InvalidDataModelError("CDE 'visitid' does not meet the required conditions for a longitudinal study.");
-        }
-    }
-
-    static boolean isValidVisitId(CommonDataElementDTO v) {
-        return "visitid".equals(v.code()) && Boolean.TRUE.equals(v.isCategorical()) && "text".equals(v.sql_type()) && v.enumerations() != null;
-    }
-
-    private static boolean validatePresenceInGroup(DataModelMetadataGroupDTO group, String code) {
-        boolean foundInVariables = group.variables() != null &&
-                group.variables().stream().anyMatch(v -> code.equals(v.code()));
-
-        boolean foundInGroups = !foundInVariables && group.groups() != null &&
-                group.groups().stream().anyMatch(g -> validatePresenceInGroup(g, code));
-
-        return foundInVariables || foundInGroups;
-    }
-
-    private static boolean validateValidVisitIdInGroup(DataModelMetadataGroupDTO group) {
-        boolean validVisitIdFound = group.variables() != null &&
-                group.variables().stream().anyMatch(DataModelValidator::isValidVisitId);
-
-        boolean validVisitIdInGroups = !validVisitIdFound && group.groups() != null &&
-                group.groups().stream().anyMatch(DataModelValidator::validateValidVisitIdInGroup);
-
-        return validVisitIdFound || validVisitIdInGroups;
-    }
 }

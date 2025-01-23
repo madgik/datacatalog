@@ -1,12 +1,12 @@
 <div>
-  <label for="federation">Select Federation:</label>
+  <!-- <label for="federation">Select Federation:</label> -->
   <select
     id="federation"
     class="dropdown"
     [(ngModel)]="selectedFederation"
     (change)="onFederationChange()"
   >
-    <option [ngValue]="null">---</option>
+    <option [ngValue]="null">All Federations</option>
     @for (federation of federations; track federation){
       <option
         [ngValue]="federation"

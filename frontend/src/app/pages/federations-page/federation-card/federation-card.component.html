@@ -2,25 +2,30 @@
   <img [src]="'assets/' + federation.code + '.png'" alt="{{ federation.title }}" class="federation-image">
   <div class="federation-content">
     <h3>{{ federation.title }}</h3>
-    <p>Data Records: {{ federation.records }} | Institutions: {{ federation.institutions }}</p>
+    @if (federation.institutions != '0') {
+      <p>Data Records: {{ federation.records }} | Institutions: {{ federation.institutions }}</p>
+    } @else {
+      <p>Data Records: {{ federation.records | number }}</p>
+    }
     <p>Data Models:</p>
     <ul>
       @for (dataModel of federation.dataModels; track dataModel){
         <li>
-          {{ dataModel.code + '_' + dataModel.version }}
+          {{ dataModel.label + ' ' + dataModel.version }}
         </li>
       }
     </ul>
-    <p class="federation-description">{{ federation.description }}</p>
-    <p>
-      Public URL:
-      <a [href]="federation.url" target="_blank">{{ federation.url }}</a>
+    <p class="federation-description">
+      {{ showMore ? federation.description : (federation.description | slice: 0:100) + '...' }}
+      <span class="toggle-description" (click)="toggleDescription()">
+        {{ showMore ? 'Read Less' : 'Read More' }}
+      </span>
     </p>
     <div class="federation-buttons">
       <button class="data-model-btn" (click)="viewDataModel()">Data Model</button>
-      <button class="request-access-btn">Request Access</button>
+      <button class="visit-btn" (click)="navigateToFederation(federation.url)">Visit Federation</button>
       @if (isAdmin){
-        <button class="update-btn" (click)="update()">✏️ Update</button>
+        <button class="update-btn" (click)="update()">✏️ Edit</button>
         <button class="delete-btn" (click)="delete()">🗑️ Delete</button>
       }
     </div>

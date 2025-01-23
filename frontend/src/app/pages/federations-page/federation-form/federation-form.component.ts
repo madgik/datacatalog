@@ -54,6 +54,10 @@ export class FederationFormComponent implements OnInit {
     this.loadDataModels();
   }
 
+  closeModal(): void {
+    this.router.navigate(['/federations']); // Navigate back to the federations list or previous page
+  }
+
   loadFederation(code: string): void {
     this.federationService.getFederationsWithModels().subscribe((federations) => {
       const federation = federations.find((f) => f.code === code);

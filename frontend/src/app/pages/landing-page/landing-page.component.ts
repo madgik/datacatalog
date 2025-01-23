@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FederationService } from '../../services/federation.service';
 import { Federation } from "../../interfaces/federations.interface";
 import { AuthService } from '../../services/auth.service';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-landing-page',
@@ -15,9 +16,13 @@ export class LandingPageComponent implements OnInit {
   federations: Federation[] = [];
   selectedFederation!: Federation;
 
+  private readonly SIGN_UP_URL = 'https://www.ebrains.eu/page/sign-up';
+
   constructor(
     private federationService: FederationService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
+
   ) {}
 
   isLoggedIn(): boolean {
@@ -25,17 +30,26 @@ export class LandingPageComponent implements OnInit {
   }
 
   redirectToSignUp(): void {
-    window.open('https://www.ebrains.eu/page/sign-up', '_blank');
-    alert('After completing registration, return to this page.');
+    window.open(this.SIGN_UP_URL, '_blank');
   }
 
+  navigateToFederation(url: string): void {
+      window.open(url, '_blank');
+  }
 
   learnMore(): void {
-
+    this.router.navigate(['/about']);
   }
 
   getStarted(): void {
+    this.router.navigate(['/federations']);
+  }
 
+  onCloseDisclaimer(): void {
+    const disclaimer = document.getElementById('disclaimer');
+    if (disclaimer) {
+      disclaimer.style.display = 'none';
+    }
   }
 
   ngOnInit(): void {

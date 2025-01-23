@@ -1,0 +1,22 @@
+.breadcrumbs {
+  font-size: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.breadcrumb {
+  cursor: pointer;
+  color: #007acc;
+  transition: color 0.2s ease;
+}
+
+.breadcrumb.active {
+  font-weight: bold;
+  color: #555;
+  cursor: default;
+}
+
+.breadcrumb:hover:not(.active) {
+  color: #005f99;
+}

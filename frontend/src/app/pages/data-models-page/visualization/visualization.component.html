@@ -1,19 +1,46 @@
-<div class="visualization-type-container">
-  <label for="visualization">Select Visualization:</label>
-  <select class="dropdown" id="visualization" (change)="onVisualizationTypeChange($event)">
-    <option value="ZoomableCirclePacking">Zoomable Circle Packing</option>
-    <option value="ZoomableSunburst">Zoomable Sunburst</option>
-    <option value="TidyTree">TidyTree</option>
-  </select>
-</div>
-
 <div id="chart-container">
-  @if (!error) {
-    <!-- Chart will render here -->
-    <div id="chart" style="width: 100%; height: 800px;"></div>
-  } @else {
+  <!-- Unified Toolbar -->
+  <div id="toolbar">
+    <div id="breadcrumbs">
+      <app-breadcrumb
+        [breadcrumbs]="breadcrumbPath"
+        (breadcrumbClick)="handleBreadcrumbClick($event)"
+      ></app-breadcrumb>
+    </div>
+
+    <div id="zoom-control">
+      <label for="zoomToggle">{{ isZoomEnabled ? 'Zoom Enabled:' : 'Zoom Disabled:' }}</label>
+      <input type="checkbox" id="zoomToggle" [(ngModel)]="isZoomEnabled" (change)="onZoomToggleChange()" />
+      <label for="zoomToggle" class="checkbox-indicator"></label>
+    </div>
+
+
+    <div id="max-depth-container">
+      <label for="maxDepth">Max Depth:</label>
+      <select id="maxDepth" [(ngModel)]="maxDepth" (change)="onMaxDepthChange()">
+        <option *ngFor="let depth of createArray(newAvailableDepths)" [value]="depth">
+          {{ depth }}
+        </option>
+      </select>
+    </div>
+
+    <div id="search-bar-container">
+      <app-search-bar
+        *ngIf="dataModelHierarchy"
+        [dataModelHierarchy]="dataModelHierarchy"
+        (searchResultSelected)="onSearchResult($event)"
+      ></app-search-bar>
+    </div>
+  </div>
+
+  <!-- Chart or Error Template -->
+  <ng-container *ngIf="!error; else errorTemplate">
+    <div id="chart" style="width: 100%; height: 100%;"></div>
+  </ng-container>
+  <ng-template #errorTemplate>
     <div class="error-message">
       {{ error }}
     </div>
-  }
+  </ng-template>
+
 </div>

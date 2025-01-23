@@ -84,17 +84,24 @@ def json_to_excel():
 @app.route("/validate-json", methods=["POST"])
 def validate_json():
     logger.info("validate_json endpoint accessed")
-    if not request.json:
-        logger.error("No JSON provided in request")
-        return jsonify({"error": "No JSON provided"}), 400
-    json_data = request.json
     try:
+        if not request.json:
+            logger.error("No JSON provided in request")
+            return jsonify({"error": "No JSON provided"}), 400
+
+        json_data = request.json
+        logger.info(f"Received JSON: {json_data}")
+
+        # Validate the JSON
         json_validator.validate_json(json_data)
         logger.info("JSON data is valid")
         return jsonify({"message": "Data model is valid."})
     except json_validator.InvalidDataModelError as e:
         logger.error(f"JSON validation error: {str(e)}")
         return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        logger.error(f"Unhandled error: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
 
 
 @app.route("/validate-excel", methods=["POST"])

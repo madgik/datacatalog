@@ -1,42 +1,104 @@
-
-/* Export options container for the export dropdown */
-.export-options {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+/* Export container */
+.export-container {
+  position: relative;
+  display: inline-block;
 }
 
-/* Export label styling */
+/* Icon button */
+.export-icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+  color: #fff;
+  background: linear-gradient(90deg, #00758c, #00a6c0);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.export-icon-button:hover {
+  background: linear-gradient(90deg, #005f73, #008fb0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.export-icon-button:focus {
+  outline: none;
+  box-shadow: 0 0 6px rgba(0, 117, 140, 0.5);
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+  position: absolute;
+  top: 54px; /* Position below the button */
+  right: 0; /* Align to the right of the button */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease;
+  z-index: 1001;
+}
+
+/* Dropdown label */
 .export-label {
   font-size: 14px;
   color: #333;
-  font-weight: bold;
+  margin-bottom: 4px;
 }
 
-/* Export button styling */
-.export-confirm-button {
-  display: flex;
-  align-items: center;
+/* Styled dropdown */
+.dropdown {
   padding: 8px 12px;
-  font-size: 13px;
-  font-weight: bold;
-  background-color: #4CAF50;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.dropdown:focus {
+  outline: none;
+  border-color: #005f73;
+  box-shadow: 0 0 6px rgba(0, 90, 102, 0.5);
+}
+
+/* Confirm button */
+.confirm-button {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
   color: #fff;
+  background: linear-gradient(90deg, #00758c, #00a6c0);
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+
 }
 
-.export-confirm-button:hover {
-  background-color: #45a049;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+.confirm-button:hover {
+  background: linear-gradient(90deg, #005f73, #008fb0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Printer icon styling within Export button */
-.printer-icon::before {
-  content: "\1F5A8";
-  font-size: 16px;
-  margin-right: 4px;
-  color: #fff;
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -1,51 +1,165 @@
-/* Common dropdown styling for all select elements */
-.dropdown {
-  padding: 8px;
-  font-size: 15px;
-  font-weight: 500;
-  color: #333;
+/* General container styling */
+#chart-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
   background-color: #fff;
   border: 1px solid #ddd;
-  border-radius: 4px;
-  max-width: 220px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Hover and focus styling for dropdowns */
-.dropdown:hover,
-.dropdown:focus {
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-/* Visualization type container */
-.visualization-type-container {
+/* Unified Toolbar */
+#toolbar {
+  flex-wrap: wrap;
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 4px;
-}
-
-/* Chart container styling */
-#chart-container {
-  padding: 5px;
+  justify-content: space-between; /* Align items properly */
   background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  overflow-x: auto;
-  overflow-y: auto;
-  height: calc(100vh - 250px);
-  width: calc(87% - 20px);
-  display: inline-block;
-  vertical-align: top;
+  padding: 5px 10px; /* Adjusted padding */
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  height: 50px; /* Add a fixed height */
+  gap: 10px; /* Add spacing between elements */
 }
 
-.error-message {
-  color: red;
-  font-size: 1.2em;
+#toolbar > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 100%; /* Ensure consistent height */
+}
+
+#breadcrumbs {
+  flex-grow: 1;
+  font-size: 13px; /* Smaller breadcrumbs */
+}
+
+#search-bar-container {
+  margin: 0;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#search-bar-container app-search-bar {
+  width: 100%;
+  max-width: 350px; /* Limit width */
+  height: 40px; /* Ensure same height */
+  display: flex;
+  align-items: center;
+  border: none; /* Remove border */
+  background-color: transparent; /* Remove background */
+}
+
+/* Chart Styling */
+#chart {
+  flex: 1;
+  overflow: auto;
+  width: 100%;
+  height: 100%; /* Adjust height to fit better */
+  margin: 0;
+}
+
+/* Max Depth Dropdown Styling */
+#max-depth-container {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: transparent; /* Remove box background */
+  height: 40px; /* Ensure consistent height with search bar */
+}
+
+#max-depth-container label {
+  font-weight: normal;
+  color: black;
+  font-size: 14px;
+}
+
+#max-depth-container select {
+  font-size: 14px;
+  padding: 4px 8px;
+  border: none; /* Remove border */
+  background-color: transparent; /* Remove background */
+  color: #333;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#max-depth-container select:hover {
+    box-shadow: none;
+    cursor: pointer;
+}
+
+#max-depth-container select:focus {
+  outline: none;
+}
+
+#zoom-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 15px;
+  font-size: 14px;
+}
+
+/* Hide the default checkbox */
+#zoomToggle {
+  display: none;
+}
+
+/* Style the indicator */
+.checkbox-indicator {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 2px solid #ccc;
+  margin-left: 10px;
+  position: relative;
   text-align: center;
-  padding: 20px;
-  border: 1px solid red;
-  background-color: #ffe5e5;
+  line-height: 16px;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  color: white;
+  cursor: pointer;
+}
+
+/* Green checkmark when enabled */
+#zoomToggle:checked + .checkbox-indicator {
+  background-color: green;
+  border-color: green;
+}
+
+#zoomToggle:checked + .checkbox-indicator::after {
+  content: '✓';
+  color: white;
+  font-size: 16px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Red X when disabled */
+#zoomToggle:not(:checked) + .checkbox-indicator {
+  background-color: red;
+  border-color: red;
+}
+
+#zoomToggle:not(:checked) + .checkbox-indicator::after {
+  content: '✗';
+  color: white;
+  font-size: 16px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

@@ -24,7 +24,7 @@ public class PersistenceConfiguration {
     @ConfigurationProperties(prefix = "spring.datasource")
     public DataSource datacatalogDataSource() {
         DataSourceBuilder<?> builder = DataSourceBuilder.create();
-        builder.url("jdbc:postgresql://datacatalog_db:5432/postgres");
+        builder.url("jdbc:postgresql://datacatalogdb:5432/postgres");
         builder.username("postgres");
         builder.password("test");
         builder.driverClassName("org.postgresql.Driver");
