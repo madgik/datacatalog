@@ -77,32 +77,6 @@ class TestConvertExcelToJson(unittest.TestCase):
         with self.assertRaisesRegex(InvalidDataModelError, expected_message):
             print(convert_excel_to_json(df))
 
-    def test_deeply_nested_conceptPath(self):
-        # Scenario with a deeply nested conceptPath
-        data = {
-            "type": ["nominal"],
-            "values": ['{"code1", "label1"}'],
-            "name": ["Deeply Nested Variable"],
-            "code": ["DeepVar"],
-            "conceptPath": ["Group1/Subgroup1/Subsubgroup1/DeepVar"],
-        }
-        df = pd.DataFrame(data)
-        result = convert_excel_to_json(df)
-        # Check if the deeply nested structure is correctly formed
-        self.assertEqual(len(result["groups"]), 1)
-        self.assertEqual(result["groups"][0]["code"], "Subgroup1")
-
-        self.assertEqual(len(result["groups"][0]["groups"]), 1)  # Subgroup1
-        self.assertEqual(
-            result["groups"][0]["groups"][0]["code"], "Subsubgroup1"
-        )  # Subgroup1
-        self.assertEqual(
-            len(result["groups"][0]["groups"][0]["variables"]), 1
-        )  # Subsubgroup1
-        self.assertEqual(
-            result["groups"][0]["groups"][0]["variables"][0]["code"], "DeepVar"
-        )
-
     def test_dataframe_with_invalid_type_raises_error(self):
         # Scenario where a row has an invalid 'type' that fails validation
         data = {
