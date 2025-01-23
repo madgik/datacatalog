@@ -32,27 +32,7 @@ class TestCleanEmptyFields(unittest.TestCase):
                         {
                             "code": "etiology",
                             "label": "etiology",
-                            "groups": [
-                                {
-                                    "code": "rare",
-                                    "label": "rare",
-                                    "variables": [
-                                        {
-                                            "label": "Other",
-                                            "code": "toast_rareoth",
-                                            "type": "nominal",
-                                            "description": "TOAST rare: other",
-                                            "enumerations": [
-                                                {"code": "0", "label": "no"},
-                                                {"code": "1", "label": "yes"},
-                                                {"code": "9", "label": "unknown"},
-                                            ],
-                                            "sql_type": "text",
-                                            "isCategorical": True,
-                                        }
-                                    ],
-                                }
-                            ],
+                            "groups": [],
                             "variables": [
                                 {
                                     "label": "Dissection",
@@ -171,6 +151,19 @@ class TestCleanEmptyFields(unittest.TestCase):
                                     "sql_type": "text",
                                     "isCategorical": True,
                                 },
+                                {
+                                    "label": "Other",
+                                    "code": "toast_rareoth",
+                                    "type": "nominal",
+                                    "description": "TOAST rare: other",
+                                    "enumerations": [
+                                        {"code": "0", "label": "no"},
+                                        {"code": "1", "label": "yes"},
+                                        {"code": "9", "label": "unknown"},
+                                    ],
+                                    "sql_type": "text",
+                                    "isCategorical": True,
+                                },
                             ],
                         },
                         {
@@ -180,34 +173,7 @@ class TestCleanEmptyFields(unittest.TestCase):
                                 {
                                     "code": "arterial",
                                     "label": "arterial",
-                                    "groups": [
-                                        {
-                                            "code": "MCA",
-                                            "label": "MCA",
-                                            "variables": [
-                                                {
-                                                    "label": "Side",
-                                                    "code": "isch_local_mca_side",
-                                                    "type": "nominal",
-                                                    "description": "Ischemic Stroke localisation MCA: side",
-                                                    "enumerations": [
-                                                        {"code": "1", "label": "right"},
-                                                        {"code": "2", "label": "left"},
-                                                        {
-                                                            "code": "3",
-                                                            "label": "bilateral",
-                                                        },
-                                                        {
-                                                            "code": "9",
-                                                            "label": "unknown",
-                                                        },
-                                                    ],
-                                                    "sql_type": "text",
-                                                    "isCategorical": True,
-                                                }
-                                            ],
-                                        }
-                                    ],
+                                    "groups": [],
                                     "variables": [
                                         {
                                             "label": "ACA",
@@ -276,6 +242,20 @@ class TestCleanEmptyFields(unittest.TestCase):
                                             "sql_type": "text",
                                             "isCategorical": True,
                                         },
+                                        {
+                                            "label": "Side",
+                                            "code": "isch_local_mca_side",
+                                            "type": "nominal",
+                                            "description": "Ischemic Stroke localisation MCA: side",
+                                            "enumerations": [
+                                                {"code": "1", "label": "right"},
+                                                {"code": "2", "label": "left"},
+                                                {"code": "3", "label": "bilateral"},
+                                                {"code": "9", "label": "unknown"},
+                                            ],
+                                            "sql_type": "text",
+                                            "isCategorical": True,
+                                        },
                                     ],
                                 }
                             ],
@@ -314,66 +294,6 @@ class TestCleanEmptyFields(unittest.TestCase):
             ],
         }
         expected = {
-            "uuid": "613d49ac-daf0-4ef8-8ae6-e6447cdd5f93",
-            "code": "example",
-            "version": "1.0",
-            "label": "Minimal Example",
-            "longitudinal": False,
-            "variables": [
-                {
-                    "code": "dataset",
-                    "label": "Dataset Variable",
-                    "description": "An example variable description",
-                    "sql_type": "text",
-                    "isCategorical": True,
-                    "enumerations": [{"code": "enum1", "label": "Enumeration 1"}],
-                    "type": "nominal",
-                    "methodology": "example methodology",
-                    "units": "unit",
-                }
-            ],
-            "groups": [
-                {
-                    "code": "Example Group",
-                    "label": "Example Group",
-                    "variables": [
-                        {
-                            "code": "group_variable",
-                            "label": "Group Variable",
-                            "description": "A variable within a group",
-                            "sql_type": "int",
-                            "isCategorical": False,
-                            "minValue": 0,
-                            "maxValue": 100,
-                            "type": "integer",
-                            "methodology": "group methodology",
-                            "units": "years",
-                        },
-                        {
-                            "code": "nested_group_variable",
-                            "label": "Nested Group Variable",
-                            "description": "A nested group variable",
-                            "sql_type": "text",
-                            "isCategorical": True,
-                            "enumerations": [
-                                {
-                                    "code": "nested_enum1",
-                                    "label": "Nested Enumeration 1",
-                                }
-                            ],
-                            "type": "nominal",
-                            "methodology": "nested methodology",
-                            "units": "",
-                        },
-                    ],
-                    "groups": [],
-                }
-            ],
-        }
-        remove_single_variable_group(data)
-        print(data)
-        self.assertEqual(data, expected)
-        bro = {
             "uuid": "613d49ac-daf0-4ef8-8ae6-e6447cdd5f93",
             "code": "example",
             "version": "1.0",
@@ -661,3 +581,5 @@ class TestCleanEmptyFields(unittest.TestCase):
                 }
             ],
         }
+        remove_single_variable_group(data)
+        self.assertEqual(data, expected)

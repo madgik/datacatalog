@@ -43,7 +43,8 @@ class TestValidationFunctions(unittest.TestCase):
         with self.assertRaises(InvalidDataModelError) as context:
             validate_min_max("2-1")
         self.assertEqual(
-            "Min value must be smaller than max value.", str(context.exception)
+            "Min value must be smaller than max value min_value='2' and max_value='1'.",
+            str(context.exception),
         )
 
     def test_validate_conceptPath_valid(self):

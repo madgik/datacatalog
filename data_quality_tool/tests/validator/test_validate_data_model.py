@@ -44,7 +44,8 @@ class TestValidateDataModel(unittest.TestCase):
                                 }
                             ],
                             "groups": [],
-                        }],
+                        }
+                    ],
                 }
             ],
         }
@@ -57,7 +58,7 @@ class TestValidateDataModel(unittest.TestCase):
             "label": "Incomplete Data Model",
             # Missing 'version', 'variables', and 'groups'
         }
-        expected_message = "Missing 'version' in DataModel"
+        expected_message = "DataModel is missing the required field 'version'. Please include it in the input JSON."
         with self.assertRaisesRegex(InvalidDataModelError, expected_message):
             validate_json(data_model_incomplete)
 
@@ -105,9 +106,7 @@ class TestValidateDataModel(unittest.TestCase):
                 }
             ],
         }
-        expected_message = (
-            "The data model must always contain a dataset CommonDataElement"
-        )
+        expected_message = "The DataModel must include at least one dataset CommonDataElement with code 'dataset', 'sql_type' as 'text', and 'isCategorical' set to true."
         with self.assertRaisesRegex(InvalidDataModelError, expected_message):
             validate_json(data_model_no_dataset)
 
@@ -185,9 +184,7 @@ class TestValidateDataModel(unittest.TestCase):
                 }
             ],
         }
-        expected_message = (
-            "Missing 'isCategorical' in CommonDataElement at '/DM006/invalid_var'"
-        )
+        expected_message = "Missing required field 'isCategorical' in CommonDataElement at path: '/DM006/invalid_var'. Please ensure all required fields are provided."
         with self.assertRaisesRegex(InvalidDataModelError, expected_message):
             validate_json(data_model)
 
@@ -229,7 +226,7 @@ class TestValidateDataModel(unittest.TestCase):
                 }
             ],
         }
-        expected_message = "Missing 'subjectid' for a longitudinal study at 'DataModel'"
+        expected_message = "Missing 'subjectid' CommonDataElement required for longitudinal studies at path: 'DataModel'. Ensure a valid 'subjectid' is defined."
         with self.assertRaisesRegex(InvalidDataModelError, expected_message):
             validate_json(data_model_missing_subjectid)
 
@@ -255,9 +252,7 @@ class TestValidateDataModel(unittest.TestCase):
                 }  # Invalid variable configuration
             ],
         }
-        expected_message = (
-            "Missing 'sql_type' in CommonDataElement at '/DM008/group1/group2/deep_var'"
-        )
+        expected_message = "Missing required field 'sql_type' in CommonDataElement at path: '/DM008/group1/group2/deep_var'. Please ensure all required fields are provided."
         with self.assertRaisesRegex(InvalidDataModelError, expected_message):
             validate_json(data_model)
 
@@ -292,7 +287,8 @@ class TestValidateDataModel(unittest.TestCase):
                 }
             ],
         }
-        expected_message = "Missing 'enumerations' for categorical CommonDataElement at '/DM009/categorical_var'"
+
+        expected_message = "'enumerations' is required for categorical CommonDataElement at path: '/DM009/categorical_var', but it is missing."
         with self.assertRaisesRegex(InvalidDataModelError, expected_message):
             validate_json(data_model)
 
@@ -320,7 +316,7 @@ class TestValidateDataModel(unittest.TestCase):
                 },  # Duplicate group code
             ],
         }
-        expected_message = "Duplicate Group code 'group1' found at '/DM010'"
+        expected_message = "Duplicate group code 'group1' detected at path: '/DM010'. Group codes must be unique within the data model hierarchy."
         with self.assertRaisesRegex(InvalidDataModelError, expected_message):
             validate_json(data_model)
 
@@ -351,7 +347,7 @@ class TestValidateDataModel(unittest.TestCase):
                 }
             ],
         }
-        expected_message = "Missing 'isCategorical' in CommonDataElement at '/DM008/groupA/groupB/deep_var'"
+        expected_message = "Missing required field 'isCategorical' in CommonDataElement at path: '/DM008/groupA/groupB/deep_var'. Please ensure all required fields are provided."
         with self.assertRaisesRegex(InvalidDataModelError, expected_message):
             validate_json(data_model)
 
@@ -391,9 +387,11 @@ class TestValidateDataModel(unittest.TestCase):
             "variables": [{}, "Not a dictionary"],  # Contains an invalid entry
             "groups": [{"code": "G001", "variables": [{}], "groups": []}],
         }
+        expected_message = "'variables' in DataModel must only contain dictionaries. Found invalid entries."
+
         with self.assertRaisesRegex(
             InvalidDataModelError,
-            "'variables' in DataModel must contain only dictionaries",
+            expected_message,
         ):
             validate_json(data_model)
 
@@ -408,13 +406,15 @@ class TestValidateDataModel(unittest.TestCase):
                     "sql_type": "text",
                     "isCategorical": True,
                     "type": "nominal",
+                    "enumerations": ["example1", "example2"],  # Added enumerations
                 }
             ],
             "groups": "Not a list",  # Invalid type for groups
         }
+        expected_message = "The DataModel must include at least one dataset CommonDataElement with code 'dataset', 'sql_type' as 'text', and 'isCategorical' set to true."
         with self.assertRaisesRegex(
             InvalidDataModelError,
-            "'groups' in DataModel must be a non-empty list of dictionaries",
+            expected_message,
         ):
             validate_json(data_model)
 
@@ -429,13 +429,15 @@ class TestValidateDataModel(unittest.TestCase):
                     "sql_type": "text",
                     "isCategorical": True,
                     "type": "nominal",
+                    "enumerations": ["example1", "example2"],  # Added enumerations
                 }
             ],
             "groups": [],  # Empty list for groups
         }
+        expected_message = "The DataModel must include at least one dataset CommonDataElement with code 'dataset', 'sql_type' as 'text', and 'isCategorical' set to true."
         with self.assertRaisesRegex(
             InvalidDataModelError,
-            "'groups' in DataModel must be a non-empty list of dictionaries",
+            expected_message,
         ):
             validate_json(data_model)
 
@@ -454,8 +456,10 @@ class TestValidateDataModel(unittest.TestCase):
             ],
             "groups": [{}, "Not a dictionary"],  # Contains an invalid entry
         }
+        expected_message = "'groups' in DataModel must only contain dictionaries. Found invalid entries."
+
         with self.assertRaisesRegex(
             InvalidDataModelError,
-            "'groups' in DataModel must contain only dictionaries",
+            expected_message,
         ):
             validate_json(data_model)

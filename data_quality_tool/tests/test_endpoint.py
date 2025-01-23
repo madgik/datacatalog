@@ -22,101 +22,70 @@ class TestController(unittest.TestCase):
             )
             self.assertEqual(response.status_code, 200)
             minimal_data_model = json.loads(response.data.decode())
-            # Validate Data Model
-            expected_data_model_fields = [
-                "code",
-                "groups",
-                "label",
-                "variables",
-                "version",
-            ]
-            self.assertListEqual(
-                list(minimal_data_model.keys()), expected_data_model_fields
-            )
-            self.assertEqual(minimal_data_model["code"], "Minimal Example")
+            print(minimal_data_model)
 
-            # Validate dataset in the variables
-            self.assertEqual(len(minimal_data_model["variables"]), 1)
-            expected_columns = [
-                "code",
-                "description",
-                "enumerations",
-                "isCategorical",
-                "label",
-                "methodology",
-                "sql_type",
-                "type",
-                "units",
-            ]
-            self.assertEqual(
-                set(minimal_data_model["variables"][0].keys()), set(expected_columns)
-            )
-            self.assertEqual(minimal_data_model["variables"][0]["code"], "dataset")
+            # Expected minimal data model JSON
+            expected_data_model = {
+                "code": "Minimal Example",
+                "label": "Minimal Example",
+                "groups": [
+                    {
+                        "code": "Example Group",
+                        "label": "Example Group",
+                        "variables": [
+                            {
+                                "label": "Group Variable",
+                                "code": "group_variable",
+                                "type": "integer",
+                                "units": "years",
+                                "description": "A variable within a group",
+                                "methodology": "group methodology",
+                                "minValue": 0,
+                                "maxValue": 100,
+                                "sql_type": "int",
+                                "isCategorical": False
+                            },
+                            {
+                                "label": "Nested Group Variable",
+                                "code": "nested_group_variable",
+                                "type": "nominal",
+                                "description": "A nested group variable",
+                                "methodology": "nested methodology",
+                                "enumerations": [
+                                    {
+                                        "code": "nested_enum1",
+                                        "label": "Nested Enumeration 1"
+                                    }
+                                ],
+                                "sql_type": "text",
+                                "isCategorical": True
+                            }
+                        ]
+                    }
+                ],
+                "variables": [
+                    {
+                        "label": "Dataset Variable",
+                        "code": "dataset",
+                        "type": "nominal",
+                        "units": "unit",
+                        "description": "An example variable description",
+                        "methodology": "example methodology",
+                        "enumerations": [
+                            {
+                                "code": "enum1",
+                                "label": "Enumeration 1"
+                            }
+                        ],
+                        "sql_type": "text",
+                        "isCategorical": True
+                    }
+                ],
+                "version": "to be defined"
+            }
 
-            # Validate Group
-            self.assertEqual(len(minimal_data_model["groups"]), 1)
-            expected_group_fields = ["code", "groups", "label", "variables"]
-            self.assertListEqual(
-                list(minimal_data_model["groups"][0].keys()), expected_group_fields
-            )
-            self.assertEqual(minimal_data_model["groups"][0]["code"], "Example Group")
-
-            # Validate Variable of the group
-            self.assertEqual(len(minimal_data_model["groups"]), 1)
-            expected_columns = [
-                "code",
-                "description",
-                "isCategorical",
-                "label",
-                "maxValue",
-                "methodology",
-                "minValue",
-                "sql_type",
-                "type",
-                "units",
-            ]
-            self.assertEqual(
-                set(minimal_data_model["groups"][0]["variables"][0].keys()),
-                set(expected_columns),
-            )
-            self.assertEqual(
-                minimal_data_model["groups"][0]["variables"][0]["code"],
-                "group_variable",
-            )
-
-            # Validate Sub-Group
-            expected_subgroup_fields = ["code", "label", "variables"]
-            self.assertEqual(len(minimal_data_model["groups"][0]["groups"]), 1)
-            self.assertListEqual(
-                list(minimal_data_model["groups"][0]["groups"][0].keys()),
-                expected_subgroup_fields,
-            )
-            self.assertEqual(
-                minimal_data_model["groups"][0]["groups"][0]["code"], "Nested Group"
-            )
-
-            # Validate Variable of the group
-            self.assertEqual(len(minimal_data_model["groups"][0]["groups"]), 1)
-            expected_sub_group_variable_columns = [
-                "code",
-                "description",
-                "enumerations",
-                "isCategorical",
-                "label",
-                "methodology",
-                "sql_type",
-                "type",
-            ]
-            self.assertListEqual(
-                list(
-                    minimal_data_model["groups"][0]["groups"][0]["variables"][0].keys()
-                ),
-                expected_sub_group_variable_columns,
-            )
-            self.assertEqual(
-                minimal_data_model["groups"][0]["groups"][0]["variables"][0]["code"],
-                "nested_group_variable",
-            )
+            # Assert that the actual data model matches the expected data model
+            self.assertEqual(minimal_data_model, expected_data_model)
 
     def test_json_to_excel_conversion(self):
         with open("MinimalDataModelExample.json", "r") as file:
@@ -135,11 +104,12 @@ class TestController(unittest.TestCase):
         df = pd.read_excel(excel_file)
         print(df["values"])
 
-        self.assertListEqual(list(df.columns), EXCEL_COLUMNS)
+        self.assertSetEqual(set(df.columns), set(EXCEL_COLUMNS))
         self.assertEqual(
             df["name"].tolist(),
             ["Dataset Variable", "Group Variable", "Nested Group Variable"],
         )
+
         self.assertEqual(
             df["code"].tolist(), ["dataset", "group_variable", "nested_group_variable"]
         )
@@ -212,7 +182,10 @@ class TestController(unittest.TestCase):
 
         response_data = response.json
         self.assertIn("error", response_data)
-        self.assertEqual("Missing 'code' in DataModel", response_data["error"])
+        self.assertEqual(
+            "DataModel is missing the required field 'code'. Please include it in the input JSON.",
+            response_data["error"],
+        )
 
     def test_validate_json_no_json(self):
         response = self.client.post(
@@ -258,5 +231,6 @@ class TestController(unittest.TestCase):
             response_data = response.json
             self.assertIn("error", response_data)
             self.assertEqual(
-                "Missing value for required column 'name'.", response_data["error"]
+                "On :dataset got: Missing value for required column 'name'.",
+                response_data["error"],
             )

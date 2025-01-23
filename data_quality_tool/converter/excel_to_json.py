@@ -214,7 +214,11 @@ def convert_excel_to_json(df):
         try:
 
             variable = process_variable(row.to_dict())
-            if "conceptPath" in variable and variable["conceptPath"] and variable["conceptPath"] != "None":
+            if (
+                "conceptPath" in variable
+                and variable["conceptPath"]
+                and variable["conceptPath"] != "None"
+            ):
                 path = variable["conceptPath"].split("/")
                 del variable["conceptPath"]
                 insert_variable_into_structure(root, variable, path)

@@ -7,6 +7,7 @@ TYPE_2_SQL = {
     "text": ("text", False),
 }
 
+
 def validate_common_data_element(cde, path):
     required_fields = ["code", "sql_type", "isCategorical", "type"]
 
@@ -41,6 +42,7 @@ def validate_common_data_element(cde, path):
                 f"Invalid range: 'minValue' ({cde['minValue']}) is greater than or equal to 'maxValue' ({cde['maxValue']}) in CommonDataElement at path: '{path}'."
             )
 
+
 def validate_group(group, path, seen_codes=None, seen_group_codes=None):
     if seen_codes is None:
         seen_codes = set()
@@ -49,7 +51,9 @@ def validate_group(group, path, seen_codes=None, seen_group_codes=None):
 
     group_code = group.get("code")
     if not group_code:
-        raise InvalidDataModelError(f"Group at path: '{path}' is missing the 'code' field. Please provide a unique code for each group.")
+        raise InvalidDataModelError(
+            f"Group at path: '{path}' is missing the 'code' field. Please provide a unique code for each group."
+        )
 
     group_path_code = f"{path}/{group_code}"
     if group_path_code in seen_group_codes:
@@ -78,12 +82,15 @@ def validate_group(group, path, seen_codes=None, seen_group_codes=None):
             seen_group_codes,
         )
 
+
 def validate_json(data_model):
     required_fields = ["code", "version", "label", "variables", "groups"]
 
     for field in required_fields:
         if field not in data_model:
-            raise InvalidDataModelError(f"DataModel is missing the required field '{field}'. Please include it in the input JSON.")
+            raise InvalidDataModelError(
+                f"DataModel is missing the required field '{field}'. Please include it in the input JSON."
+            )
 
     for field in ["code", "version", "label"]:
         if not isinstance(data_model[field], str) or not data_model[field].strip():
@@ -122,6 +129,7 @@ def validate_json(data_model):
             data_model["variables"], data_model["groups"], path="DataModel"
         )
 
+
 def contains_required_dataset(variables, groups, path=""):
     if groups is None:
         groups = []
@@ -144,6 +152,7 @@ def contains_required_dataset(variables, groups, path=""):
             return True
 
     return False
+
 
 def validate_longitudinal_elements(variables, groups, path):
     subjectid_present = any(v.get("code") == "subjectid" for v in variables)
@@ -168,6 +177,7 @@ def validate_longitudinal_elements(variables, groups, path):
         raise InvalidDataModelError(
             f"Missing 'visitid' CommonDataElement required for longitudinal studies at path: '{path}'. Ensure a valid 'visitid' is defined."
         )
+
 
 def has_valid_cde_in_group(cde_code, group, path):
     valid_cde_found = any(v.get("code") == cde_code for v in group.get("variables", []))
