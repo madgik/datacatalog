@@ -30,67 +30,61 @@ class TestController(unittest.TestCase):
                 "label": "Minimal Example",
                 "groups": [
                     {
-                      "code": "Example Group",
-                      "label": "Example Group",
-                      "variables": [
-                        {
-                          "code": "group_variable",
-                          "label": "Group Variable",
-                          "description": "A variable within a group",
-                          "sql_type": "int",
-                          "isCategorical": False,
-                          "minValue": 0,
-                          "maxValue": 100,
-                          "type": "integer",
-                          "methodology": "group methodology",
-                          "units": "years"
-                        }
-                      ],
-                      "groups": [
-                        {
-                          "code": "Nested Group",
-                          "label": "Nested Group",
-                          "variables": [
+                        "code": "Example Group",
+                        "label": "Example Group",
+                        "groups": [
                             {
-                              "code": "nested_group_variable",
-                              "label": "Nested Group Variable",
-                              "description": "A nested group variable",
-                              "sql_type": "text",
-                              "isCategorical": True,
-                              "enumerations": [
-                                {
-                                  "code": "nested_enum1",
-                                  "label": "Nested Enumeration 1"
-                                }
-                              ],
-                              "type": "nominal",
-                              "methodology": "nested methodology",
-                              "units": ""
+                                "code": "Nested Group",
+                                "label": "Nested Group",
+                                "variables": [
+                                    {
+                                        "label": "Nested Group Variable",
+                                        "code": "nested_group_variable",
+                                        "type": "nominal",
+                                        "description": "A nested group variable",
+                                        "methodology": "nested methodology",
+                                        "enumerations": [
+                                            {
+                                                "code": "nested_enum1",
+                                                "label": "Nested Enumeration 1",
+                                            }
+                                        ],
+                                        "sql_type": "text",
+                                        "isCategorical": True,
+                                    }
+                                ],
                             }
-                          ]
-                        }
-                      ]
+                        ],
+                        "variables": [
+                            {
+                                "label": "Group Variable",
+                                "code": "group_variable",
+                                "type": "integer",
+                                "units": "years",
+                                "description": "A variable within a group",
+                                "methodology": "group methodology",
+                                "minValue": 0,
+                                "maxValue": 100,
+                                "sql_type": "int",
+                                "isCategorical": False,
+                            }
+                        ],
                     }
                 ],
                 "variables": [
                     {
-                        "code": "dataset",
                         "label": "Dataset Variable",
+                        "code": "dataset",
+                        "type": "nominal",
+                        "units": "unit",
                         "description": "An example variable description",
+                        "methodology": "example methodology",
+                        "enumerations": [{"code": "enum1", "label": "Enumeration 1"}],
                         "sql_type": "text",
                         "isCategorical": True,
-                        "enumerations": [
-                            {
-                                "code": "enum1",
-                                "label": "Enumeration 1"
-                            }
-                        ],
-                        "type": "nominal",
-                        "methodology": "example methodology",
-                        "units": "unit"
                     }
                 ],
-                "version": "to be defined"
+                "version": "to be defined",
             }
 
             # Assert that the actual data model matches the expected data model
@@ -111,7 +105,6 @@ class TestController(unittest.TestCase):
         # Read the Excel file from the response
         excel_file = BytesIO(response.data)
         df = pd.read_excel(excel_file)
-        print(df["values"])
 
         self.assertSetEqual(set(df.columns), set(EXCEL_COLUMNS))
         self.assertEqual(
