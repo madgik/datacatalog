@@ -30,55 +30,64 @@ class TestController(unittest.TestCase):
                 "label": "Minimal Example",
                 "groups": [
                     {
-                        "code": "Example Group",
-                        "label": "Example Group",
-                        "variables": [
+                      "code": "Example Group",
+                      "label": "Example Group",
+                      "variables": [
+                        {
+                          "code": "group_variable",
+                          "label": "Group Variable",
+                          "description": "A variable within a group",
+                          "sql_type": "int",
+                          "isCategorical": False,
+                          "minValue": 0,
+                          "maxValue": 100,
+                          "type": "integer",
+                          "methodology": "group methodology",
+                          "units": "years"
+                        }
+                      ],
+                      "groups": [
+                        {
+                          "code": "Nested Group",
+                          "label": "Nested Group",
+                          "variables": [
                             {
-                                "label": "Group Variable",
-                                "code": "group_variable",
-                                "type": "integer",
-                                "units": "years",
-                                "description": "A variable within a group",
-                                "methodology": "group methodology",
-                                "minValue": 0,
-                                "maxValue": 100,
-                                "sql_type": "int",
-                                "isCategorical": False
-                            },
-                            {
-                                "label": "Nested Group Variable",
-                                "code": "nested_group_variable",
-                                "type": "nominal",
-                                "description": "A nested group variable",
-                                "methodology": "nested methodology",
-                                "enumerations": [
-                                    {
-                                        "code": "nested_enum1",
-                                        "label": "Nested Enumeration 1"
-                                    }
-                                ],
-                                "sql_type": "text",
-                                "isCategorical": True
+                              "code": "nested_group_variable",
+                              "label": "Nested Group Variable",
+                              "description": "A nested group variable",
+                              "sql_type": "text",
+                              "isCategorical": True,
+                              "enumerations": [
+                                {
+                                  "code": "nested_enum1",
+                                  "label": "Nested Enumeration 1"
+                                }
+                              ],
+                              "type": "nominal",
+                              "methodology": "nested methodology",
+                              "units": ""
                             }
-                        ]
+                          ]
+                        }
+                      ]
                     }
                 ],
                 "variables": [
                     {
-                        "label": "Dataset Variable",
                         "code": "dataset",
-                        "type": "nominal",
-                        "units": "unit",
+                        "label": "Dataset Variable",
                         "description": "An example variable description",
-                        "methodology": "example methodology",
+                        "sql_type": "text",
+                        "isCategorical": True,
                         "enumerations": [
                             {
                                 "code": "enum1",
                                 "label": "Enumeration 1"
                             }
                         ],
-                        "sql_type": "text",
-                        "isCategorical": True
+                        "type": "nominal",
+                        "methodology": "example methodology",
+                        "units": "unit"
                     }
                 ],
                 "version": "to be defined"
