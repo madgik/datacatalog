@@ -32,6 +32,29 @@ class TestController(unittest.TestCase):
                     {
                         "code": "Example Group",
                         "label": "Example Group",
+                        "groups": [
+                            {
+                                "code": "Nested Group",
+                                "label": "Nested Group",
+                                "variables": [
+                                    {
+                                        "label": "Nested Group Variable",
+                                        "code": "nested_group_variable",
+                                        "type": "nominal",
+                                        "description": "A nested group variable",
+                                        "methodology": "nested methodology",
+                                        "enumerations": [
+                                            {
+                                                "code": "nested_enum1",
+                                                "label": "Nested Enumeration 1",
+                                            }
+                                        ],
+                                        "sql_type": "text",
+                                        "isCategorical": True,
+                                    }
+                                ],
+                            }
+                        ],
                         "variables": [
                             {
                                 "label": "Group Variable",
@@ -43,24 +66,9 @@ class TestController(unittest.TestCase):
                                 "minValue": 0,
                                 "maxValue": 100,
                                 "sql_type": "int",
-                                "isCategorical": False
-                            },
-                            {
-                                "label": "Nested Group Variable",
-                                "code": "nested_group_variable",
-                                "type": "nominal",
-                                "description": "A nested group variable",
-                                "methodology": "nested methodology",
-                                "enumerations": [
-                                    {
-                                        "code": "nested_enum1",
-                                        "label": "Nested Enumeration 1"
-                                    }
-                                ],
-                                "sql_type": "text",
-                                "isCategorical": True
+                                "isCategorical": False,
                             }
-                        ]
+                        ],
                     }
                 ],
                 "variables": [
@@ -71,17 +79,12 @@ class TestController(unittest.TestCase):
                         "units": "unit",
                         "description": "An example variable description",
                         "methodology": "example methodology",
-                        "enumerations": [
-                            {
-                                "code": "enum1",
-                                "label": "Enumeration 1"
-                            }
-                        ],
+                        "enumerations": [{"code": "enum1", "label": "Enumeration 1"}],
                         "sql_type": "text",
-                        "isCategorical": True
+                        "isCategorical": True,
                     }
                 ],
-                "version": "to be defined"
+                "version": "to be defined",
             }
 
             # Assert that the actual data model matches the expected data model
@@ -102,7 +105,6 @@ class TestController(unittest.TestCase):
         # Read the Excel file from the response
         excel_file = BytesIO(response.data)
         df = pd.read_excel(excel_file)
-        print(df["values"])
 
         self.assertSetEqual(set(df.columns), set(EXCEL_COLUMNS))
         self.assertEqual(

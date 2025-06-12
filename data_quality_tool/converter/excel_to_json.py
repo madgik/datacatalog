@@ -150,6 +150,8 @@ def process_variable(row):
 
 
 def remove_single_variable_group(group, parent=None):
+    # This is used only in the case that we want to extract from a tree only the variables that actually have values,
+    # so that the tree has a more clear structure.
     if "groups" in group:
         # Process subgroups recursively
         for subgroup in group["groups"]:
@@ -232,9 +234,6 @@ def convert_excel_to_json(df):
     if root["groups"]:
         data_model = root["groups"][0]
         data_model["version"] = "to be defined"
-        groups_to_process = list(data_model["groups"])
-        for group in groups_to_process:
-            remove_single_variable_group(group, data_model)
         clean_empty_fields(data_model)
 
         return data_model
