@@ -1,9 +1,8 @@
-# Persistent Volume Claim
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: db-pvc
-  namespace: default
+  namespace: {{ .Values.namespace }}
   labels:
     app: db
 spec:
@@ -11,17 +10,38 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi
-  storageClassName: k8s-local-storage
+      storage: {{ .Values.datacatalogDb.storage }}
+  storageClassName: |
+    {{- if .Values.managed_cluster }}
+    ceph-corbo-cephfs
+    {{- else }}
+    k8s-local-storage
+    {{- end }}
 
 ---
 
-# PostgreSQL Deployment
+{{- if not .Values.managed_cluster }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: db-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: k8s-local-storage
+  hostPath:
+    path: /data/db
+{ { - end } }
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: db
-  namespace: default
+  namespace: {{ .Values.namespace }}
   labels:
     app: db
 spec:
@@ -36,16 +56,16 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:15
+          image: {{ .Values.datacatalogDb.image }}
           ports:
             - containerPort: 5432
           env:
             - name: POSTGRES_PASSWORD
-              value: "{{ .Values.datacatalogDb.password }}" # Replace with a secure password
+              value: {{ .Values.datacatalogDb.password | quote }}
             - name: POSTGRES_USER
-              value: "{{ .Values.datacatalogDb.user }}" # Replace with your preferred username
+              value: {{ .Values.datacatalogDb.user | quote }}
             - name: POSTGRES_DB
-              value: "{{ .Values.datacatalogDb.db }}" # Replace with your preferred database name
+              value: {{ .Values.datacatalogDb.db | quote }}
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgres-data
@@ -56,12 +76,11 @@ spec:
 
 ---
 
-# PostgreSQL Service
 apiVersion: v1
 kind: Service
 metadata:
   name: datacatalogdb
-  namespace: default
+  namespace: {{ .Values.namespace }}
   labels:
     app: db
 spec:
@@ -71,17 +90,3 @@ spec:
       targetPort: 5432
   selector:
     app: db
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: db-pv
-spec:
-  capacity:
-    storage: 10Gi
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: k8s-local-storage
-  hostPath:
-    path: /data/db
-
