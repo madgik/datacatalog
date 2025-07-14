@@ -33,7 +33,7 @@ spec:
   storageClassName: k8s-local-storage
   hostPath:
     path: /data/db
-{ { - end } }
+{{- end }}
 
 ---
 
