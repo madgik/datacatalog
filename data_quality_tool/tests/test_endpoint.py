@@ -63,7 +63,7 @@ class TestController(unittest.TestCase):
                                 "units": "years",
                                 "description": "A variable within a group",
                                 "methodology": "group methodology",
-                                "minValue": 0,
+                                "minValue": -10,
                                 "maxValue": 100,
                                 "sql_type": "int",
                                 "isCategorical": False,
@@ -120,7 +120,7 @@ class TestController(unittest.TestCase):
             df["values"].tolist(),
             [
                 '{"enum1","Enumeration 1"}',
-                "0-100",
+                "-10-100",
                 '{"nested_enum1","Nested Enumeration 1"}',
             ],
         )

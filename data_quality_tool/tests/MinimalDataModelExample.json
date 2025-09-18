@@ -32,7 +32,7 @@
           "description": "A variable within a group",
           "sql_type": "int",
           "isCategorical": false,
-          "minValue": 0,
+          "minValue": -10,
           "maxValue": 100,
           "type": "integer",
           "methodology": "group methodology",

@@ -13,8 +13,6 @@ spec:
       labels:
         app: backend
     spec:
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: backend
         image: "{{ .Values.datacatalog_images.repository }}/datacatalog_backend:{{ .Values.datacatalog_images.tag }}"
@@ -24,11 +22,17 @@ spec:
         - name: DB_URL
           value: "{{ .Values.backend.dbUrl }}"
         - name: DB_USER
-          value: "{{ .Values.backend.dbUser }}"
+          valueFrom:
+            secretKeyRef:
+              name: datacatalog-secrets
+              key: db.user
         - name: DB_PASSWORD
-          value: "{{ .Values.backend.dbPassword }}"
+          valueFrom:
+            secretKeyRef:
+              name: datacatalog-secrets
+              key: db.password
         - name: PUBLIC_HOST
-          value: "{{ .Values.backend.publicHost }}"
+          value: "http://{{ .Values.backend.publicHost }}"
         - name: DQT_URL
           value: "{{ .Values.backend.dqtUrl }}"
         - name: KEYCLOAK_AUTH_URL
@@ -36,9 +40,15 @@ spec:
         - name: KEYCLOAK_REALM
           value: "{{ .Values.backend.keycloak.realm }}"
         - name: KEYCLOAK_CLIENT_ID
-          value: "{{ .Values.backend.keycloak.clientId }}"
+          valueFrom:
+            secretKeyRef:
+              name: datacatalog-secrets
+              key: keycloak.client-id
         - name: KEYCLOAK_CLIENT_SECRET
-          value: "{{ .Values.backend.keycloak.clientSecret }}"
+          valueFrom:
+            secretKeyRef:
+              name: datacatalog-secrets
+              key: keycloak.client-secret
         - name: KEYCLOAK_SSL_REQUIRED
           value: "{{ .Values.backend.keycloak.sslRequired }}"
 ---
@@ -51,8 +61,11 @@ spec:
   selector:
     app: backend
   ports:
-  - protocol: TCP
-    port: 8090
-    targetPort: 8090
-    nodePort: 30090  # Static NodePort for backend
+    - protocol: TCP
+      port: 8090
+      targetPort: 8090
+  {{- if .Values.managed_cluster }}
+      nodePort: 30090  # Static NodePort for backend
   type: NodePort
+  {{- end }}
+

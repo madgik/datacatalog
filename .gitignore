@@ -1,5 +1,6 @@
 /backend/target/
 /backend/.idea/
+/.idea/
 /data_quality_tool/.idea/
 /frontend/.angular/
 /frontend/.idea/

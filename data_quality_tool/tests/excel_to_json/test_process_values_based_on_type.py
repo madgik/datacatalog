@@ -18,7 +18,7 @@ class TestProcessValuesBasedOnType(unittest.TestCase):
         with self.assertRaises(InvalidDataModelError) as context:
             process_values_based_on_type(row, variable)
         self.assertIn(
-            "Range values for variable None must be valid integer numbers",
+            "Variable None declared as integer but range bounds '1.1-100.1' are not whole numbers.",
             str(context.exception),
         )
 
@@ -73,7 +73,7 @@ class TestProcessValuesBasedOnType(unittest.TestCase):
         with self.assertRaises(InvalidDataModelError) as context:
             process_values_based_on_type(row, variable)
         self.assertIn(
-            "Values must match format '<float or integer>-<float or integer>",
+            "Range values for variable VInvalidInt must be valid numbers but got 'not-an-int - 100'.",
             str(context.exception),
         )
 
@@ -83,7 +83,7 @@ class TestProcessValuesBasedOnType(unittest.TestCase):
         with self.assertRaises(InvalidDataModelError) as context:
             process_values_based_on_type(row, variable)
         self.assertIn(
-            "Values must match format '<float or integer>-<float or integer>",
+            "Range values for variable VInvalidReal must be valid numbers but got '0.1 - not-a-real'.",
             str(context.exception),
         )
 
@@ -93,6 +93,6 @@ class TestProcessValuesBasedOnType(unittest.TestCase):
         with self.assertRaises(InvalidDataModelError) as context:
             process_values_based_on_type(row, variable)
         self.assertIn(
-            "Values must match format '<float or integer>-<float or integer>",
+            "Range values for variable VInvalidReal must be valid numbers but got 'a-b'.",
             str(context.exception),
         )

@@ -33,23 +33,28 @@ def validate_enumerations(values):
             f"Duplicate codes found in enumeration values {codes=}."
         )
 
-
 def validate_min_max(values):
     """Validate the format and logic of min-max values."""
-    try:
-        # Attempt to split the string into exactly two parts and unpack
-        min_value, max_value = values.split("-")
+    # Split on the last hyphen only, so "-10-100" → ["-10", "100"]
+    parts = values.rsplit("-", 1)
+    if len(parts) != 2:
+        raise InvalidDataModelError(
+            f"Values must match format '<float or integer>-<float or integer>' but got '{values}'."
+        )
 
-        # Try to convert both parts into floats
-        float(min_value)
-        float(max_value)
+    min_str, max_str = parts[0].strip(), parts[1].strip()
+
+    try:
+        min_val = float(min_str)
+        max_val = float(max_str)
     except ValueError:
         raise InvalidDataModelError(
             f"Values must match format '<float or integer>-<float or integer>' but got '{values}'."
         )
-    if float(min_value) >= float(max_value):
+
+    if min_val >= max_val:
         raise InvalidDataModelError(
-            f"Min value must be smaller than max value {min_value=} and {max_value=}."
+            f"Min value must be smaller than max value {min_str=} and {max_str=}."
         )
 
 
