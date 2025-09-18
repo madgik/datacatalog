@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: dqt
-        image: "{{ .Values.datacatalog_images.repository }}/datacatalog_data_quality_tool:1.0.2"
+        image: "{{ .Values.datacatalog_images.repository }}/datacatalog_data_quality_tool:{{ .Values.datacatalog_images.tag }}"
         ports:
         - containerPort: 8000
         env:
