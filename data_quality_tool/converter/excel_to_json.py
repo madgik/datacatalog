@@ -71,6 +71,7 @@ def process_values_based_on_type(row, variable):
     Processes the 'values' field based on the variable's 'type':
     - For 'integer' or 'real', extracts 'minValue' and 'maxValue' from a range specified in 'values'
       and ensures these values are of the appropriate type.
+      If 'type' is 'integer' but the parsed bounds aren't whole numbers, raises DatasetError.
     - For 'nominal', retrieves a list of 'enumerations' from 'values'.
     """
     code = row.get("code")
@@ -78,32 +79,36 @@ def process_values_based_on_type(row, variable):
     variable_type = row.get("type")
 
     if variable_type in ["real", "integer"] and values:
-        try:
-            # Attempt to split the string into exactly two parts and unpack
-            min_value, max_value = values.split("-")
-
-            # Try to convert both parts into floats
-            float(min_value)
-            float(max_value)
-        except Exception:
+        # Split on the last hyphen only
+        parts = values.rsplit("-", 1)
+        if len(parts) != 2:
             raise InvalidDataModelError(
                 f"Values must match format '<float or integer>-<float or integer>' but got '{values}'."
             )
 
-        # Convert min and max values to the appropriate type
+        min_str, max_str = parts[0].strip(), parts[1].strip()
+
+        # Parse both ends as floats first
         try:
-            if variable_type == "integer":
-                variable["minValue"], variable["maxValue"] = int(min_value), int(
-                    max_value
-                )
-            elif variable_type == "real":
-                variable["minValue"], variable["maxValue"] = float(min_value), float(
-                    max_value
-                )
+            min_val = float(min_str)
+            max_val = float(max_str)
         except ValueError:
             raise InvalidDataModelError(
-                f"Range values for variable {code} must be valid {variable_type} numbers"
+                f"Range values for variable {code} must be valid numbers but got '{values}'."
             )
+
+        if variable_type == "integer":
+            # If either bound has a fractional part, that's invalid for integer variables
+            if not min_val.is_integer() or not max_val.is_integer():
+                raise InvalidDataModelError(
+                    f"Variable {code} declared as integer but range bounds '{values}' are not whole numbers."
+                )
+            # Safe to cast to int
+            variable["minValue"] = int(min_val)
+            variable["maxValue"] = int(max_val)
+        else:  # real
+            variable["minValue"] = min_val
+            variable["maxValue"] = max_val
 
     elif variable_type == "nominal":
         if not values:
