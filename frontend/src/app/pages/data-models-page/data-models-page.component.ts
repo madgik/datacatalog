@@ -49,6 +49,9 @@ export class DataModelsPageComponent implements OnInit{
   federations: Federation[] = [];
   selectedFederation: Federation | null = null;
   selectedDataModel: DataModel | null | undefined;
+  queryDataModelCode: string | null = null;
+  queryDataModelSlug: string | null = null;
+  queryLatestFlag = false;
   isDomainExpert = false;
   selectedFileType = signal<'json' | 'xlsx'>('json');
   crossSectionalModels: DataModel[] = [];
@@ -81,13 +84,33 @@ export class DataModelsPageComponent implements OnInit{
         // Now process the query parameters
         this.route.queryParams.subscribe((params) => {
           const federationCode = params['federationCode'];
+          const dataModelCode = params['dataModelCode'];
+          const latestFlag = params['latest'];
 
           // Set selectedFederation based on federationCode
           this.selectedFederation = federationCode
             ? this.federations.find((fed) => fed.code === federationCode) || null
             : null;
+
+          if (typeof dataModelCode === 'string') {
+            this.queryDataModelCode = this.normalizeIdentifier(dataModelCode);
+            this.queryDataModelSlug = this.slugifyIdentifier(this.queryDataModelCode);
+          } else {
+            this.queryDataModelCode = null;
+            this.queryDataModelSlug = null;
+          }
+          this.queryLatestFlag = this.parseLatestFlag(latestFlag);
+
+          console.log('[DataModels] Applied query params', {
+            federationCode,
+            dataModelCode,
+            normalizedCode: this.queryDataModelCode,
+            slug: this.queryDataModelSlug,
+            latest: this.queryLatestFlag,
+          });
+
+          this.loadDataModels();
         });
-        this.loadDataModels()
       },
       error: (error) => {
         console.error('Error loading federations:', error);
@@ -123,9 +146,7 @@ export class DataModelsPageComponent implements OnInit{
     const { crossSectional, longitudinal } = this.dataModelService.categorizeDataModels(dataModels);
     this.crossSectionalModels = crossSectional;
     this.longitudinalModels = longitudinal;
-    if (dataModels.length > 0) {
-      this.selectedDataModel = crossSectional[0] || longitudinal[0] || null;
-    }
+    this.selectedDataModel = this.pickDataModelSelection(crossSectional, longitudinal);
     this.loadVisualizationData();
   }
 
@@ -143,6 +164,170 @@ export class DataModelsPageComponent implements OnInit{
   onSelectedFederationChange(selectedFederation: Federation | null): void {
     this.selectedFederation = selectedFederation;
     this.loadDataModels();
+  }
+
+  private pickDataModelSelection(crossSectional: DataModel[], longitudinal: DataModel[]): DataModel | null {
+    const combined = [...crossSectional, ...longitudinal];
+
+    if (!this.queryDataModelCode) {
+      console.log('[DataModels] No dataModelCode query provided; falling back to first available model.');
+      return crossSectional[0] || longitudinal[0] || null;
+    }
+
+    const matchingLogs = combined.map((model) => {
+      const normalizedCode = this.normalizeIdentifier(model.code);
+      const normalizedLabel = this.normalizeIdentifier(model.label);
+      const candidates = [
+        normalizedCode,
+        normalizedLabel,
+        this.slugifyIdentifier(normalizedCode),
+        this.slugifyIdentifier(normalizedLabel),
+      ].filter((candidate): candidate is string => candidate !== null);
+
+      const exactMatch = candidates.some((candidate) =>
+        candidate === this.queryDataModelCode
+        || (this.queryDataModelSlug !== null && candidate === this.queryDataModelSlug)
+      );
+      const partialMatch = candidates.some((candidate) =>
+        (this.queryDataModelCode !== null && candidate.includes(this.queryDataModelCode))
+        || (this.queryDataModelSlug !== null && candidate.includes(this.queryDataModelSlug))
+      );
+
+      return {
+        code: model.code,
+        label: model.label,
+        version: model.version,
+        candidates,
+        exactMatch,
+        partialMatch,
+        matches: exactMatch || partialMatch,
+      };
+    });
+
+    const matchingModels = combined.filter((_, index) => matchingLogs[index].matches);
+
+    console.log('[DataModels] Evaluated data model matches', {
+      query: {
+        code: this.queryDataModelCode,
+        slug: this.queryDataModelSlug,
+        latest: this.queryLatestFlag,
+      },
+      results: matchingLogs,
+    });
+
+    if (matchingModels.length === 0) {
+      console.log('[DataModels] No matching data models found; falling back to default ordering.');
+      return crossSectional[0] || longitudinal[0] || null;
+    }
+
+    if (this.queryLatestFlag) {
+      const selectedLatest = matchingModels.reduce((latest, current) =>
+        this.compareSemanticVersions(current.version, latest.version) > 0 ? current : latest
+      , matchingModels[0]);
+      console.log('[DataModels] Selected latest matching model', {
+        code: selectedLatest.code,
+        label: selectedLatest.label,
+        version: selectedLatest.version,
+      });
+      return selectedLatest;
+    }
+
+    const selectedModel = matchingModels[0];
+    console.log('[DataModels] Selected matching model', {
+      code: selectedModel.code,
+      label: selectedModel.label,
+      version: selectedModel.version,
+    });
+    return selectedModel;
+  }
+
+  private parseLatestFlag(value: unknown): boolean {
+    if (typeof value === 'string') {
+      return value.toLowerCase() === 'true';
+    }
+    if (typeof value === 'boolean') {
+      return value;
+    }
+    return false;
+  }
+
+  private compareSemanticVersions(a: string | undefined, b: string | undefined): number {
+    const aTokens = this.tokenizeVersion(a);
+    const bTokens = this.tokenizeVersion(b);
+    const maxLength = Math.max(aTokens.length, bTokens.length);
+
+    for (let i = 0; i < maxLength; i += 1) {
+      const aToken = aTokens[i];
+      const bToken = bTokens[i];
+
+      if (aToken === undefined && bToken === undefined) {
+        return 0;
+      }
+      if (aToken === undefined) {
+        return -1;
+      }
+      if (bToken === undefined) {
+        return 1;
+      }
+
+      const aIsNumeric = /^\d+$/.test(aToken);
+      const bIsNumeric = /^\d+$/.test(bToken);
+
+      if (aIsNumeric && bIsNumeric) {
+        const aVal = parseInt(aToken, 10);
+        const bVal = parseInt(bToken, 10);
+        if (aVal !== bVal) {
+          return aVal > bVal ? 1 : -1;
+        }
+        continue;
+      }
+
+      if (aIsNumeric) {
+        return 1;
+      }
+      if (bIsNumeric) {
+        return -1;
+      }
+
+      if (aToken !== bToken) {
+        return aToken > bToken ? 1 : -1;
+      }
+    }
+
+    return 0;
+  }
+
+  private tokenizeVersion(value: string | undefined): string[] {
+    if (!value) {
+      return [];
+    }
+
+    const normalized = value.trim().toLowerCase();
+    if (!normalized) {
+      return [];
+    }
+
+    const rawTokens = normalized.match(/[a-z]+|\d+/g) || [];
+    if (rawTokens.length > 1 && rawTokens[0] === 'v') {
+      rawTokens.shift();
+    }
+    return rawTokens;
+  }
+
+  private normalizeIdentifier(value: unknown): string | null {
+    if (typeof value !== 'string') {
+      return null;
+    }
+    const normalized = value.trim().toLowerCase();
+    return normalized.length > 0 ? normalized : null;
+  }
+
+  private slugifyIdentifier(value: string | null): string | null {
+    if (!value) {
+      return null;
+    }
+    const slug = value.replace(/[^a-z0-9]/g, '');
+    return slug.length > 0 ? slug : null;
   }
 
 
