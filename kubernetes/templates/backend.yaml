@@ -64,7 +64,7 @@ spec:
     - protocol: TCP
       port: 8090
       targetPort: 8090
-  {{- if .Values.managed_cluster }}
+  {{- if not .Values.managed_cluster }}
       nodePort: 30090  # Static NodePort for backend
   type: NodePort
   {{- end }}

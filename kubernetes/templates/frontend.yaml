@@ -31,10 +31,11 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
-{{- if .Values.managed_cluster }}
+  {{- if not .Values.managed_cluster }}
       nodePort: 30080  # Static NodePort for frontend
   type: NodePort
-
+  {{- end }}
+{{- if .Values.managed_cluster }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
