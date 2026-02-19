@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../navbar/navbar.component';
-import {NavigationEnd, Router, RouterModule} from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import {Component, OnInit} from "@angular/core";
-import {filter} from "rxjs";
+import { Component, OnInit } from "@angular/core";
+import { filter } from "rxjs";
 
 @Component({
   selector: 'app-header',
@@ -15,12 +15,22 @@ import {filter} from "rxjs";
 export class HeaderComponent implements OnInit {
   currentRoute: string | undefined;
   menuOpen = false;
+  darkMode = false;
 
   toggleMobileMenu() {
     this.menuOpen = !this.menuOpen;
   }
 
-  constructor(private router: Router, public authService: AuthService) {}
+  toggleDarkMode() {
+    this.darkMode = !this.darkMode;
+    if (this.darkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }
+
+  constructor(private router: Router, public authService: AuthService) { }
 
   ngOnInit(): void {
     // Listen to changes in the route

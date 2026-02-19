@@ -30,7 +30,8 @@ export interface DataModel {
   longitudinal?: boolean;  // Root level only
   variables?: Variable[];
   groups?: Group[];
-  released:boolean;
+  released: boolean;
+  description?: string;
 }
 
 // D3 hierarchy format interface

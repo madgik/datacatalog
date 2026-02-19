@@ -10,7 +10,7 @@ import {
 import { createTidyTree } from './tidy-tree';
 import { FormsModule } from '@angular/forms';
 import { ErrorService } from '../services/error.service';
-import { NgForOf, NgIf, NgClass } from '@angular/common';
+import { NgForOf, NgIf, NgClass, CommonModule } from '@angular/common';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
 import { SearchBarComponent } from './search-bar/search-bar.component';
 
@@ -19,7 +19,7 @@ import { SearchBarComponent } from './search-bar/search-bar.component';
   templateUrl: './visualization.component.html',
   styleUrls: ['./visualization.component.css'],
   standalone: true,
-  imports: [NgForOf, NgIf, NgClass, FormsModule, BreadcrumbComponent, SearchBarComponent],
+  imports: [CommonModule, FormsModule, BreadcrumbComponent, SearchBarComponent],
 })
 export class VisualizationComponent implements OnInit, OnChanges {
   @Input() dataModelHierarchy: any;
@@ -28,7 +28,7 @@ export class VisualizationComponent implements OnInit, OnChanges {
   error: string | null = null;
   maxDepth = 1;
   newAvailableDepths = 5;
-  isZoomEnabled = false;
+  isZoomEnabled = true;
   isFullscreen = false;
   private shouldForcePortrait = false;
   private orientationLocked = false;
@@ -151,6 +151,9 @@ export class VisualizationComponent implements OnInit, OnChanges {
     );
   }
 
+  currentZoomLevel = 1.0;
+  private treeControls: any;
+
   private renderChart(
     node: any = this.originalData,
     highlightedNode: any = null,
@@ -158,7 +161,7 @@ export class VisualizationComponent implements OnInit, OnChanges {
   ): void {
     const container = this.elementRef.nativeElement.querySelector('#chart');
     if (!container) return;
-    createTidyTree(
+    this.treeControls = createTidyTree(
       this.breadcrumbPath,
       node,
       container,
@@ -171,8 +174,23 @@ export class VisualizationComponent implements OnInit, OnChanges {
       },
       highlightedNode,
       maxDepth,
-      this.isZoomEnabled
+      this.isZoomEnabled,
+      (zoomLevel) => {
+        this.currentZoomLevel = zoomLevel;
+      }
     );
+  }
+
+  zoomIn(): void {
+    this.treeControls?.zoomIn();
+  }
+
+  zoomOut(): void {
+    this.treeControls?.zoomOut();
+  }
+
+  resetView(): void {
+    this.treeControls?.resetZoom();
   }
 
   toggleFullscreen(): void {

@@ -12,38 +12,60 @@
   display: flex;
   justify-content: flex-end;
   list-style: none;
-  margin: 25px;
+  margin: 0;
   padding: 0;
+  gap: 8px;
 }
 
 .navbar ul li {
-  margin-left: 15px;
+  margin: 0;
 }
 
 .navbar ul li a {
-  color: #c0c0c0;
+  color: var(--text-muted);
   text-decoration: none;
-  font-size: 0.85em;
-  transition: color 0.3s ease;
+  font-size: 0.9em;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 99px;
+  /* Pill shape */
+  transition: all 0.2s ease;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  /* Icon left */
   align-items: center;
-  font-family: 'Roboto', sans-serif;
-  font-weight: 300;
+  font-family: 'Inter', sans-serif;
+  gap: 8px;
 }
 
 .navbar ul li a:hover {
-  color: #18a2b8;
+  background-color: var(--hover-bg);
+  color: var(--text-main);
 }
 
 .navbar ul li a i {
-  font-size: 1.7em;
-  margin-bottom: 3px;
+  font-size: 1.1em;
 }
 
 .navbar ul li a.active {
-  color: #18a2b8;
-  font-weight: bold;
+  background-color: rgba(43, 51, 233, 0.1);
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+/* For the specific "Blue Pill" look in the reference image for 'active' */
+/* If the user wants solid blue: */
+/*
+.navbar ul li a.active {
+  background-color: var(--primary-color);
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(43, 51, 233, 0.2);
+}
+*/
+
+.navbar ul li a.active::before {
+  display: none;
+  /* Remove underline indicator */
 }
 
 /* =============================== */
@@ -52,15 +74,16 @@
 
 @media (max-width: 1024px) {
   .navbar ul {
-    margin: 15px;
+    gap: 4px;
   }
 
   .navbar ul li a {
-    font-size: 0.95em;
+    font-size: 0.8em;
+    padding: 8px 12px;
   }
 
   .navbar ul li a i {
-    font-size: 1.5em;
+    font-size: 1.3em;
   }
 }
 
@@ -70,23 +93,38 @@
 
 .mobile-menu .navbar ul {
   flex-direction: column !important;
-  align-items: center !important;
+  align-items: stretch !important;
   margin: 0;
-  padding: 15px 0;
+  padding: 0;
+  gap: 4px;
 }
 
 .mobile-menu .navbar ul li {
-  margin: 12px 0;
+  margin: 0;
 }
 
 .mobile-menu .navbar ul li a {
-  flex-direction: column !important;
+  flex-direction: row !important;
+  justify-content: flex-start !important;
   align-items: center !important;
-  font-size: 1.05em;
-  text-align: center !important;
+  font-size: 1em;
+  text-align: left !important;
+  padding: 14px 20px;
+  border-radius: var(--radius-lg);
+  gap: 12px;
 }
 
 .mobile-menu .navbar ul li a i {
-  font-size: 1.8em;
-  margin-bottom: 6px;
+  font-size: 1.3em;
+}
+
+.mobile-menu .navbar ul li a.active::before {
+  /* Left border instead of bottom for mobile */
+  bottom: auto;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 24px;
+  border-radius: 0 2px 2px 0;
 }

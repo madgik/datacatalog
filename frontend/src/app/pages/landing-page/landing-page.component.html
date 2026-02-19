@@ -1,86 +1,177 @@
-<section class="landing-page">
-  <!-- Federation Image Grid Section -->
-  <div class="federation-container">
-    <div class="image-gallery">
-      <div class="image-container">
-        <!-- Dynamic Federation Cards -->
-        <div
-          *ngFor="let federation of federations;"
-          class="image-item"
-          (click)="navigateToFederation(federation.url)"
-        >
-          <img
-            [src]="'assets/' + federation.code + '.png'"
-            [alt]="federation.title"
-          />
-          <div class="image-caption">
-            <h3>{{ federation.title }}</h3>
-            <p>
-              <span *ngIf="federation.institutions != '0'">
-                Institutions: {{ federation.institutions }} |
-              </span>
-              Data Records: {{ federation.records | number }}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Description Section -->
-    <div class="description">
-      <h6 class="welcome">
-      Welcome to the <br /> Medical Informatics Platform
-      </h6>
-      <br />
-      <p>
-        Collaborate across multiple hospitals to access medical data and use
-        cutting-edge algorithms to analyze shared pathologies like dementia,
-        mental health, and more.
-        <br />
-        <br />
-        Make sure you have an EBRAINS Account to access the platform.
+<div class="landing-page-wrapper">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container hero-content">
+      <h1 class="hero-title">
+        The Future of Medical <br>Informatics Research
+      </h1>
+      <p class="hero-subtitle">
+        Collaborate across global hospital networks with federated nodes. Analyze shared pathologies like dementia and
+        mental health without compromising data privacy.
       </p>
-      <div class="actions">
-        <!-- Call-to-Action Button -->
-        <button class="gradient-button" (click)="getStarted()">Get Started</button>
-        <button class="gradient-button" (click)="learnMore()">Learn More</button>
-      </div>
-    </div>
-  </div>
+      <div class="hero-actions">
+        <!-- Explore Platform -> Federations Page -->
+        <button class="btn-primary-lg shadow-glow" routerLink="/federations">
+          Explore Platform <span class="material-icons-outlined">arrow_forward</span>
+        </button>
 
-  <section class="info-section">
-    <div class="info-card">
-      <div class="info-icon">
-        <i class="fas fa-database"></i>
-      </div>
-      <div class="info-content">
-        <h2>Access to Medical Data</h2>
-        <p>
-          Explore tools that enable secure access to medical data from our federated network of hospitals. Gain insights while maintaining privacy and compliance.
-        </p>
-        <!-- <button class="gradient-button">Learn More</button> -->
-      </div>
-    </div>
-
-    <div class="info-card reverse">
-      <div class="info-content">
-        <h2>Algorithms</h2>
-        <p>
-          Leverage cutting-edge algorithms for analyzing medical data, including advanced tools for diagnosing pathologies like dementia or mental health conditions.
-        </p>
-        <!-- <button class="gradient-button">Discover Tools</button> -->
-      </div>
-      <div class="info-icon">
-        <i class="fas fa-brain"></i>
+        <!-- Documentation -> External Link or About -->
+        <button class="btn-glass-lg" (click)="openDocumentation()">
+          View Documentation
+        </button>
       </div>
     </div>
   </section>
 
-  <div class="floating-button" aria-label="Create an EBRAINS Account" *ngIf="!isLoggedIn()">
-    <button (click)="redirectToSignUp()">
-      <!-- Create EBRAINS Account -->
-      <img src="assets/ebrains-logo.png" alt="Create EBRAINS Account" />
-    </button>
-  </div>
+  <!-- Feature Cards Section -->
+  <section class="features-section">
+    <div class="container features-grid">
 
-</section>
+      <!-- DATA CATALOG CARD -->
+      <div class="feature-card glass card-glow">
+        <div class="card-decoration top-right opacity-low">
+          <!-- Optional SVG or Icon here -->
+          <svg class="tree-mini" width="120" height="120" viewBox="0 0 100 100">
+            <circle class="fill-primary" cx="20" cy="50" r="3"></circle>
+            <path class="tree-line-mini" d="M20 50 L40 30 M20 50 L40 50 M20 50 L40 70"></path>
+            <circle class="fill-slate-400" cx="40" cy="30" r="2"></circle>
+            <circle class="fill-slate-400" cx="40" cy="50" r="2"></circle>
+            <circle class="fill-slate-400" cx="40" cy="70" r="2"></circle>
+          </svg>
+        </div>
+
+        <div class="card-body">
+          <div class="icon-box bg-primary-soft">
+            <span class="material-icons-outlined text-primary">dns</span>
+          </div>
+          <h3>Data Catalog</h3>
+          <p>
+            Explore common data schemas and variable groupings across the network. Visualize hierarchical structures and
+            identify harmonized variables for cross-institutional research.
+          </p>
+        </div>
+
+        <div class="card-footer-action">
+          <a class="btn-primary" routerLink="/data-models">
+            Explore Data Catalog <span class="material-icons-outlined">list_alt</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- FEDERATIONS CARD -->
+      <div class="feature-card glass card-glow">
+        <div class="card-decoration top-right opacity-low">
+          <span class="material-icons-outlined text-huge text-blue-soft">hub</span>
+        </div>
+
+        <div class="card-body">
+          <div class="icon-box bg-blue-soft">
+            <span class="material-icons-outlined text-blue">groups</span>
+          </div>
+          <h3>Access Research Federations</h3>
+          <p>
+            Browse pathology research networks like <strong>Dementia</strong> or <strong>Mental Health</strong>. Find
+            relevant cohorts and institutional partners before launching your Experiment Workspace.
+          </p>
+
+          <div class="steps-process">
+            <div class="step">
+              <div class="step-num">1</div>
+              <span>Explore global research federations</span>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <span>Select network & pathology focus</span>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <span>Access workspace for secure analysis</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer-action">
+          <a class="btn-dark" routerLink="/federations">
+            Browse Federations <span class="material-icons-outlined">lan</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Federated Advantage Section -->
+  <section class="advantage-section">
+    <div class="container">
+      <div class="section-center text-center">
+        <h2>The Federated Advantage</h2>
+        <p class="section-subtitle">Our unique architecture enables collaborative research while maintaining the highest
+          standards of data security.</p>
+      </div>
+
+      <div class="advantage-grid">
+        <div class="advantage-item">
+          <div class="icon-circle">
+            <span class="material-icons-outlined text-primary">security</span>
+          </div>
+          <h4>Privacy-Preserving</h4>
+          <p>Data stays behind hospital firewalls. Only aggregated results and models move across the network, ensuring
+            patient anonymity.</p>
+        </div>
+
+        <div class="advantage-item">
+          <div class="icon-circle">
+            <span class="material-icons-outlined text-primary">memory</span>
+          </div>
+          <h4>Distributed Compute</h4>
+          <p>Leverage the processing power of the entire network. Execute complex algorithms locally on each node and
+            synthesize findings centrally.</p>
+        </div>
+
+        <div class="advantage-item">
+          <div class="icon-circle">
+            <span class="material-icons-outlined text-primary">auto_fix_high</span>
+          </div>
+          <h4>Harmonized Data</h4>
+          <p>Benefit from a unified data model (OMOP/MIP) that maps heterogeneous hospital data into a single, queryable
+            research schema.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Global Ecosystem Section -->
+  <section class="ecosystem-section">
+    <div class="container text-center">
+      <span class="eyebrow">Our Global Ecosystem</span>
+      <h3 class="mb-large">Trusted by Leading Medical Institutions</h3>
+
+      <div class="logos-row">
+        <div class="logo-item">
+          <span class="material-icons-outlined">local_hospital</span>
+          <span class="logo-text">Euro<span class="text-primary">Clinic</span></span>
+        </div>
+        <div class="logo-item">
+          <span class="material-icons-outlined">school</span>
+          <span class="logo-text">Oxbridge<span class="text-primary">Med</span></span>
+        </div>
+        <div class="logo-item">
+          <span class="material-icons-outlined">psychology</span>
+          <span class="logo-text">Neuro<span class="text-primary">Hub</span></span>
+        </div>
+        <div class="logo-item">
+          <span class="material-icons-outlined">public</span>
+          <span class="logo-text">Global<span class="text-primary">Health</span></span>
+        </div>
+        <div class="logo-item">
+          <span class="material-icons-outlined">science</span>
+          <span class="logo-text">Core<span class="text-primary">Labs</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <button class="fab-support" (click)="openSupport()">
+    <span class="material-icons-outlined">support_agent</span>
+  </button>
+</div>

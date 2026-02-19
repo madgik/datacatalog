@@ -2,32 +2,36 @@
   <!-- Logo and Branding -->
   <div class="branding">
     <img src="assets/mip-logo.png" alt="Platform Logo" class="logo">
-    <div class="branding-text">
-      <h1>Medical Informatics Platform</h1>
-    </div>
   </div>
 
-  <!-- Desktop Navigation -->
+  <!-- Desktop Navigation (Centered) -->
   <div class="navbar-wrapper">
     <app-navbar></app-navbar>
   </div>
 
-  <!-- Mobile hamburger button -->
-  <button class="mobile-menu-btn" (click)="toggleMobileMenu()">
-    ☰
-  </button>
+  <!-- Right Actions -->
+  <div class="header-actions">
+    <button class="theme-toggle" (click)="toggleDarkMode()">
+      <span class="icon">{{ darkMode ? '☀️' : '🌙' }}</span>
+    </button>
 
-  <!-- User icon for login/logout -->
-  <div class="user-icon">
-    @if (isLoggedIn()) {
+    <!-- User icon for login/logout -->
+    <div class="user-icon">
+      @if (isLoggedIn()) {
       <button class="sign-in-btn" [routerLink]="['/account']">
         <img src="assets/user-icon.png" alt="User Picture" class="account-picture">
       </button>
-    } @else {
+      } @else {
       <button class="sign-in-btn" (click)="login()">
         <img src="assets/grey-avatar.png" alt="Sign In" class="account-picture">
       </button>
-    }
+      }
+    </div>
+
+    <!-- Mobile hamburger button -->
+    <button class="mobile-menu-btn" (click)="toggleMobileMenu()">
+      ☰
+    </button>
   </div>
 </header>
 

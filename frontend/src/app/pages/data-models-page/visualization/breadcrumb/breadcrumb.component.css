@@ -1,22 +1,40 @@
 .breadcrumbs {
-  font-size: 14px;
+  font-size: 13px;
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Inter', sans-serif;
+  padding: 4px 0;
 }
 
 .breadcrumb {
   cursor: pointer;
-  color: #007acc;
-  transition: color 0.2s ease;
-}
-
-.breadcrumb.active {
-  font-weight: bold;
-  color: #555;
-  cursor: default;
+  color: var(--primary-color);
+  transition: all 0.15s ease;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: transparent;
 }
 
 .breadcrumb:hover:not(.active) {
-  color: #005f99;
+  color: var(--primary-dark);
+  background: rgba(43, 51, 233, 0.06);
+}
+
+.breadcrumb.active {
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: default;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* Separators (styled via the span in template) */
+.breadcrumbs>span:not(.breadcrumb) {
+  color: var(--text-muted);
+  opacity: 0.5;
+  font-size: 12px;
+  margin: 0 2px;
+  user-select: none;
 }

@@ -1,44 +1,92 @@
 <app-guide-popup></app-guide-popup>
 @if(!isChildRouteActive()){
 
-<div class="container">
-  <div class="top-bar">
-    <!-- Dropdowns container for data model-specific settings -->
-    <div class="dropdown-container">
-      <app-federation-selector
-        [isDomainExpert]="isDomainExpert"
-        [defaultFederation]="selectedFederation"
-        (federationChange)="onSelectedFederationChange($event)"
-      ></app-federation-selector>
+<div class="explorer-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar-panel">
+    <!-- Context Section -->
+    <div class="sidebar-section border-b">
+      <h2 class="section-title">Current Context</h2>
+      <div class="context-group">
+        <!-- Federation Selector -->
+        <div class="input-group">
+          <label>Federation</label>
+          <app-federation-selector [isDomainExpert]="isDomainExpert" [defaultFederation]="selectedFederation"
+            (federationChange)="onSelectedFederationChange($event)">
+          </app-federation-selector>
+        </div>
 
-      @if(selectedDataModel && (crossSectionalModels.length > 0 ||
-      longitudinalModels.length > 0)){
-      <app-data-model-selector
-        [crossSectionalModels]="crossSectionalModels"
-        [longitudinalModels]="longitudinalModels"
-        [defaultModel]="selectedDataModel"
-        (dataModelChange)="onSelectedDataModelChange($event)"
-      ></app-data-model-selector>
-      }
+        <!-- Data Model Selector -->
+        @if(selectedDataModel && (crossSectionalModels.length > 0 || longitudinalModels.length > 0)){
+        <div class="input-group">
+          <label>Data Model</label>
+          <app-data-model-selector [crossSectionalModels]="crossSectionalModels"
+            [longitudinalModels]="longitudinalModels" [defaultModel]="selectedDataModel"
+            (dataModelChange)="onSelectedDataModelChange($event)">
+          </app-data-model-selector>
+        </div>
+        }
+      </div>
     </div>
 
-    <div class="export-options-btns">
-      <app-export-options
-        [selectedFileType]="selectedFileType()"
-        (export)="exportDataModel($event)"
-      ></app-export-options>
+    <!-- Selection Details (Placeholder for now, connected to selection later) -->
+    <div class="sidebar-section flex-1 custom-scrollbar">
+      <div class="details-header">
+        <h3>Selection Details</h3>
+        @if(selectedDataModel){
+        <span class="status-badge">READY</span>
+        }
+      </div>
+
+      <div class="details-content">
+        @if(selectedDataModel){
+        <div class="stats-grid">
+          <div class="stat-row">
+            <span>Version</span>
+            <span class="stat-value">{{ selectedDataModel.version }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Code</span>
+            <span class="stat-value mono">{{ selectedDataModel.code }}</span>
+          </div>
+        </div>
+
+        <!-- Validation Stats (Mocked based on design) -->
+        <div class="validation-section">
+          <h4>Validation Stats</h4>
+          <div class="validation-row">
+            <span>Data Completeness</span>
+            <span class="stat-value">88%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="fill" style="width: 88%"></div>
+          </div>
+        </div>
+        } @else {
+        <p class="text-muted">Select a Data Model to view details.</p>
+        }
+      </div>
+    </div>
+
+    <!-- Actions Footer -->
+    <div class="sidebar-footer">
+      <app-export-options [selectedFileType]="selectedFileType()" (export)="exportDataModel($event)">
+      </app-export-options>
 
       @if(isDomainExpert){
-      <app-action-menu
-        [isSelectedDataModelReleased]="selectedDataModel?.released ?? false"
-        (action)="handleAction($event)"
-        (menuVisibleChange)="handleMenuToggle($event)"
-      ></app-action-menu>
+      <app-action-menu [isSelectedDataModelReleased]="selectedDataModel?.released ?? false"
+        (action)="handleAction($event)" (menuVisibleChange)="handleMenuToggle($event)">
+      </app-action-menu>
       }
     </div>
-  </div>
+  </aside>
 
-  <app-visualization [dataModelHierarchy]="d3Data"></app-visualization>
+  <!-- Canvas -->
+  <section class="canvas-area dot-grid">
+    <app-visualization [dataModelHierarchy]="d3Data"></app-visualization>
+
+    <!-- Floating Controls will be handled inside visualization component or overlaid here -->
+  </section>
 </div>
 }
 

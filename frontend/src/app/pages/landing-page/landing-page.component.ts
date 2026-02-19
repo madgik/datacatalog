@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FederationService } from '../../services/federation.service';
 import { Federation } from "../../interfaces/federations.interface";
 import { AuthService } from '../../services/auth.service';
-import { Router } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 
 @Component({
   selector: 'app-landing-page',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './landing-page.component.html',
   styleUrls: ['./landing-page.component.css'],
 })
@@ -23,7 +23,7 @@ export class LandingPageComponent implements OnInit {
     private authService: AuthService,
     private router: Router
 
-  ) {}
+  ) { }
 
   isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
@@ -34,7 +34,7 @@ export class LandingPageComponent implements OnInit {
   }
 
   navigateToFederation(url: string): void {
-      window.open(url, '_blank');
+    window.open(url, '_blank');
   }
 
   learnMore(): void {
@@ -72,5 +72,15 @@ export class LandingPageComponent implements OnInit {
 
   selectFederation(federation: Federation): void {
     this.selectedFederation = federation;
+  }
+
+  openDocumentation(): void {
+    // Placeholder - User to provide URL
+    window.open('https://ebrains.eu/service/medical-informatics-platform', '_blank');
+  }
+
+  openSupport(): void {
+    // Placeholder - User to provide Email/URL
+    window.location.href = 'mailto:support@humanbrainproject.eu';
   }
 }

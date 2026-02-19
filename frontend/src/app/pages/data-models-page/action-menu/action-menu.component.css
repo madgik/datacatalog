@@ -1,18 +1,45 @@
+/* Container */
+.action-menu {
+  position: relative;
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  height: 40px;
+}
 
 /* Three-dots button styling to match page design */
 .three-dots-button {
-  background: none;
-  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--bg-card);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   font-size: 20px;
   cursor: pointer;
-  color: #333;
-  padding: 13px;
-  border-radius: 50%;
-  transition: background-color 0.3s ease;
+  color: var(--text-muted);
+  border-radius: var(--radius-lg);
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  padding: 0;
+  line-height: 1;
 }
 
 .three-dots-button:hover {
-  background-color: #f0f0f0;
+  background-color: rgba(43, 51, 233, 0.04);
+  color: var(--primary-color);
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-md);
+}
+
+.three-dots-button:active {
+  transform: scale(0.95);
+}
+
+.three-dots-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(43, 51, 233, 0.1);
+  border-color: var(--primary-color);
 }
 
 /* Backdrop to close the menu when clicked */
@@ -22,61 +49,71 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 999;
+  background: rgba(0, 0, 0, 0.05);
+  /* very subtle */
+  z-index: 998;
+  cursor: default;
 }
 
 /* Options menu styling */
 .options-menu {
   position: absolute;
-  top: 140px;
-  right: 30px;
+  top: calc(100% + 8px);
+  right: 0;
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  padding: 10px 0;
-  min-width: 180px;
-  z-index: 1000;
-  border: 1px solid #ddd;
-  animation: fadeIn 0.2s ease;
+  background-color: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  padding: 6px;
+  min-width: 200px;
+  z-index: 999;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  animation: slideDown 0.15s ease-out;
+  overflow: hidden;
 }
 
 /* Options menu button styling */
 .options-menu button {
   background: none;
   border: none;
-  padding: 12px 20px;
-  color: #333;
+  padding: 10px 14px;
+  color: var(--text-main);
   font-size: 14px;
+  font-weight: 500;
   text-align: left;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.15s ease;
+  border-radius: 6px;
+  margin-bottom: 2px;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.options-menu button:last-child {
+  margin-bottom: 0;
 }
 
 .options-menu button:hover {
-  background-color: #f0f0f0;
+  background-color: rgba(43, 51, 233, 0.06);
+  color: var(--primary-color);
+  transform: translateX(2px);
 }
 
-@keyframes fadeIn {
+.options-menu button:active {
+  background-color: rgba(43, 51, 233, 0.1);
+}
+
+@keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-5px);
+    transform: translateY(-8px) scale(0.98);
   }
+
   to {
     opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .node-info {
-    width: 100%;
-    top: auto;
-    bottom: 20px;
-    right: 10px;
-    margin-top: 10px;
+    transform: translateY(0) scale(1);
   }
 }

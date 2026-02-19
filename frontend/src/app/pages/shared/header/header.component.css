@@ -3,57 +3,95 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
-  width: 100%;
-  background-color: #2b2c2e;
+  padding: 0 24px;
+  width: calc(100% - 40px);
+  /* Floating effect */
+  margin: 10px 20px;
+  /* Floating margin */
   box-sizing: border-box;
-  height: 65px;
-  color: #f0f0f0;
+  height: 70px;
+  color: var(--text-main);
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-xl);
+
+  /* Glassmorphism */
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
 }
 
 /* Logo and Branding Styling */
 .branding {
   display: flex;
   align-items: center;
+  gap: 12px;
+  width: 200px;
+  /* Fixed width for layout balance */
+}
+
+.brand-name {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--primary-color);
+  letter-spacing: -0.5px;
 }
 
 .logo {
-  width: 60px;
-  height: auto;
-  margin-right: 15px;
-}
-
-.branding-text {
-  display: block;
-  text-align: left;
-}
-
-.branding-text h1 {
-  margin: 0;
-  font-size: 1.3em;
-  font-family: 'Roboto', sans-serif;
+  width: auto;
+  max-height: 40px;
+  object-fit: contain;
 }
 
 /* Navbar Wrapper (desktop) */
 .navbar-wrapper {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   flex: 1;
-  margin-left: 20px;
+  /* Takes up remaining space to center content */
+}
+
+/* Right Actions */
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  width: 200px;
+  /* Fixed width to balance logo */
+}
+
+.theme-toggle {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.theme-toggle:hover {
+  background: rgba(0, 0, 0, 0.05);
 }
 
 /* User Icon Styling */
 .user-icon {
   display: flex;
   align-items: center;
-  margin-left: 10px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  /* Removed separator border */
 }
 
 .account-picture {
@@ -61,8 +99,24 @@
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #18a2b8;
+  border: 2px solid transparent;
+  /* Removed explicit border unless hover */
+  background-color: #f1f5f9;
+  transition: all 0.2s;
+}
+
+.account-picture {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-light);
   background-color: transparent;
+  transition: border-color 0.2s;
+}
+
+.sign-in-btn:hover .account-picture {
+  border-color: var(--primary-color);
 }
 
 /* Sign In Button */
@@ -74,11 +128,11 @@
 }
 
 .sign-in-btn img {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #18a2b8;
+  border: 2px solid var(--primary-light);
   background-color: transparent;
 }
 
@@ -90,19 +144,24 @@
   cursor: pointer;
   font-size: 28px;
   margin-left: 10px;
-  color: #f0f0f0;
+  color: var(--text-main);
 }
 
 /* Mobile dropdown menu (hidden by default) */
 .mobile-menu {
   display: none;
   position: fixed;
-  top: 65px;            /* same as header height */
-  left: 0;
-  width: 100%;
-  background: #2b2c2e;
-  padding: 10px 0;
+  top: 85px;
+  /* header height + margin */
+  left: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 20px;
   z-index: 999;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .mobile-menu.open {
@@ -111,27 +170,38 @@
 
 /* Tablet Layout (768px - 1024px) */
 @media (max-width: 1024px) {
+  .header {
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    padding: 0 20px;
+  }
+
   .branding-text h1 {
     font-size: 1.1em;
   }
 
   .account-picture,
   .sign-in-btn img {
-    width: 35px;
-    height: 35px;
+    width: 38px;
+    height: 38px;
   }
 }
 
 /* Mobile Layout (up to 768px) */
 @media (max-width: 768px) {
   .header {
-    padding: 0 10px;
-    height: 55px;
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    padding: 0 16px;
+    height: 60px;
   }
 
   .logo {
-    width: 45px;
-    margin-right: 8px;
+    width: auto;
+    max-height: 40px;
+    margin-right: 12px;
   }
 
   .branding-text h1 {
@@ -149,11 +219,23 @@
 
   .account-picture,
   .sign-in-btn img {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .user-icon {
+    padding-left: 12px;
+    margin-left: 12px;
   }
 
   .mobile-menu {
-    top: 55px; /* match mobile header height */
+    top: 60px;
+    /* match mobile header height */
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-radius: 0;
+    margin: 0;
+    box-sizing: border-box;
   }
 }

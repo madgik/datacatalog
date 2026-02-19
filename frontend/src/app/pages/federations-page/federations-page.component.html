@@ -1,21 +1,31 @@
 @if (!isChildRouteActive()){
-  @if (isAdmin){
-    <app-add-federation-card (addNew)="goToAddFederation()"></app-add-federation-card>
-  }
+<div class="layout-container">
+  <!-- Sidebar Removed as per request -->
 
-  <section class="federations-list">
-    @for (federation of filteredFederations; track federation){
-      <app-federation-card
-        [federation]="federation"
-        [isAdmin]="isAdmin"
-        (updateFederation)="goToUpdateFederation($event)"
-        (deleteFederation)="deleteFederation($event)"
-        (visualizeDataModel)="goToVisualization($event)"
-      ></app-federation-card>
-    }
-  </section>
+  <!-- Main Content -->
+  <main class="main-content full-width">
+    <div class="page-header">
+      <div>
+        <h1>Federations</h1>
+        <p class="subtitle">Access global pathology research networks. Connect with decentralized datasets across
+          leading institutions for secure, collaborative medical analysis.</p>
+      </div>
+      @if (isAdmin){
+      <app-add-federation-card (addNew)="goToAddFederation()"></app-add-federation-card>
+      }
+    </div>
+
+    <div class="federations-grid">
+      @for (federation of filteredFederations; track federation){
+      <app-federation-card [federation]="federation" [isAdmin]="isAdmin"
+        (updateFederation)="goToUpdateFederation($event)" (deleteFederation)="deleteFederation($event)"
+        (visualizeDataModel)="goToVisualization($event)"></app-federation-card>
+      }
+    </div>
+  </main>
+</div>
 }
 
 
-  <!-- Child route outlet for Add and Update forms -->
+<!-- Child route outlet for Add and Update forms -->
 <router-outlet></router-outlet>

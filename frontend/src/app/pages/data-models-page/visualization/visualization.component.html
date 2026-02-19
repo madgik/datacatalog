@@ -1,47 +1,68 @@
 <div id="chart-container">
-  <!-- Unified Toolbar -->
-  <div id="toolbar">
-    <div id="breadcrumbs">
-      <app-breadcrumb
-        [breadcrumbs]="breadcrumbPath"
-        (breadcrumbClick)="handleBreadcrumbClick($event)"
-      ></app-breadcrumb>
-    </div>
 
-    <div id="zoom-control">
-      <label for="zoomToggle">{{ isZoomEnabled ? 'Zoom Enabled:' : 'Zoom Disabled:' }}</label>
-      <input type="checkbox" id="zoomToggle" [(ngModel)]="isZoomEnabled" (change)="onZoomToggleChange()" />
-      <label for="zoomToggle" class="checkbox-indicator"></label>
-    </div>
+  <!-- Canvas Layer -->
+  <ng-container *ngIf="!error; else errorTemplate">
+    <div id="chart"></div>
+  </ng-container>
 
+  <!-- Floating Overlays -->
 
-    <div id="max-depth-container">
-      <label for="maxDepth">Max Depth:</label>
-      <select id="maxDepth" [(ngModel)]="maxDepth" (change)="onMaxDepthChange()">
-        <option *ngFor="let depth of createArray(newAvailableDepths)" [value]="depth">
-          {{ depth }}
-        </option>
-      </select>
-    </div>
-
-    <div id="search-bar-container">
-      <app-search-bar
-        *ngIf="dataModelHierarchy"
-        [dataModelHierarchy]="dataModelHierarchy"
-        (searchResultSelected)="onSearchResult($event)"
-      ></app-search-bar>
-      <div aria-label="Toggle fullscreen">
-        <div class="fullscreen-btn" (click)="toggleFullscreen()">
-          <i class="fas" [ngClass]="isFullscreen ? 'fa-compress' : 'fa-expand'"></i>
-        </div>
-      </div>
-    </div>
+  <!-- Top Left: Breadcrumbs -->
+  <div class="overlay-top-left">
+    <app-breadcrumb [breadcrumbs]="breadcrumbPath" (breadcrumbClick)="handleBreadcrumbClick($event)">
+    </app-breadcrumb>
   </div>
 
-  <!-- Chart or Error Template -->
-  <ng-container *ngIf="!error; else errorTemplate">
-    <div id="chart" style="width: 100%; height: 100%;"></div>
-  </ng-container>
+  <!-- Top Right: Search -->
+  <div class="overlay-top-right">
+    <app-search-bar *ngIf="dataModelHierarchy" [dataModelHierarchy]="dataModelHierarchy"
+      (searchResultSelected)="onSearchResult($event)">
+    </app-search-bar>
+  </div>
+
+  <!-- Bottom Center: Floating Toolbar -->
+  <div class="floating-toolbar control-glass">
+
+    <!-- Zoom Controls -->
+    <div class="control-group">
+      <button class="icon-btn" (click)="zoomOut()" title="Zoom Out">
+        <i class="fas fa-minus"></i>
+      </button>
+      <span class="zoom-level">{{ currentZoomLevel | percent:'1.0-0' }}</span>
+      <button class="icon-btn" (click)="zoomIn()" title="Zoom In">
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Reset View -->
+    <button class="text-btn" (click)="resetView()">
+      <i class="fas fa-compress-arrows-alt"></i> Reset View
+    </button>
+
+    <div class="divider"></div>
+
+    <!-- Max Depth Stepper -->
+    <div class="control-group">
+      <span class="label-small">DEPTH</span>
+      <div class="depth-pills">
+        <button *ngFor="let depth of createArray(newAvailableDepths)" [class.active]="maxDepth === depth"
+          (click)="maxDepth = depth; onMaxDepthChange()">
+          {{ depth }}
+        </button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Fullscreen -->
+    <button class="icon-btn" (click)="toggleFullscreen()" title="Fullscreen">
+      <i class="fas" [ngClass]="isFullscreen ? 'fa-compress' : 'fa-expand'"></i>
+    </button>
+  </div>
+
+  <!-- Error Template -->
   <ng-template #errorTemplate>
     <div class="error-message">
       {{ error }}

@@ -1,33 +1,58 @@
-<div class="federation-card">
-  <img [src]="'assets/' + federation.code + '.png'" alt="{{ federation.title }}" class="federation-image">
-  <div class="federation-content">
-    <h3>{{ federation.title }}</h3>
-    @if (federation.institutions != '0') {
-      <p>Data Records: {{ federation.records }} | Institutions: {{ federation.institutions }}</p>
-    } @else {
-      <p>Data Records: {{ federation.records | number }}</p>
-    }
-    <p>Data Models:</p>
-    <ul>
-      @for (dataModel of federation.dataModels; track dataModel){
-        <li>
-          {{ dataModel.label + ' ' + dataModel.version }}
-        </li>
-      }
-    </ul>
-    <p class="federation-description">
-      {{ showMore ? federation.description : (federation.description | slice: 0:100) + '...' }}
-      <span class="toggle-description" (click)="toggleDescription()">
-        {{ showMore ? 'Read Less' : 'Read More' }}
-      </span>
-    </p>
-    <div class="federation-buttons">
-      <button class="data-model-btn" (click)="viewDataModel()">Data Model</button>
-      <button class="visit-btn" (click)="navigateToFederation(federation.url)">Visit Federation</button>
-      @if (isAdmin){
-        <button class="update-btn" (click)="update()">✏️ Edit</button>
-        <button class="delete-btn" (click)="delete()">🗑️ Delete</button>
-      }
+<div class="card-wrapper">
+  <!-- Banner Image Section -->
+  <div class="card-banner">
+    <img [src]="'assets/' + federation.code + '.png'" alt="{{ federation.title }}" class="banner-image">
+    <div class="banner-overlay"></div>
+
+    <!-- Floating Admin Actions (Top Right) -->
+    @if (isAdmin) {
+    <div class="floating-actions">
+      <button class="action-btn" (click)="update()" title="Edit">
+        <span class="icon">✎</span>
+      </button>
+      <button class="action-btn delete" (click)="delete()" title="Delete">
+        <span class="icon">🗑</span>
+      </button>
     </div>
+    }
+  </div>
+
+  <!-- Card Content -->
+  <div class="card-content">
+    <div class="content-header">
+      <h3>{{ federation.title }}</h3>
+    </div>
+
+    <div class="meta-badges">
+      @if(federation.institutions != '0') {
+      <span class="badge gray">
+        <span class="icon">🏥</span> {{ federation.institutions }} Hospitals
+      </span>
+      }
+      <span class="badge blue">
+        <span class="icon">📊</span> {{ federation.records | number }} Datasets
+      </span>
+    </div>
+
+    <p class="description">
+      {{ federation.description }}
+    </p>
+
+    <!-- Version Tag -->
+    @if(federation.dataModels.length > 0) {
+    <div class="version-tag">
+      VERSION {{ federation.dataModels[0].version }}
+    </div>
+    }
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="card-footer">
+    <button class="btn-link" (click)="navigateToFederation(federation.url)">
+      Visit Site <span class="arrow">↗</span>
+    </button>
+    <button class="btn-primary" (click)="viewDataModel()">
+      Explore
+    </button>
   </div>
 </div>

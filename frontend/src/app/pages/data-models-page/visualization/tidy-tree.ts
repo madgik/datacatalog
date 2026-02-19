@@ -1,6 +1,12 @@
 import * as d3 from 'd3';
 import { HierarchyPointNode, HierarchyPointLink } from 'd3-hierarchy';
 
+export interface TreeControls {
+  zoomIn: () => void;
+  zoomOut: () => void;
+  resetZoom: () => void;
+}
+
 export function createTidyTree(
   providedPath: any,
   data: any,
@@ -9,8 +15,9 @@ export function createTidyTree(
   onAvailableDepthsUpdate: (newAvailableDepths: number) => void,
   highlightedNode: any = null,
   maxDepth: number | null,
-  isZoomEnabled: boolean = true
-): void {
+  isZoomEnabled: boolean = true,
+  onZoomUpdate?: (level: number) => void
+): TreeControls {
   const originalData = JSON.parse(JSON.stringify(data)); // Save the original data
 
   let tooltip: d3.Selection<HTMLDivElement, unknown, null, undefined> | null = null;
@@ -166,25 +173,39 @@ export function createTidyTree(
     createTooltipElement();
   };
 
+  // Color palette from design system - using CSS variables directly for dark mode support
+  const colors = {
+    rootNode: 'var(--tree-root-color)',
+    rootStroke: 'var(--tree-root-stroke)',
+    parentNode: 'var(--tree-node-parent)',
+    leafNode: 'var(--tree-node-leaf)',
+    link: 'var(--tree-link-color)',
+    highlight: 'var(--tree-highlight)',
+    textMain: 'var(--text-main)',
+    textStroke: 'var(--tree-text-stroke)',
+  };
+
   const renderTree = (rootData: any, maxDepth: number | null) => {
     container.innerHTML = ''; // Clear existing visualization
     tooltipWrapper();
 
+    // Layout constants
     const baseWidth = 2500;
     const baseHeight = 940;
-    const dx = 10;
-    const dy = baseWidth / 8;
+    const nodeSpacingVertical = 12; // Space between nodes vertically
+    const nodeSpacingHorizontal = baseWidth / 8; // Space between depth levels
 
     const root = d3.hierarchy(rootData);
 
     onAvailableDepthsUpdate(calculateMaxDepth(root));
 
-    pruneTreeToDepth(root, 0, maxDepth); // Prune the tree to the max depth
-    const tree = d3.tree<HierarchyPointNode<any>>().nodeSize([dx, dy]);
+    pruneTreeToDepth(root, 0, maxDepth);
+    const tree = d3.tree<HierarchyPointNode<any>>().nodeSize([nodeSpacingVertical, nodeSpacingHorizontal]);
 
     root.sort((a, b) => d3.ascending(a.data.name, b.data.name));
     tree(root);
 
+    // Calculate bounds
     let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
     root.each((d) => {
       if (typeof d.x === 'number') {
@@ -197,23 +218,17 @@ export function createTidyTree(
       }
     });
 
-
-    const dynamicHeight = Math.max(baseHeight, x1 - x0 + dx * 2 + 100);
-    const dynamicWidth = y1 - y0 + dy * 2;
-    const offsetFactor = dynamicWidth / baseWidth; // Calculate a ratio based on size
-    const leftBias = Math.min(0.25, offsetFactor / 2); // Bias more for larger charts
+    const dynamicHeight = Math.max(baseHeight, x1 - x0 + nodeSpacingVertical * 2 + 100);
+    const dynamicWidth = y1 - y0 + nodeSpacingHorizontal * 2;
+    const offsetFactor = dynamicWidth / baseWidth;
+    const leftBias = Math.min(0.25, offsetFactor / 2);
 
     const offsetX = (baseWidth - dynamicWidth) / 2 * (1 - leftBias) - y0;
-
-
-    // Ensure offset doesn't push too far left for large diagrams
     let adjustedOffsetX = Math.max(offsetX, -y0) + 50;
-    adjustedOffsetX = adjustedOffsetX - 1000 + dynamicWidth / 2
+    adjustedOffsetX = adjustedOffsetX - 1000 + dynamicWidth / 2;
 
-    const paddingX = 10, paddingY = 10;
+    const paddingX = 20, paddingY = 20;
     const verticalOffset = (2.5 * baseHeight - dynamicHeight) / 8;
-
-    // Ensure the offset is non-negative (only for smaller diagrams)
     const adjustedPaddingY = Math.max(paddingY, verticalOffset);
     const viewBoxWidth = dynamicWidth + paddingX * 2;
     const viewBoxHeight = dynamicHeight + paddingY * 2;
@@ -222,23 +237,45 @@ export function createTidyTree(
       .attr('width', baseWidth)
       .attr('height', dynamicHeight)
       .attr('viewBox', `${y0 - paddingX} ${x0 - paddingY} ${viewBoxWidth} ${viewBoxHeight}`)
-      .attr('style', 'max-width: 100%; height: auto; font: 10px sans-serif; cursor: grab;');
+      .attr('style', `max-width: 100%; height: auto; font: 11px 'Inter', system-ui, sans-serif; cursor: grab;`);
 
     const g = svg.append('g')
       .attr('transform', `translate(${adjustedOffsetX}, ${adjustedPaddingY})`);
 
+    // Clear highlights when clicking background
+    svg.on('click', () => {
+      g.selectAll('path')
+        .attr('stroke', colors.link)
+        .attr('stroke-width', 1.5)
+        .style('filter', 'none');
+
+      g.selectAll('text')
+        .style('font-size', (n: any) => n.depth === 0 ? '18px' : (n.data.hasOwnProperty('variableCount') ? '16px' : '14px'))
+        .style('font-weight', (n: any) => n.depth === 0 ? '700' : (n.data.hasOwnProperty('variableCount') ? '600' : '400'));
+    });
+
+    let zoomBehavior: d3.ZoomBehavior<SVGSVGElement, unknown> | null = null;
+    let svgSelection: d3.Selection<SVGSVGElement, unknown, null, undefined> | null = null;
+
     if (isZoomEnabled) {
-      const zoom = d3.zoom<SVGSVGElement, unknown>()
-        .scaleExtent([0.5, 2]) // Allow zooming between 50% and 200%
-        .on('zoom', (event) => g.attr('transform', event.transform));
-      svg.call(zoom as any);
+      zoomBehavior = d3.zoom<SVGSVGElement, unknown>()
+        .scaleExtent([0.5, 2])
+        .on('zoom', (event) => {
+          g.attr('transform', event.transform);
+          if (onZoomUpdate) {
+            onZoomUpdate(event.transform.k);
+          }
+        });
+      svg.call(zoomBehavior as any);
+      svgSelection = svg as any;
     }
 
-    // Render links
+    // ... (rest of the rendering logic remains)
+
+    // Render links with smooth curves
     g.append('g')
       .attr('fill', 'none')
-      .attr('stroke', '#555')
-      .attr('stroke-opacity', 0.4)
+      .attr('stroke', colors.link)
       .attr('stroke-width', 1.5)
       .selectAll('path')
       .data(root.links())
@@ -248,7 +285,9 @@ export function createTidyTree(
         d3.linkHorizontal<HierarchyPointLink<any>, HierarchyPointNode<any>>()
           .x(d => d.y)
           .y(d => d.x) as any
-      );
+      )
+      .style('transition', 'stroke 0.2s ease, filter 0.2s ease')
+      .style('cursor', 'pointer');
 
     // Render nodes
     const node = g.append('g')
@@ -259,6 +298,39 @@ export function createTidyTree(
       .join('g')
       .attr('transform', d => `translate(${d.y},${d.x})`)
       .style('cursor', 'pointer')
+      .on("click", (_event, d) => {
+        // Stop propagation to avoid interfering with other events
+        _event.stopPropagation();
+
+        // 1. Reset all links to default state
+        g.selectAll('path')
+          .attr('stroke', colors.link)
+          .attr('stroke-width', 1.5)
+          .style('filter', 'none');
+
+        // 2. Reset all text sizes to default
+        g.selectAll('text')
+          .style('font-size', (n: any) => n.depth === 0 ? '18px' : (n.data.hasOwnProperty('variableCount') ? '16px' : '14px'))
+          .style('font-weight', (n: any) => n.depth === 0 ? '700' : (n.data.hasOwnProperty('variableCount') ? '600' : '400'));
+
+        // 3. Highlight links:
+        // - Ancestor Path: Links where target is in the ancestor chain (path up to node)
+        // - Children Paths: Links where source is the clicked node (paths down to children)
+        const ancestors = new Set(d.ancestors());
+
+        g.selectAll('path')
+          .filter((link: any) => ancestors.has(link.target) || link.source === d)
+          .attr('stroke', colors.parentNode)
+          .attr('stroke-width', 2.5)
+          .style('filter', `drop-shadow(0 0 4px ${colors.parentNode})`);
+
+        // 4. Highlight Ancestor Text (Make it bigger)
+        g.selectAll('text')
+          .filter((n: any) => ancestors.has(n))
+          .style('font-size', (n: any) => n.depth === 0 ? '22px' : (n.data.hasOwnProperty('variableCount') ? '20px' : '18px'))
+          .style('font-weight', '800')
+          .style('transition', 'all 0.3s ease');
+      })
       .on("mouseover", (_event, d) => {
         showTooltip(_event, d);
         // Highlight clicked node
@@ -303,38 +375,77 @@ export function createTidyTree(
         hideTooltip()
       });
 
+    // Add node circles with design system colors
     node.append('circle')
       .attr('fill', d => {
         if (highlightedNode && d.data.name === highlightedNode.name) {
-          return 'red'; // Highlight the node in red
+          return colors.highlight;
         }
         if (d.depth === 0) {
-          return '#4caf50'; // Root node gets green color
-        } d.data.hasOwnProperty()
-        return d.data.hasOwnProperty('variableCount') ? '#007acc' : '#555'; // Other nodes based on depth
+          return colors.rootNode;
+        }
+        return d.data.hasOwnProperty('variableCount') ? colors.parentNode : colors.leafNode;
       })
-      .attr('stroke', d => (highlightedNode && d.data.name === highlightedNode.name ? '#ff0000' : (d.depth === 0 ? '#2e7d32' : null))) // Highlighted stroke red
+      .attr('stroke', d => {
+        if (highlightedNode && d.data.name === highlightedNode.name) {
+          return colors.highlight;
+        }
+        return d.depth === 0 ? colors.rootStroke : 'transparent';
+      })
+      .attr('stroke-width', d => (d.depth === 0 ? 2 : 0))
       .attr('r', d => {
         if (highlightedNode && d.data.name === highlightedNode.name) {
-          return 6; // Highlighted node has a bigger radius
+          return 7;
         }
-        return d.depth === 0 ? 8 : (d.data.hasOwnProperty('variableCount') ? 5 : 2.5);
-      });
+        return d.depth === 0 ? 9 : (d.data.hasOwnProperty('variableCount') ? 5 : 3);
+      })
+      .style('transition', 'all 0.15s ease')
+      .style('filter', d => d.depth === 0 ? 'drop-shadow(0 2px 4px rgba(16, 185, 129, 0.3))' : 'none');
 
+    // Add node labels with improved typography
     node.append('text')
-      .attr('dy', '0.31em')
-      .attr('x', d => (d.children ? -6 : 6))
+      .attr('dy', '0.35em')
+      .attr('x', d => (d.children ? -10 : 10))
       .attr('text-anchor', d => (d.children ? 'end' : 'start'))
       .text(d => d.data.name)
-      .attr('stroke', d => (d.depth === 0 ? '#ffffff' : (d.depth > 0 && d.data.hasOwnProperty('variableCount') ? 'yellow' : 'white'))) // Root text gets white stroke
+      .attr('fill', d => d.depth === 0 ? colors.rootNode : colors.textMain)
+      .attr('stroke', colors.textStroke)
+      .attr('stroke-width', 3)
       .attr('paint-order', 'stroke')
-      .style('font-size', d => (d.depth === 0 ? `${14}px` : (d.depth > 0 && d.data.hasOwnProperty('variableCount') ? `${12}px` : `${10}px`))) // Root has larger font size
-      .style('font-weight', d => (d.depth === 0 ? 'bold' : 'normal')); // Bold font for root
+      .style('font-size', d => d.depth === 0 ? '24px' : (d.data.hasOwnProperty('variableCount') ? '16px' : '14px'))
+      .style('font-weight', d => d.depth === 0 ? '700' : (d.data.hasOwnProperty('variableCount') ? '600' : '400'))
+      .style('letter-spacing', '0.01em');
 
     if (svg.node() !== null) {
       container.appendChild(svg.node() as Node);
     }
 
+    // Assign to closure variables for control access
+    controls.zoomIn = () => {
+      if (svgSelection && zoomBehavior) {
+        svgSelection.transition().duration(300).call(zoomBehavior.scaleBy as any, 1.2);
+      }
+    };
+    controls.zoomOut = () => {
+      if (svgSelection && zoomBehavior) {
+        svgSelection.transition().duration(300).call(zoomBehavior.scaleBy as any, 0.8);
+      }
+    };
+    controls.resetZoom = () => {
+      if (svgSelection && zoomBehavior) {
+        svgSelection.transition().duration(750).call(zoomBehavior.transform as any, d3.zoomIdentity);
+      }
+    };
+
   };
+
+  // Controls object that will be populated by renderTree
+  const controls: TreeControls = {
+    zoomIn: () => { },
+    zoomOut: () => { },
+    resetZoom: () => { }
+  };
+
   renderTree(data, maxDepth);
+  return controls;
 }

@@ -2,6 +2,7 @@
 .export-container {
   position: relative;
   display: inline-block;
+  font-family: 'Inter', sans-serif;
 }
 
 /* Icon button */
@@ -9,94 +10,121 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  font-size: 18px;
+  gap: 8px;
+  height: 40px;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 600;
   color: #fff;
-  background: linear-gradient(90deg, #00758c, #00a6c0);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
   border: none;
-  border-radius: 50%;
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  font-family: 'Inter', sans-serif;
+  text-decoration: none;
+  width: auto;
+  /* Allow width to fit text if added later */
+}
+
+/* Add pseudo-element for label if not in HTML, or just rely on icon for now but shape it like a button */
+.export-icon-button::after {
+  content: 'Export';
+  font-size: 14px;
 }
 
 .export-icon-button:hover {
-  background: linear-gradient(90deg, #005f73, #008fb0);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, #3b44f6, #2b33e9);
+}
+
+.export-icon-button:active {
+  transform: translateY(1px);
 }
 
 .export-icon-button:focus {
   outline: none;
-  box-shadow: 0 0 6px rgba(0, 117, 140, 0.5);
+  box-shadow: 0 0 0 3px rgba(43, 51, 233, 0.3);
 }
 
 /* Dropdown menu */
 .dropdown-menu {
   position: absolute;
-  top: 54px; /* Position below the button */
-  right: 0; /* Align to the right of the button */
+  top: 54px;
+  right: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  animation: fadeIn 0.3s ease;
+  gap: 12px;
+  padding: 16px;
+  background-color: var(--bg-card);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  animation: slideDown 0.2s ease;
   z-index: 1001;
+  min-width: 250px;
 }
 
 /* Dropdown label */
 .export-label {
-  font-size: 14px;
-  color: #333;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
   margin-bottom: 4px;
 }
 
 /* Styled dropdown */
 .dropdown {
-  padding: 8px 12px;
+  padding: 10px 12px;
   font-size: 14px;
-  color: #333;
+  color: var(--text-main);
   background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-lg);
+  transition: all 0.2s ease;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
 }
 
 .dropdown:focus {
   outline: none;
-  border-color: #005f73;
-  box-shadow: 0 0 6px rgba(0, 90, 102, 0.5);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(43, 51, 233, 0.1);
 }
 
 /* Confirm button */
 .confirm-button {
-  padding: 8px 16px;
+  padding: 10px 16px;
   font-size: 14px;
   font-weight: 600;
   color: #fff;
-  background: linear-gradient(90deg, #00758c, #00a6c0);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  width: 100%;
+  margin-top: 8px;
 }
 
 .confirm-button:hover {
-  background: linear-gradient(90deg, #005f73, #008fb0);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
-/* Fade-in animation */
-@keyframes fadeIn {
+.confirm-button:active {
+  transform: translateY(1px);
+}
+
+/* Animation */
+@keyframes slideDown {
   from {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

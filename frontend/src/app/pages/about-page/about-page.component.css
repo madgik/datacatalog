@@ -1,38 +1,39 @@
 /* Host padding ensures content sits below fixed header */
 :host {
   display: block;
-  padding-top: 80px;
+  padding-top: 20px;
 }
 
 /* Container Styling */
 .about-container {
   max-width: 900px;
   margin: 40px auto;
-  padding: 20px;
-  background: #ffffff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  font-family: 'Roboto', sans-serif;
-  color: #333;
+  padding: 32px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-xl);
+  font-family: 'Inter', sans-serif;
+  color: var(--text-main);
   line-height: 1.6;
+  border: var(--border-subtle);
 }
 
 /* Header Styling */
 .header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
 }
 
 .logo {
   width: 80px;
   height: 80px;
-  margin-bottom: 15px;
+  margin-bottom: 16px;
 }
 
 .title {
-  font-size: 2.4em;
-  color: #333;
-  font-weight: 500;
+  font-size: 2.2em;
+  color: var(--text-main);
+  font-weight: 700;
 }
 
 /* About Content Styling */
@@ -42,36 +43,39 @@
 }
 
 .about-content h2 {
-  font-size: 1.8em;
+  font-size: 1.6em;
+  font-weight: 700;
   margin-bottom: 20px;
-  color: #555;
+  color: var(--text-main);
 }
 
 .about-content p {
   font-size: 1.1em;
-  margin-bottom: 15px;
-  color: #555;
+  margin-bottom: 16px;
+  color: var(--text-muted);
 }
 
 .about-content a {
-  color: #007bff;
-  font-weight: 500;
+  color: var(--primary-color);
+  font-weight: 600;
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .about-content a:hover {
   text-decoration: underline;
-  color: #0056b3;
+  color: var(--primary-dark);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .about-container {
-    padding: 15px;
+    padding: 20px;
+    margin: 20px;
   }
 
   .title {
-    font-size: 2em;
+    font-size: 1.8em;
   }
 
   .about-content p {

@@ -1,37 +1,38 @@
 /* General container styling */
 .federation-form {
-  background: linear-gradient(145deg, #fcffff, #f9f9f9); /* Subtle gradient */
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  background: var(--bg-card);
+  box-shadow: var(--shadow-md);
   max-width: 700px;
-  margin: 50px auto;
+  margin: 40px auto;
   padding: 40px;
-  border-radius: 12px;
-  font-family: 'Roboto', sans-serif;
-  transition: transform 0.3s, box-shadow 0.3s;
+  border-radius: var(--radius-xl);
+  font-family: 'Inter', sans-serif;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: var(--border-subtle);
 }
 
 .federation-form:hover {
-  transform: scale(1.01); /* Slight scaling effect on hover */
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Form heading */
 .federation-form h1 {
-  font-size: 28px;
-  margin-bottom: 20px;
+  font-size: 1.75rem;
+  margin-bottom: 24px;
   text-align: center;
-  font-weight: bold;
-  color: #333;
+  font-weight: 700;
+  color: var(--text-main);
 }
 
 /* Labels */
 .federation-form label {
   font-weight: 500;
-  font-family: 'Roboto', sans-serif;
-  margin-top: 15px;
+  font-family: 'Inter', sans-serif;
+  margin-top: 16px;
   display: block;
   font-size: 14px;
-  color: #444;
+  color: var(--text-muted);
 }
 
 /* Input fields */
@@ -41,22 +42,24 @@
 .federation-form select,
 .federation-form textarea {
   width: 100%;
-  padding: 12px;
+  padding: 12px 14px;
   margin-top: 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-lg);
   box-sizing: border-box;
   font-size: 14px;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  font-family: 'Inter', sans-serif;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background: var(--bg-card);
 }
 
 .federation-form input[type="text"]:focus,
 .federation-form input[type="url"]:focus,
 .federation-form select:focus,
 .federation-form textarea:focus {
-  border-color: #159cb3;
-  background-color: #06b2bb10;
-  box-shadow: 0 0 8px rgba(165, 244, 250, 0.2);
+  border-color: var(--primary-color);
+  background-color: rgba(43, 51, 233, 0.02);
+  box-shadow: 0 0 0 3px rgba(43, 51, 233, 0.1);
   outline: none;
 }
 
@@ -64,10 +67,8 @@
 .federation-form input[type="url"]:required:invalid,
 .federation-form select:required:invalid,
 .federation-form textarea:required:invalid {
-  border-color: #159cb3;
-  background-color: rgba(255, 0, 0, 0.034);
-  box-shadow: 0 0 8px rgba(165, 244, 250, 0.2);
-  outline: none;
+  border-color: var(--primary-light);
+  background-color: rgba(255, 0, 0, 0.02);
 }
 
 /* Textarea field */
@@ -77,156 +78,161 @@
 
 /* Data Models Section */
 .data-models-section {
-  margin-top: 30px;
+  margin-top: 32px;
 }
 
 .data-models-section h2 {
-  font-size: 20px;
-  margin-bottom: 10px;
-  color: #333;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--text-main);
 }
 
 .data-models-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 16px;
 }
 
 .data-model-card {
-  background-color: #f9f9f9;
-  transition: background-color 0.3s, box-shadow 0.3s;
-  flex: 1 1 calc(50% - 15px); /* Two-column layout with gap */
-  padding: 15px;
-  border: 1px solid #e6e6e6;
-  border-radius: 8px;
+  background-color: var(--bg-card);
+  transition: all 0.2s ease;
+  flex: 1 1 calc(50% - 16px);
+  padding: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .data-model-card:hover {
-  border: 1px solid #18a2b8;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  background-color: #18a3b811;
-  color: white;
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-md);
+  background-color: rgba(43, 51, 233, 0.02);
 }
 
 .data-model-card label {
   font-size: 14px;
-  font-weight: normal;
-  color: #555;
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
 .data-model-name {
-  margin-left: 5px;
+  margin-left: 8px;
 }
 
 /* Button */
 .federation-form button[type="submit"] {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(45deg, #18a2b8, #a2f1f5);
+  padding: 14px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: background-color 0.3s, transform 0.3s;
-  margin-top: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 24px;
+  box-shadow: var(--shadow-sm);
 }
 
 .federation-form button[type="submit"]:hover {
-  background-color: #a2f1f5;
-  transform: scale(1.02);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .federation-form button[type="submit"]:disabled {
-  background-color: #ddd;
+  background: #e2e8f0;
+  color: var(--text-muted);
   cursor: not-allowed;
   box-shadow: none;
+  transform: none;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .federation-form {
-    padding: 20px;
+    padding: 24px;
+    margin: 20px;
   }
 
   .data-model-card {
-    flex: 1 1 100%; /* Stack cards on smaller screens */
+    flex: 1 1 100%;
   }
 
   button {
     font-size: 14px;
-    padding: 10px;
+    padding: 12px;
   }
 }
+
 /* Breadcrumb */
 .breadcrumb {
   margin-bottom: 20px;
   font-size: 14px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .breadcrumb a {
   text-decoration: none;
-  color: #06b2bb;
-  transition: color 0.3s;
+  color: var(--primary-color);
+  transition: color 0.2s ease;
 }
 
 .breadcrumb a:hover {
-  color: #16a6ad;
+  color: var(--primary-dark);
 }
 
 /* Close X Button */
 .close-x-btn {
   position: absolute;
-  top: 10px;
-  right: 15px;
-  background: #fff;
-  color: #333;
-  font-size: 20px;
+  top: 12px;
+  right: 16px;
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-size: 18px;
   border: none;
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   text-align: center;
-  line-height: 30px;
+  line-height: 32px;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
 }
 
 .close-x-btn:hover {
-  background: #f5f5f5;
-  color: #ff0000;
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-danger);
 }
 
 /* Close Button at the Bottom */
 .close-btn {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(145deg, #ff4e4e, #ff7979);
+  padding: 14px;
+  background: linear-gradient(135deg, var(--color-danger), #dc2626);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: background-color 0.3s, transform 0.3s;
+  font-size: 1rem;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   margin-top: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .close-btn:hover {
-  background-color: #ff4e4e;
-  transform: scale(1.02);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
+
 .button-container {
   display: flex;
   justify-content: space-between;
-  gap: 50%;
-  margin-top: 20px;
+  gap: 16px;
+  margin-top: 24px;
 }
