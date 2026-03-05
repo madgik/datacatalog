@@ -1,10 +1,13 @@
 import pandas as pd
 import json
+import re
+from urllib.parse import unquote
 
 from common_entities import (
     EXCEL_TYPE_2_SQL_TYPE_ISCATEGORICAL_MAP,
     InvalidDataModelError,
 )
+from converter.json_to_excel import ROOT_METADATA_CODE, ROOT_METADATA_PREFIX
 
 
 EXCEL_JSON_FIELDS_MAP_WITHOUT_VALUES = {
@@ -38,6 +41,16 @@ def process_enumerations(values):
             + values
             + "."
         )
+
+    if not isinstance(enumerations, list) or any(
+        not isinstance(item, dict) for item in enumerations
+    ):
+        raise InvalidDataModelError(
+            'Nominal values format error: \'{"code", "label"}, {"code", "label"}\' expected but got '
+            + str(values)
+            + "."
+        )
+
     return [
         {"code": list(item.keys())[0], "label": list(item.values())[0]}
         for item in enumerations
@@ -50,16 +63,23 @@ def insert_variable_into_structure(root, variable, path):
     """
     # The last path element of the list is always the variable.
     for part in path[:-1]:
+        group_code = part
+
         # Find or create the group at the current level
         found = False
         for group in root["groups"]:
-            if group["code"] == part:
+            if group["code"] == group_code:
                 root = group
                 found = True
                 break
 
         if not found:
-            new_group = {"code": part, "label": part, "groups": [], "variables": []}
+            new_group = {
+                "code": group_code,
+                "label": group_code,
+                "groups": [],
+                "variables": [],
+            }
             root["groups"].append(new_group)
             root = new_group
 
@@ -79,6 +99,7 @@ def process_values_based_on_type(row, variable):
     variable_type = row.get("type")
 
     if variable_type in ["real", "integer"] and values:
+        values = str(values)
         # Split on the last hyphen only
         parts = values.rsplit("-", 1)
         if len(parts) != 2:
@@ -107,8 +128,8 @@ def process_values_based_on_type(row, variable):
             variable["minValue"] = int(min_val)
             variable["maxValue"] = int(max_val)
         else:  # real
-            variable["minValue"] = min_val
-            variable["maxValue"] = max_val
+            variable["minValue"] = _parse_number_preserving_integer(min_str)
+            variable["maxValue"] = _parse_number_preserving_integer(max_str)
 
     elif variable_type == "nominal":
         if not values:
@@ -214,7 +235,10 @@ def convert_excel_to_json(df):
     Converts a DataFrame from Excel into a JSON structure, handling enumerations specifically,
     and adds 'isCategorical' and 'sql_type' based on the 'type'.
     """
-    df = df.astype(str).replace("nan", None)
+    df = df.where(pd.notna(df), None)
+    metadata, df = _extract_root_metadata(df)
+    roundtrip_hints = metadata.pop("__dqt_roundtrip_hints", None)
+
     root = {"variables": [], "groups": [], "code": "root"}
 
     for _, row in df.iterrows():
@@ -226,7 +250,9 @@ def convert_excel_to_json(df):
                 and variable["conceptPath"]
                 and variable["conceptPath"] != "None"
             ):
-                path = variable["conceptPath"].split("/")
+                path = [
+                    part.strip() for part in str(variable["conceptPath"]).split("/")
+                ]
                 del variable["conceptPath"]
                 insert_variable_into_structure(root, variable, path)
             else:
@@ -236,11 +262,129 @@ def convert_excel_to_json(df):
         except InvalidDataModelError as e:
             raise InvalidDataModelError(f"Error processing variable: {e}")
 
-    if root["groups"]:
-        data_model = root["groups"][0]
-        data_model["version"] = "to be defined"
-        clean_empty_fields(data_model)
-
-        return data_model
+    if not root["groups"] and not root["variables"]:
+        if metadata:
+            data_model = {
+                "code": metadata.get("code", "No groups found"),
+                "label": metadata.get("label", metadata.get("code", "No groups found")),
+                "version": metadata.get("version", "to be defined"),
+                "groups": [],
+                "variables": [],
+            }
+        else:
+            return {"code": "No groups found", "groups": [], "variables": []}
     else:
-        return {"code": "No groups found", "groups": [], "variables": root["variables"]}
+        root_group_key = metadata.get("label", metadata.get("code"))
+        top_level_group = None
+        if root_group_key:
+            top_level_group = next(
+                (
+                    group
+                    for group in root["groups"]
+                    if group.get("code") == root_group_key
+                ),
+                None,
+            )
+
+        if top_level_group is None and len(root["groups"]) == 1:
+            top_level_group = root["groups"][0]
+
+        if top_level_group is not None:
+            top_groups = [
+                group for group in root["groups"] if group is not top_level_group
+            ]
+            data_model = {
+                "code": metadata.get("code", top_level_group["code"]),
+                "label": metadata.get(
+                    "label", top_level_group.get("label", top_level_group["code"])
+                ),
+                "version": metadata.get("version", "to be defined"),
+                "variables": top_level_group.get("variables", []),
+                "groups": top_level_group.get("groups", []) + top_groups,
+            }
+        else:
+            data_model = {
+                "code": metadata.get("code", "DataModel"),
+                "label": metadata.get("label", metadata.get("code", "DataModel")),
+                "version": metadata.get("version", "to be defined"),
+                "variables": root["variables"],
+                "groups": root["groups"],
+            }
+
+    for key, value in metadata.items():
+        if key not in {"code", "label", "version"}:
+            data_model[key] = value
+
+    clean_empty_fields(data_model)
+    data_model.setdefault("groups", [])
+    _apply_roundtrip_hints(data_model, roundtrip_hints)
+    return data_model
+
+
+def _parse_number_preserving_integer(value):
+    if isinstance(value, (int, float)):
+        return value
+
+    value = str(value).strip()
+    if re.fullmatch(r"[+-]?\d+", value):
+        return int(value)
+    return float(value)
+
+
+def _extract_root_metadata(df):
+    if "code" not in df.columns or "csvFile" not in df.columns:
+        return {}, df
+
+    metadata_mask = df["code"].apply(
+        lambda value: str(value) == ROOT_METADATA_CODE
+    ) & df["csvFile"].apply(
+        lambda value: isinstance(value, str) and value.startswith(ROOT_METADATA_PREFIX)
+    )
+    if not metadata_mask.any():
+        return {}, df
+
+    metadata_rows = df[metadata_mask]
+    if len(metadata_rows) > 1:
+        raise InvalidDataModelError("Multiple root metadata rows found in Excel input.")
+
+    metadata_row = metadata_rows.iloc[0]
+    encoded_metadata = metadata_row.get("csvFile")
+    payload = encoded_metadata[len(ROOT_METADATA_PREFIX) :]
+    try:
+        metadata = json.loads(unquote(payload))
+    except json.JSONDecodeError:
+        raise InvalidDataModelError("Invalid root metadata row in Excel input.")
+    if not isinstance(metadata, dict):
+        raise InvalidDataModelError("Invalid root metadata row in Excel input.")
+
+    filtered_df = df[~metadata_mask].copy()
+    return metadata, filtered_df
+
+
+def _apply_roundtrip_hints(data_model, hints):
+    if not isinstance(hints, dict):
+        return
+
+    variable_fields = [
+        field
+        for field in hints.get("variable_fields_with_explicit_empty", [])
+        if field not in {"enumerations", "minValue", "maxValue"}
+    ]
+    enumeration_fields = hints.get("enumeration_fields_with_explicit_empty", [])
+
+    def _walk(node):
+        for variable in node.get("variables") or []:
+            for field in variable_fields:
+                if field not in variable:
+                    variable[field] = ""
+
+            for enumeration in variable.get("enumerations") or []:
+                if isinstance(enumeration, dict):
+                    for field in enumeration_fields:
+                        if field not in enumeration:
+                            enumeration[field] = ""
+
+        for group in node.get("groups") or []:
+            _walk(group)
+
+    _walk(data_model)

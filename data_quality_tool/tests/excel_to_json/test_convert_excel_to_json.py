@@ -1,9 +1,12 @@
 import unittest
+import json
+from urllib.parse import quote
 
 import pandas as pd
 
 from common_entities import InvalidDataModelError
 from converter.excel_to_json import convert_excel_to_json
+from converter.json_to_excel import ROOT_METADATA_CODE, ROOT_METADATA_PREFIX
 
 
 class TestConvertExcelToJson(unittest.TestCase):
@@ -75,7 +78,7 @@ class TestConvertExcelToJson(unittest.TestCase):
             "Error processing variable: The variable Var2 is missing the conceptPath"
         )
         with self.assertRaisesRegex(InvalidDataModelError, expected_message):
-            print(convert_excel_to_json(df))
+            convert_excel_to_json(df)
 
     def test_dataframe_with_invalid_type_raises_error(self):
         # Scenario where a row has an invalid 'type' that fails validation
@@ -110,4 +113,115 @@ class TestConvertExcelToJson(unittest.TestCase):
         df = pd.DataFrame(data)
         expected_message = "The variable UngroupedTextVar is missing the conceptPath"
         with self.assertRaisesRegex(InvalidDataModelError, expected_message):
+            convert_excel_to_json(df)
+
+    def test_metadata_code_collision_variable_is_not_dropped(self):
+        metadata_payload = {
+            "code": "DM",
+            "label": "DM",
+            "version": "1.0",
+        }
+        metadata_row = {
+            "csvFile": ROOT_METADATA_PREFIX
+            + quote(json.dumps(metadata_payload, separators=(",", ":")), safe=""),
+            "name": ROOT_METADATA_CODE,
+            "code": ROOT_METADATA_CODE,
+            "type": "text",
+            "values": "",
+            "unit": "",
+            "description": "",
+            "canBeNull": "",
+            "comments": "",
+            "conceptPath": f"{ROOT_METADATA_CODE}/{ROOT_METADATA_CODE}",
+            "methodology": "",
+        }
+        data_row_with_same_code = {
+            "csvFile": "",
+            "name": "Sentinel Variable",
+            "code": ROOT_METADATA_CODE,
+            "type": "text",
+            "values": "",
+            "unit": "",
+            "description": "",
+            "canBeNull": "",
+            "comments": "",
+            "conceptPath": f"DM/{ROOT_METADATA_CODE}",
+            "methodology": "",
+        }
+        df = pd.DataFrame([metadata_row, data_row_with_same_code])
+
+        result = convert_excel_to_json(df)
+
+        self.assertEqual(result["code"], "DM")
+        self.assertEqual(len(result["variables"]), 1)
+        self.assertEqual(result["variables"][0]["code"], ROOT_METADATA_CODE)
+
+    def test_multiple_metadata_rows_raise_error(self):
+        metadata_payload = {
+            "code": "DM",
+            "label": "DM",
+            "version": "1.0",
+        }
+        row = {
+            "csvFile": ROOT_METADATA_PREFIX
+            + quote(json.dumps(metadata_payload, separators=(",", ":")), safe=""),
+            "name": ROOT_METADATA_CODE,
+            "code": ROOT_METADATA_CODE,
+            "type": "text",
+            "values": "",
+            "unit": "",
+            "description": "",
+            "canBeNull": "",
+            "comments": "",
+            "conceptPath": f"{ROOT_METADATA_CODE}/{ROOT_METADATA_CODE}",
+            "methodology": "",
+        }
+        df = pd.DataFrame([row, row])
+
+        with self.assertRaisesRegex(
+            InvalidDataModelError, "Multiple root metadata rows found"
+        ):
+            convert_excel_to_json(df)
+
+    def test_invalid_metadata_payload_raises_error(self):
+        invalid_metadata_row = {
+            "csvFile": ROOT_METADATA_PREFIX + "not-json",
+            "name": ROOT_METADATA_CODE,
+            "code": ROOT_METADATA_CODE,
+            "type": "text",
+            "values": "",
+            "unit": "",
+            "description": "",
+            "canBeNull": "",
+            "comments": "",
+            "conceptPath": f"{ROOT_METADATA_CODE}/{ROOT_METADATA_CODE}",
+            "methodology": "",
+        }
+        df = pd.DataFrame([invalid_metadata_row])
+
+        with self.assertRaisesRegex(
+            InvalidDataModelError, "Invalid root metadata row in Excel input"
+        ):
+            convert_excel_to_json(df)
+
+    def test_non_object_metadata_payload_raises_error(self):
+        metadata_row = {
+            "csvFile": ROOT_METADATA_PREFIX
+            + quote(json.dumps([1], separators=(",", ":")), safe=""),
+            "name": ROOT_METADATA_CODE,
+            "code": ROOT_METADATA_CODE,
+            "type": "text",
+            "values": "",
+            "unit": "",
+            "description": "",
+            "canBeNull": "",
+            "comments": "",
+            "conceptPath": f"{ROOT_METADATA_CODE}/{ROOT_METADATA_CODE}",
+            "methodology": "",
+        }
+        df = pd.DataFrame([metadata_row])
+
+        with self.assertRaisesRegex(
+            InvalidDataModelError, "Invalid root metadata row in Excel input"
+        ):
             convert_excel_to_json(df)
