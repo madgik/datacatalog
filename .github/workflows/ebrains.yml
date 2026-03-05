@@ -1,0 +1,55 @@
+name: Mirror to Ebrains
+
+on:
+  push:
+    branches: [master]
+    tags:
+      - "*"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Validate sync configuration without mirroring"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+jobs:
+  to_ebrains:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execution mode
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "Running in DRY-RUN mode (no sync)."
+          else
+            echo "Running in SYNC mode."
+          fi
+
+      - name: Dry-run preflight checks
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == 'true' }}
+        run: |
+          test -n "${{ secrets.EBRAINS_GITLAB_ACCESS_TOKEN }}"
+          git ls-remote "https://github.com/madgik/datacatalog.git" refs/heads/master >/dev/null
+          git ls-remote "https://ghpusher:${{ secrets.EBRAINS_GITLAB_ACCESS_TOKEN }}@gitlab.ebrains.eu/hbp-mip/datacatalog.git" >/dev/null
+          echo "Dry-run preflight checks passed."
+
+      - name: syncmaster
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != 'true' }}
+        uses: wei/git-sync@v3
+        with:
+          source_repo: "madgik/datacatalog"
+          source_branch: "master"
+          destination_repo: "https://ghpusher:${{ secrets.EBRAINS_GITLAB_ACCESS_TOKEN }}@gitlab.ebrains.eu/hbp-mip/datacatalog.git"
+          destination_branch: "master"
+
+      - name: synctags
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != 'true' }}
+        uses: wei/git-sync@v3
+        with:
+          source_repo: "madgik/datacatalog"
+          source_branch: "refs/tags/*"
+          destination_repo: "https://ghpusher:${{ secrets.EBRAINS_GITLAB_ACCESS_TOKEN }}@gitlab.ebrains.eu/hbp-mip/datacatalog.git"
+          destination_branch: "refs/tags/*"

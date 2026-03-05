@@ -3,6 +3,16 @@ name: Build & Push images on Release
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Build and validate without pushing images"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
 
 env:
   DOCKERHUB_ORG: madgik
@@ -28,10 +38,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Execution mode
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "Running in DRY-RUN mode (build, no push)."
+          else
+            echo "Running in PUSH mode."
+          fi
+
       - name: Extract version from release tag
         run: |
-          TAG="${{ github.event.release.tag_name }}"
-          VERSION="${TAG#v}"
+          if [ "${{ github.event_name }}" = "release" ]; then
+            TAG="${{ github.event.release.tag_name }}"
+            VERSION="${TAG#v}"
+          else
+            VERSION="dryrun-${GITHUB_SHA::7}"
+          fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Prepare image name
@@ -54,7 +76,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.context }}
-          push: true
+          push: ${{ github.event_name != 'workflow_dispatch' || inputs.dry_run != 'true' }}
           tags: |
             ${{ env.IMAGE }}:${{ env.VERSION }}
           cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache
