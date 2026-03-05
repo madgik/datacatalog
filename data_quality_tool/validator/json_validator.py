@@ -84,7 +84,7 @@ def validate_group(group, path, seen_codes=None, seen_group_codes=None):
 
 
 def validate_json(data_model):
-    required_fields = ["code", "version", "label", "variables", "groups"]
+    required_fields = ["code", "version", "label", "groups"]
 
     for field in required_fields:
         if field not in data_model:
@@ -98,17 +98,23 @@ def validate_json(data_model):
                 f"'{field}' in DataModel must be a non-empty string. Current value: '{data_model[field]}'."
             )
 
-    if not isinstance(data_model["variables"], list) or not data_model["variables"]:
+    if "variables" not in data_model:
+        data_model["variables"] = []
+
+    variables = data_model["variables"]
+    if not isinstance(variables, list):
         raise InvalidDataModelError(
-            "'variables' in DataModel must be a non-empty list of dictionaries. Ensure that variables are properly defined."
+            "'variables' in DataModel must be a list of dictionaries."
         )
-    if not all(isinstance(var, dict) for var in data_model["variables"]):
+    elif not all(isinstance(var, dict) for var in variables):
         raise InvalidDataModelError(
             "'variables' in DataModel must only contain dictionaries. Found invalid entries."
         )
 
     if not isinstance(data_model["groups"], list):
-        data_model["groups"] = []
+        raise InvalidDataModelError(
+            "'groups' in DataModel must be a list of dictionaries."
+        )
 
     if not all(isinstance(group, dict) for group in data_model["groups"]):
         raise InvalidDataModelError(

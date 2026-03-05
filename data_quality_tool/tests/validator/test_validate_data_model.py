@@ -361,7 +361,35 @@ class TestValidateDataModel(unittest.TestCase):
         }
         with self.assertRaisesRegex(
             InvalidDataModelError,
-            "'variables' in DataModel must be a non-empty list of dictionaries",
+            "'variables' in DataModel must be a list of dictionaries",
+        ):
+            validate_json(data_model)
+
+    def test_variables_explicit_null_raises_error(self):
+        data_model = {
+            "code": "DM001",
+            "version": "1.0",
+            "label": "Test Model",
+            "variables": None,
+            "groups": [
+                {
+                    "code": "G001",
+                    "variables": [
+                        {
+                            "code": "dataset",
+                            "sql_type": "text",
+                            "isCategorical": True,
+                            "type": "nominal",
+                            "enumerations": ["dataset1"],
+                        }
+                    ],
+                    "groups": [],
+                }
+            ],
+        }
+        with self.assertRaisesRegex(
+            InvalidDataModelError,
+            "'variables' in DataModel must be a list of dictionaries",
         ):
             validate_json(data_model)
 
@@ -370,14 +398,48 @@ class TestValidateDataModel(unittest.TestCase):
             "code": "DM002",
             "version": "1.0",
             "label": "Test Model",
-            "variables": [],  # Empty list for variables
-            "groups": [{"code": "G001", "variables": [], "groups": []}],
+            "variables": [],  # Empty list for variables is now valid
+            "groups": [
+                {
+                    "code": "G001",
+                    "variables": [
+                        {
+                            "code": "dataset",
+                            "sql_type": "text",
+                            "isCategorical": True,
+                            "type": "nominal",
+                            "enumerations": ["dataset1"],
+                        }
+                    ],
+                    "groups": [],
+                }
+            ],
         }
-        with self.assertRaisesRegex(
-            InvalidDataModelError,
-            "'variables' in DataModel must be a non-empty list of dictionaries",
-        ):
-            validate_json(data_model)
+        validate_json(data_model)  # Should pass without error
+
+    def test_valid_data_model_without_top_level_variables(self):
+        # Data model with no 'variables' key at all — dataset is inside a group
+        data_model = {
+            "code": "DM_NO_VARS",
+            "version": "1.0",
+            "label": "No Top-Level Variables",
+            "groups": [
+                {
+                    "code": "group1",
+                    "variables": [
+                        {
+                            "code": "dataset",
+                            "sql_type": "text",
+                            "isCategorical": True,
+                            "type": "nominal",
+                            "enumerations": ["dataset1"],
+                        }
+                    ],
+                    "groups": [],
+                }
+            ],
+        }
+        validate_json(data_model)  # Should pass without error
 
     def test_variables_contains_non_dictionary(self):
         data_model = {
@@ -411,7 +473,7 @@ class TestValidateDataModel(unittest.TestCase):
             ],
             "groups": "Not a list",  # Invalid type for groups
         }
-        expected_message = "The DataModel must include at least one dataset CommonDataElement with code 'dataset', 'sql_type' as 'text', and 'isCategorical' set to true."
+        expected_message = "'groups' in DataModel must be a list of dictionaries."
         with self.assertRaisesRegex(
             InvalidDataModelError,
             expected_message,
